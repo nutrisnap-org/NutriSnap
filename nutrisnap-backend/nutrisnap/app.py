@@ -14,8 +14,35 @@ genai.configure(api_key=GOOGLE_API_KEY)
 app = Flask(__name__)
 
 
+@app.route('/food-snap', methods=['GET'])
+def food_snap():
+   
+    img_url = request.args.get('img_url')
+
+    if img_url:
+        
+        response = requests.get(img_url)
+
+        
+        if response.status_code == 200:
+          
+            image = Image.open(BytesIO(response.content))
+
+           
+            model = genai.GenerativeModel('gemini-pro-vision')
+
+            response = model.generate_content(["Analyse the food and give output in this manner eg {'status':'unhealthy','description':'the food contains paneer and gravy'. 'est calories':'400-500 cal'}", image], stream=True)
+            response.resolve()
+
+           
+            return jsonify({"result": response.text})
+        else:
+            return jsonify({"error": "Failed to retrieve the image"}), 400
+    else:
+        return jsonify({"error": "img_url parameter is required"}), 400
+    
 @app.route('/skin-analyse', methods=['GET'])
-def generate_content():
+def skin_analyse():
    
     img_url = request.args.get('img_url')
 
@@ -40,6 +67,7 @@ def generate_content():
             return jsonify({"error": "Failed to retrieve the image"}), 400
     else:
         return jsonify({"error": "img_url parameter is required"}), 400
+
 
 
 if __name__ == '__main__':
