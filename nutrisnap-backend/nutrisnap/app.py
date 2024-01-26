@@ -7,12 +7,14 @@ from PIL import Image
 import requests
 from io import BytesIO
 
+from flask_cors import CORS
+
 load_dotenv()
 GOOGLE_API_KEY=os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/body-analyse', methods=['GET'])
 def body_analyse():

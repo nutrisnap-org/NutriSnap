@@ -25,6 +25,7 @@ const db = getFirestore(app);
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
+  
 
   const [user, setUser] = useState(null);
 
@@ -67,7 +68,7 @@ const ImageUploader = () => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
-          foodsnapUrls: arrayUnion(imageUrl),
+          bodysnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
         fetchAnalysisData(imageUrl);
@@ -81,51 +82,43 @@ const ImageUploader = () => {
 
   const fetchAnalysisData = async (imageUrl) => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`
-      );
+      const response = await fetch(`http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`);
       const data = await response.json();
       console.log(data);
-
+  
       // Parse the result string into a JSON object
       const parsedResult = JSON.parse(data.result);
-
+  
       // Update analysisResults state with the parsed result
       setAnalysisResults([...analysisResults, parsedResult]);
     } catch (error) {
       console.error("Error fetching analysis data: ", error);
     }
   };
-
+  
+ 
   return (
     <>
-      <div className="px-4">
-        <div className=" mx-auto text-center text-7xl max-sm:text-4xl max-md:text-6xl font-bold mt-10 leading-relaxed">
+      <div>
+        <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
           Ready to send us your <span className="text-grad">"Foodsnap"</span> ?
         </div>
         <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
           Choose a file or open camera to send us pics to analyze the food and
           provide you the necesary data
         </p>
-        <div className="max:md-w-11/12 p-8 w-fit bg-violet-100 border border-violet-300 shadow-md hover:shadow-none rounded-md h-fit max-h-min mx-auto mt-20 flex-col items-center justify-center">
-          <div className=" flex-col items-center justify-center">
+        <div className="w-11/12 p-8 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-20 flex-col items-center justify-center">
+          <div className=" flex-col">
             <input
               type="file"
-              id="file"
               accept="image/*"
               onChange={uploadImage}
-              className="sr-only mx-auto"
+              className="mb-4"
             />
-            <label
-              htmlFor="file"
-              className="items-center cursor-pointer border px-4 py-2 mx-auto text-center h-fit rounded-md border-gray-800"
-            >
-              Choose an Image
-            </label>
             {imageUrls.length > 0 && (
               <div>
                 {imageUrls.map((url, index) => (
-                  <div key={index} className="m-8">
+                  <div key={index}>
                     <Image
                       cloudName="dmdhep1qp"
                       publicId={url}
@@ -144,12 +137,12 @@ const ImageUploader = () => {
           </div>
         )}
         {analysisResults.map((result, index) => (
-          <div key={index} className="card">
-            <h2>Status: {result.status}</h2>
-            <p>Description: {result.description}</p>
-            <p>Remedies: {result.remedies}</p>
-          </div>
-        ))}
+        <div key={index} className="card">
+          <h2>Status: {result.status}</h2>
+          <p>Description: {result.description}</p>
+          <p>workout plan: {result.remedies}</p>
+        </div>
+      ))}
       </div>
     </>
   );

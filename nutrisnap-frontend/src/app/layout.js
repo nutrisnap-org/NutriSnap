@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
       <Header />
       {children}
+      <iframe className="bottom-0 right-0 fixed m-8 opacity-90 rounded-md backdrop-blur-md shadow-xl" width={320} height={560}  src="https://nutrisnap-chat.vercel.app/"></iframe>
       <Footer />
 </body>
     </html>
