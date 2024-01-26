@@ -78,22 +78,29 @@ const ImageUploader = () => {
 
   return (
     <>
-      <div>
-        <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
+      <div className="px-4">
+        <div className=" mx-auto text-center text-7xl max-sm:text-4xl max-md:text-6xl font-bold mt-10 leading-relaxed">
           Ready to send us your <span className="text-grad">"Foodsnap"</span> ?
         </div>
         <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
           Choose a file or open camera to send us pics to analyze the food and
           provide you the necesary data
         </p>
-        <div className="w-11/12 p-8 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-20 flex-col items-center justify-center">
+        <div className="w-11/12 p-8 bg-violet-100 border border-violet-300 shadow-md hover:shadow-none rounded-md h-fit max-h-min mx-auto mt-20 flex-col items-center justify-center">
           <div className=" flex-col">
             <input
               type="file"
+              id="file"
               accept="image/*"
               onChange={uploadImage}
-              className="mb-4"
+              className="sr-only"
             />
+            <label
+              htmlFor="file"
+              className=" cursor-pointer border px-4 py-2 mx-auto text-center rounded-md border-gray-800"
+            >
+              Choose an Image
+            </label>
             {imageUrls.length > 0 && (
               <div>
                 {imageUrls.map((url, index) => (

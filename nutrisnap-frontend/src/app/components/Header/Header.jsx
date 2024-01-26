@@ -61,7 +61,6 @@ const Header = () => {
                 alt=""
                 height={30}
                 width={30}
-                onClick={() => handleLinkClick("foodsnap")}
                 className={` mx-auto opacity-40`}
               />
               <div className="text-xs text-center">Food</div>
@@ -74,7 +73,7 @@ const Header = () => {
                 alt=""
                 height={30}
                 width={30}
-                className={` mx-auto opacity-40`}
+                className={` mx-auto opacity-40 hover:opacity-100`}
               />
               <div className="text-xs text-center">Skin</div>
             </a>
@@ -86,7 +85,7 @@ const Header = () => {
                 alt=""
                 height={30}
                 width={30}
-                className={` mx-auto opacity-40`}
+                className={` mx-auto opacity-40 active:opacity-100`}
               />
               <div className="text-xs text-center">Body</div>
             </a>
