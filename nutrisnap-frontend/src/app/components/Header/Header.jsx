@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import "./Header.css";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [isActive, setIsActive] = useState(false);
-
+  const router = useRouter();
   function toggleActive() {
     setIsActive(!isActive);
   }
@@ -12,9 +13,7 @@ const Header = () => {
   return (
     <>
       <div
-        className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4 ${
-          location.pathname !== "/" ? "hidden" : "flex"
-        }`}
+        className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4 `}
       >
         <div className="flex md:mx-12 items-center gap-2">
           <a href="/" className="flex">
@@ -44,13 +43,60 @@ const Header = () => {
         <div
           className={`menu-btn-1 md:hidden mx-6 z-20 ${
             isActive ? "active" : ""
-          }`}
+          } ${router.pathname === "/" ? "block" : "hidden"}`}
           onClick={toggleActive}
         >
           <span></span>
         </div>
       </div>
       {isActive && <HamBurger />}
+      {router.pathname !== "/" && (
+        <div className="bottom-navigation bottom-0 fixed w-full p-4 sm:hidden bg-white shadow-2xl h-fit">
+          <div className="flex items-center justify-around sm:hidden">
+            <div className="flex flex-col items-center">
+              <img
+                src="/food.png"
+                alt=""
+                height={30}
+                width={30}
+                className="opacity-70"
+              />
+              <div className="text-xs">Food</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <img
+                src="/face.png"
+                alt=""
+                height={30}
+                width={30}
+                className="opacity-70"
+              />
+              <div className="text-xs">Skin</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <img
+                src="/body.png"
+                alt=""
+                height={30}
+                width={30}
+                className="opacity-70"
+              />
+              <div className="text-xs">Body</div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <img
+                src="/nutricon.png"
+                alt=""
+                height={30}
+                width={30}
+                className="opacity-70"
+              />
+              <div className="text-xs">Nutricon</div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -66,10 +112,10 @@ const HamBurger = () => {
             <a href="#">Home</a>
           </li>
           <li>
-            <a href="#">Contact</a>
+            <a href="#">login</a>
           </li>
           <li>
-            <a href="#">FAQs</a>
+            <a href="#">Register</a>
           </li>
         </ul>
       </div>
