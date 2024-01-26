@@ -99,7 +99,7 @@ const ImageUploader = () => {
 
   return (
     <>
-      <div className="px-24">
+      <div className="">
         <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10">
           Ready to Analyse your <span className="text-grad">"Face snap"</span> ?
         </div>
@@ -107,9 +107,9 @@ const ImageUploader = () => {
           Choose a file or open camera to send us pics to get a skin care
           routine and analyse your skin using our AI
         </p>
-        <div className="flex max-md:flex-col mx-auto justify-center mt-8 px-24">
+        <div className="flex max-md:flex-col mx-auto justify-center mt-8 px-24 max-sm:px-4">
           <div className="w-full">
-            <div className="w-fit max-md:w-11/12 p-8 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
+            <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
               <div className=" flex-col items-center justify-center">
                 <input
                   type="file"
@@ -120,7 +120,7 @@ const ImageUploader = () => {
                 />
                 <label
                   htmlFor="file"
-                  className="items-center cursor-pointer border px-4 py-2 mx-auto text-center h-fit rounded-md border-gray-800 hover:bg-black hover:text-white transition duration-300 ease-in-out"
+                  className="items-center max-sm:text-sm cursor-pointer border max-sm:px-2 px-4 py-2 mx-auto text-center h-fit rounded-md border-gray-800 hover:bg-black hover:text-white transition duration-300 ease-in-out"
                 >
                   Choose an Image
                 </label>
@@ -149,8 +149,8 @@ const ImageUploader = () => {
           <div>
             {analysisResults.map((result, index) => (
               <div className="w-full">
-                <div className="text-4xl mb-4 px-8 max-md:px-8">Report:</div>
-                <div key={index} className="card px-8 max-md:px-8">
+                <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
+                <div key={index} className="card px-4 max-md:px-2">
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
                       result.status === "unhealthy"
