@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import "./Header.css";
-import { useRouter } from "next/navigation";
+import { useRouter, useEffect } from "next/navigation";
 
 const Header = () => {
   const [isActive, setIsActive] = useState(false);
+
   const router = useRouter();
   function toggleActive() {
     setIsActive(!isActive);
@@ -50,57 +51,64 @@ const Header = () => {
         </div>
       </div>
       {isActive && <HamBurger />}
-      {router.pathname !== "/" && (
-        <div className="bottom-navigation bottom-0 fixed w-full p-4 sm:hidden bg-white shadow-2xl h-fit">
-          <div className="flex items-center justify-around sm:hidden">
-            <div className="flex flex-col items-center">
+
+      <div className="bottom-navigation bottom-0 fixed w-full p-4 sm:hidden bg-white shadow-2xl h-fit">
+        <div className="flex items-center justify-around sm:hidden">
+          <div className="flex flex-col items-center">
+            <a href="/foodsnap">
               <img
                 src="/food.png"
                 alt=""
                 height={30}
                 width={30}
-                className="opacity-70"
+                onClick={() => handleLinkClick("foodsnap")}
+                className={` mx-auto opacity-40`}
               />
-              <div className="text-xs">Food</div>
-            </div>
-            <div className="flex flex-col items-center">
+              <div className="text-xs text-center">Food</div>
+            </a>
+          </div>
+          <div className="flex flex-col items-center">
+            <a href="/skinsnap">
               <img
                 src="/face.png"
                 alt=""
                 height={30}
                 width={30}
-                className="opacity-70"
+                className={` mx-auto opacity-40`}
               />
-              <div className="text-xs">Skin</div>
-            </div>
-            <div className="flex flex-col items-center">
+              <div className="text-xs text-center">Skin</div>
+            </a>
+          </div>
+          <div className="flex flex-col items-center">
+            <a href="/">
               <img
                 src="/body.png"
                 alt=""
                 height={30}
                 width={30}
-                className="opacity-70"
+                className={` mx-auto opacity-40`}
               />
-              <div className="text-xs">Body</div>
-            </div>
+              <div className="text-xs text-center">Body</div>
+            </a>
+          </div>
 
-            <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
+            <a href="/">
               <img
                 src="/nutricon.png"
                 alt=""
                 height={30}
                 width={30}
-                className="opacity-70"
+                className={` mx-auto opacity-40`}
               />
-              <div className="text-xs">Nutricon</div>
-            </div>
+              <div className="text-xs text-center">Nutricon</div>
+            </a>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };
-
 export default Header;
 
 const HamBurger = () => {

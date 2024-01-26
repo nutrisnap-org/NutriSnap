@@ -108,8 +108,13 @@ const ImageUploader = () => {
           provide you the necesary data
         </p>
         <div className="w-11/12 p-8 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-20 flex-col items-center justify-center">
-          <div className=" flex">
-            <input type="file" accept="image/*" onChange={uploadImage} />
+          <div className=" flex-col">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={uploadImage}
+              className="mb-4"
+            />
             {imageUrls.length > 0 && (
               <div>
                 {imageUrls.map((url, index) => (

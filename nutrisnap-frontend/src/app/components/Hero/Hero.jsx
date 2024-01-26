@@ -65,8 +65,8 @@ const Hero = () => {
                 stroke="currentColor"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   strokeWidth="2.5"
                   d="M9 5l7 7-7 7"
                 />
