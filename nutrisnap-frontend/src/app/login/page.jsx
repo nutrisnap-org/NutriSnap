@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { useRouter } from 'next/navigation';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
@@ -25,6 +26,7 @@ const db = getFirestore(app);
 
 const LoginWithGoogle = () => {
   const [user, setUser] = useState(null);
+  const router = useRouter(); 
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -32,6 +34,7 @@ const LoginWithGoogle = () => {
         setUser(authUser);
         // Store user data in Firestore
         saveUserDataToFirestore(authUser);
+        router.push('/foodsnap');
       } else {
         setUser(null);
       }
@@ -75,11 +78,13 @@ const LoginWithGoogle = () => {
       .signOut()
       .then(() => {
         setUser(null);
+        sessionStorage.removeItem("user"); // Remove user data from session storage
       })
       .catch((error) => {
         console.error("Error signing out: ", error);
       });
   };
+  
   {
     /* <button onClick={handleLogout}>Logout</button> */
   }
