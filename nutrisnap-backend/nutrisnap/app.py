@@ -31,7 +31,7 @@ def body_analyse():
            
             model = genai.GenerativeModel('gemini-pro-vision')
 
-            response = model.generate_content(["Analyse the person and give output in this manner eg {'status':'healthy','description':'the person looks healthy and active lean', 'est body fat':'30 percent', 'remedies':'maintain diet and cardio' pls give a comprehensive report in remedies pointwise}", image], stream=True)
+            response = model.generate_content(["Analyse the person and give output in this manner in a json format eg {status:'healthy',description:'the person looks healthy and active lean', est body fat:'30 percent', remedies:'maintain diet and cardio' pls give a comprehensive report in remedies pointwise}", image], stream=True)
             response.resolve()
 
            
@@ -59,7 +59,7 @@ def food_snap():
            
             model = genai.GenerativeModel('gemini-pro-vision')
 
-            response = model.generate_content(["Analyse the food and give output in this manner eg {'status':'unhealthy','description':'the food contains paneer and gravy'. 'est calories':'400-500 cal'}", image], stream=True)
+            response = model.generate_content(["Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'400-500 cal'}", image], stream=True)
             response.resolve()
 
            
@@ -86,7 +86,7 @@ def skin_analyse():
            
             model = genai.GenerativeModel('gemini-pro-vision')
 
-            response = model.generate_content(["Analyse the skin of this human and suggest any remedies if necessary eg in this format {'status':'healthy' ,'description':'The skin appears to be healthy and clear', 'remedies':'However, the person may want to consider using a moisturizer to keep their skin hydrated, especially if they live in a dry climate. Additionally, the person may want to consider using a sunscreen with an SPF of 30 or higher to protect their skin from the sun's harmful UV rays.'}", image], stream=True)
+            response = model.generate_content(["Analyse the skin of this human and suggest any remedies if necessary eg in json format {status:'healthy' ,description:'The skin appears to be healthy and clear', remedies:'However, the person may want to consider using a moisturizer to keep their skin hydrated, especially if they live in a dry climate. Additionally, the person may want to consider using a sunscreen with an SPF of 30 or higher to protect their skin from the sun's harmful UV rays.'}", image], stream=True)
             response.resolve()
 
            
