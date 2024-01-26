@@ -1,6 +1,6 @@
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-
+import Bot from "./components/Bot/Bot";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 const inter = DM_Sans({ subsets: ["latin"] });
@@ -15,10 +15,8 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Header />
         {children}
-        <div className=" bottom-0 right-0 fixed m-8 bg-violet-400 shadow-xl w-fit bg-opacity-40 backdrop-blur-sm p-4 border cursor-pointer rounded-full text-white">
-          <img src="/bot.png" height={40} width={40} alt="" />
-        </div>
-        {/* <iframe className="bottom-0 right-0 fixed m-8 opacity-90 rounded-md backdrop-blur-md shadow-xl" width={320} height={560}  src="https://nutrisnap-chat.vercel.app/"></iframe> */}
+        <Bot />
+
         <Footer />
       </body>
     </html>
