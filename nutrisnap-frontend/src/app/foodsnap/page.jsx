@@ -24,6 +24,9 @@ const db = getFirestore(app);
 
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
+  const [analysisResults, setAnalysisResults] = useState([]);
+  
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -68,6 +71,7 @@ const ImageUploader = () => {
           foodsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
+        fetchAnalysisData(imageUrl);
       } else {
         console.error("User not found in session storage");
       }
@@ -76,6 +80,23 @@ const ImageUploader = () => {
     }
   };
 
+  const fetchAnalysisData = async (imageUrl) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/skin-analyse?img_url=${imageUrl}`);
+      const data = await response.json();
+      console.log(data);
+  
+      // Parse the result string into a JSON object
+      const parsedResult = JSON.parse(data.result);
+  
+      // Update analysisResults state with the parsed result
+      setAnalysisResults([...analysisResults, parsedResult]);
+    } catch (error) {
+      console.error("Error fetching analysis data: ", error);
+    }
+  };
+  
+ 
   return (
     <>
       <div>
@@ -110,6 +131,13 @@ const ImageUploader = () => {
             Analyze
           </div>
         )}
+        {analysisResults.map((result, index) => (
+        <div key={index} className="card">
+          <h2>Status: {result.status}</h2>
+          <p>Description: {result.description}</p>
+          <p>Remedies: {result.remedies}</p>
+        </div>
+      ))}
       </div>
     </>
   );
