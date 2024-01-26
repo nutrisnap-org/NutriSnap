@@ -1,31 +1,46 @@
 from flask import Flask, request, jsonify
 import google.generativeai as genai  
 import requests  
+import os
+from dotenv import load_dotenv
+from PIL import Image
+import requests
+from io import BytesIO
+
+load_dotenv()
+GOOGLE_API_KEY=os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=GOOGLE_API_KEY)
 
 app = Flask(__name__)
 
-@app.route('/process-image', methods=['POST'])
-def process_image():
-    image_url = request.json.get('imageUrl')
 
-  
-    response = requests.get(image_url)
-    if response.status_code == 200:
-        image_content = response.content
+@app.route('/skin-analyse', methods=['GET'])
+def generate_content():
+   
+    img_url = request.args.get('img_url')
+
+    if img_url:
+        
+        response = requests.get(img_url)
 
         
-        model = genai.GenerativeModel('gemini-pro-vision')
+        if response.status_code == 200:
+          
+            image = Image.open(BytesIO(response.content))
 
-        gemini_response = model.generate_content(image_content)
+           
+            model = genai.GenerativeModel('gemini-pro-vision')
 
-        processed_content = to_markdown(gemini_response.text)
+            response = model.generate_content(["Analyse the skin of this human and suggest any remedies if necessary eg in this format {'status':'healthy' ,'description':'The skin appears to be healthy and clear', 'remedies':'However, the person may want to consider using a moisturizer to keep their skin hydrated, especially if they live in a dry climate. Additionally, the person may want to consider using a sunscreen with an SPF of 30 or higher to protect their skin from the sun's harmful UV rays.'}", image], stream=True)
+            response.resolve()
 
-        return jsonify({"processedContent": processed_content})
+           
+            return jsonify({"result": response.text})
+        else:
+            return jsonify({"error": "Failed to retrieve the image"}), 400
     else:
-        return 'Failed to fetch image', 400
+        return jsonify({"error": "img_url parameter is required"}), 400
 
-def to_markdown(text):
-    return f"```markdown\n{text}\n```"
 
 if __name__ == '__main__':
     app.run(debug=True)
