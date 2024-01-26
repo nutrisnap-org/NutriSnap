@@ -1,12 +1,10 @@
-'use client'
-import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-
+"use client";
+import React, { useState, useEffect } from "react";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
   authDomain: "nutrisnap-e6cf9.firebaseapp.com",
@@ -19,8 +17,7 @@ const firebaseConfig = {
 
   appId: "1:169090435206:web:45f0d96b834969ca236907",
 
-  measurementId: "G-VHL1DB60YR"
-
+  measurementId: "G-VHL1DB60YR",
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -50,7 +47,7 @@ const LoginWithGoogle = () => {
         // User signed in
         const user = result.user;
         setUser(user);
-        sessionStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.setItem("user", JSON.stringify(user));
       })
       .catch((error) => {
         // Handle errors
@@ -59,43 +56,71 @@ const LoginWithGoogle = () => {
   };
 
   const saveUserDataToFirestore = (user) => {
-    setDoc(doc(db, 'users', user.uid), {
+    setDoc(doc(db, "users", user.uid), {
       displayName: user.displayName,
       email: user.email,
       photoURL: user.photoURL,
       // You can add more user data as needed
     })
-    .then(() => {
-      console.log('User data successfully stored in Firestore!');
-    })
-    .catch((error) => {
-      console.error('Error storing user data: ', error);
-    });
+      .then(() => {
+        console.log("User data successfully stored in Firestore!");
+      })
+      .catch((error) => {
+        console.error("Error storing user data: ", error);
+      });
   };
 
   const handleLogout = () => {
-    auth.signOut()
+    auth
+      .signOut()
       .then(() => {
         setUser(null);
       })
       .catch((error) => {
-        console.error('Error signing out: ', error);
+        console.error("Error signing out: ", error);
       });
   };
+  {
+    /* <button onClick={handleLogout}>Logout</button> */
+  }
 
   return (
-    <div>
-      {user ? (
-        <div>
-          <h1>Welcome, {user.displayName}</h1>
-          <button onClick={handleLogout}>Logout</button>
+    // <div>
+    //   {user ? (
+    //     <div>
+    //       <h1>Welcome, {user.displayName}</h1>
+    //     </div>
+    //   ) : (
+    //     <div>
+    //       <h1>Login with Google</h1>
+    //       <button onClick={handleGoogleLogin}>Login</button>
+    //     </div>
+    //   )}
+    // </div>
+    <div className="flex items-center justify-center p-8 min-h-screen -mt-24">
+      <div className="w-[400px] bg-white border border-gray-300 shadow-2xl rounded-lg h-fit p-4">
+        <div className="border-gray-300 px-4 py-4">
+          <div className="text-2xl font-semibold mb-6">
+            Sign in{" "}
+            <span className="text-gray-600 font-normal text-xl">
+              to Unlock Best Features of{" "}
+            </span>
+            Nutrisnap
+          </div>
+          {/* {loading ? <Spinner /> : ""} */}
+
+          <div className="w-full mt-4 text-center text-black font-medium px-4 py-3 border-gray-900 border-2 rounded-full items-center flex hover:bg-black hover:text-white cursor-pointer transition-all">
+            <img
+              src="/google.svg"
+              alt=""
+              className="mr-12 max-sm:mr-4 "
+              height={20}
+              width={20}
+            />
+            Continue with Google
+          </div>
         </div>
-      ) : (
-        <div>
-          <h1>Login with Google</h1>
-          <button onClick={handleGoogleLogin}>Login</button>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

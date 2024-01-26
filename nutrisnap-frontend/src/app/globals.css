@@ -35,3 +35,10 @@ body {
   filter: blur(100px);
 
 }
+.text-grad{
+  /* text gradient from webkit */
+  background: linear-gradient(269deg, #29005C 29.96%, #6611D2 93.86%);
+background-clip: text;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}

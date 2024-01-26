@@ -74,10 +74,10 @@ const Hero = () => {
             </div>
           </div>
           <img
-            src="/dumbell.png"
+            src="/header 2.png"
             alt=""
-            height={800}
-            width={800}
+            height={600}
+            width={600}
             className="mx-auto yoga -mt-15"
           />
         </div>
