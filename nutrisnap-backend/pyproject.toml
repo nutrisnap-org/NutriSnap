@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "nutrisnap"
+version = "0.1.0"
+description = ""
+authors = ["Prathik Shetty <prathikkshetty15@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+flask = "^3.0.1"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
