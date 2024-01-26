@@ -68,7 +68,7 @@ const ImageUploader = () => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
-          foodsnapUrls: arrayUnion(imageUrl),
+          bodysnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
         fetchAnalysisData(imageUrl);
@@ -82,7 +82,7 @@ const ImageUploader = () => {
 
   const fetchAnalysisData = async (imageUrl) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`);
+      const response = await fetch(`http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`);
       const data = await response.json();
       console.log(data);
   
@@ -140,7 +140,7 @@ const ImageUploader = () => {
         <div key={index} className="card">
           <h2>Status: {result.status}</h2>
           <p>Description: {result.description}</p>
-          <p>Remedies: {result.remedies}</p>
+          <p>workout plan: {result.remedies}</p>
         </div>
       ))}
       </div>
