@@ -17,17 +17,21 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: #000000;
+  background: #ffffff;
 }
 
+.text-stroke {
+  -webkit-text-stroke: 1px #000; /* WebKit browsers (Safari, Chrome) */
+  color: white; /* Set the text color */
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+.ball{
+  z-index: -1;
+  filter: blur(100px);
+
 }
