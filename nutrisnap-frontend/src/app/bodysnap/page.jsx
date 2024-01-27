@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { useRouter } from 'next/navigation';  
+import { useRouter } from "next/navigation";
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
@@ -25,8 +25,8 @@ const db = getFirestore(app);
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-  
-  const router = useRouter(); 
+
+  const router = useRouter();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -34,12 +34,10 @@ const ImageUploader = () => {
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
-    }
-    else{
-      router.push('/login');
+    } else {
+      router.push("/login");
     }
   }, []);
-
 
   const uploadImage = async (e) => {
     const file = e.target.files[0];
@@ -86,67 +84,103 @@ const ImageUploader = () => {
 
   const fetchAnalysisData = async (imageUrl) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`);
+      const response = await fetch(
+        `http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`
+      );
       const data = await response.json();
       console.log(data);
-  
+
       // Parse the result string into a JSON object
       const parsedResult = JSON.parse(data.result);
-  
+
       // Update analysisResults state with the parsed result
       setAnalysisResults([...analysisResults, parsedResult]);
     } catch (error) {
       console.error("Error fetching analysis data: ", error);
     }
   };
-  
- 
+
   return (
     <>
       <div>
         <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
-          Ready to send us your <span className="text-grad">"Foodsnap"</span> ?
+          Ready to send us your <span className="text-grad">"BodySnap"</span> ?
         </div>
         <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
           Choose a file or open camera to send us pics to analyze the food and
           provide you the necesary data
         </p>
-        <div className="w-11/12 p-8 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-20 flex-col items-center justify-center">
-          <div className=" flex-col">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={uploadImage}
-              className="mb-4"
-            />
-            {imageUrls.length > 0 && (
-              <div>
-                {imageUrls.map((url, index) => (
-                  <div key={index}>
-                    <Image
-                      cloudName="dmdhep1qp"
-                      publicId={url}
-                      width="300"
-                      crop="scale"
-                    />
+        <div className="flex max-md:flex-col mx-auto justify-center mt-8 px-24 max-sm:px-4">
+          <div className="w-full">
+            <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
+              <div className=" flex-col items-center justify-center">
+                <input
+                  type="file"
+                  id="file"
+                  accept="image/*"
+                  onChange={uploadImage}
+                  className="sr-only mx-auto"
+                />
+                <label
+                  htmlFor="file"
+                  className="items-center max-sm:text-sm cursor-pointer border max-sm:px-2 px-4 py-2 mx-auto text-center h-fit rounded-md border-gray-800 hover:bg-black hover:text-white transition duration-300 ease-in-out"
+                >
+                  Choose an Image
+                </label>
+                {imageUrls.length > 0 && (
+                  <div>
+                    {imageUrls.map((url, index) => (
+                      <div key={index} className="m-8">
+                        <Image
+                          cloudName="dmdhep1qp"
+                          publicId={url}
+                          height="400"
+                          crop="cover"
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
+              </div>
+            </div>
+            {imageUrls.length > 0 && (
+              <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+                Analyze
               </div>
             )}
           </div>
-        </div>
-        {imageUrls.length > 0 && (
-          <div className="analyze-button cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-md text-white w-fit mt-6 transition-all hover:from-slate-800 hover:to-slate-600">
-            Analyze
+          <div>
+            {analysisResults.map((result, index) => (
+              <div className="w-full">
+                <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
+                <div key={index} className="card px-4 max-md:px-2">
+                  <div
+                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+                      result.status === "unhealthy"
+                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+                    }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+                  >
+                    Status:{" "}
+                    {result.status === "unhealthy" ? "Unhealthy" : "Healthy"}
+                  </div>
+                  <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+                    <span className="font-bold text-lg max-sm:text-md">
+                      Description:
+                    </span>{" "}
+                    {result.description}
+                  </p>
+                  <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+                    <span className="font-bold text-lg max-sm:text-md">
+                      Remedies and Solutions:
+                    </span>{" "}
+                    {result.remedies}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-        {analysisResults.map((result, index) => (
-        <div key={index} className="card">
-          <h2>Status: {result.status}</h2>
-          <p>Description: {result.description}</p>
-          <p>workout plan: {result.remedies}</p>
         </div>
-      ))}
       </div>
     </>
   );

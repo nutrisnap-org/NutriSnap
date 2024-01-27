@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
-import { useRouter } from 'next/navigation';  
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -26,7 +25,7 @@ const db = getFirestore(app);
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-  const router = useRouter(); 
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -34,9 +33,8 @@ const ImageUploader = () => {
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
-    }
-    else{
-      router.push('/login');
+    } else {
+      router.push("/login");
     }
   }, []);
 
@@ -86,7 +84,8 @@ const ImageUploader = () => {
   const fetchAnalysisData = async (imageUrl) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`
+        // console.log(imageUrl),
+        `http://127.0.0.1:5000/food-snap?img_url=https://res.cloudinary.com/dmdhep1qp/image/upload/v1706315326/s25cyl3nis9dgaxdwxyi.jpg`
       );
       const data = await response.json();
       console.log(data);
@@ -173,9 +172,9 @@ const ImageUploader = () => {
                   </p>
                   <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
-                      Remedies and Solutions:
+                      Calories:
                     </span>{" "}
-                    {result.remedies}
+                    {result.est_calories}
                   </p>
                 </div>
               </div>
