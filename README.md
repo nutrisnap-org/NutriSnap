@@ -23,7 +23,12 @@
 </div>
 
 
-https://github.com/prathikshetty2002/NutriSnap/assets/133371863/6cb2ae21-cc68-426b-b611-36c544d0924e
+<p align="center">
+  <a href="https://youtu.be/dkfoVbClsvc?si=bUftNCQuxuDnq9lx">
+    <img src="https://img.youtube.com/vi/dkfoVbClsvc/0.jpg" alt="Video">
+  </a>
+</p>
+
 
 
 
