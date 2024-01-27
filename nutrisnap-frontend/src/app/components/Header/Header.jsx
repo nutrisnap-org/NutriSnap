@@ -68,7 +68,7 @@ const Header = () => {
             ""
           )}
         </div>
-        <ul className="hidden list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
+        <ul className="list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
           {/* <li>
             <a href="/login">Login</a>
           </li> */}
