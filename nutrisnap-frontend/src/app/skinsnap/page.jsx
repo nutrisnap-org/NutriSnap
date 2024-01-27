@@ -36,9 +36,7 @@ const ImageUploader = () => {
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
-    } else {
-      router.push("/login");
-    }
+    } 
   }, []);
 
   const uploadImage = async (e) => {

@@ -143,7 +143,7 @@ export default function NutritionistsPage() {
               <a href="https://cal.com/prathik-shetty/15min" target="_blank">
                 <button
                   onClick={() => setSelectedNutritionist(null)}
-                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+                  className="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
                 >
                   Book Now
                 </button>
@@ -151,14 +151,7 @@ export default function NutritionistsPage() {
             </div>
           </div>
         )}
-        <button
-          data-cal-namespace="15min"
-          data-cal-link="prathik-shetty/15min"
-          data-cal-config='{"layout":"month_view"}'
-        >
-          Click me
-        </button>
-        ;
+        
       </div>
       <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-white shadow-2xl h-fit">
         <div className="flex items-center justify-around md:hidden">
