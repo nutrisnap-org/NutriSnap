@@ -3,8 +3,12 @@ import React from "react";
 import { useEffect } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
-
+import { motion } from "framer-motion";
 const Hero = () => {
+  const textVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 1 } },
+  };
   useEffect(() => {
     gsap.set(".ball", { xPercent: -50, yPercent: -50 });
     let targets = gsap.utils.toArray(".ball");
@@ -44,37 +48,44 @@ const Hero = () => {
         Fitness Playground ⛹️‍♂️{" "}
       </div>
 
-      <h1 className="text-center text-8xl font-bold max-sm:text-4xl max-md:text-6xl">
+      <motion.div
+        className="text-center text-8xl font-bold max-sm:text-4xl max-md:text-6xl"
+        variants={textVariants}
+        initial="hidden"
+        animate="visible"
+      >
         Think of <span className="text-black italic font-normal">Fitness</span>{" "}
         <br /> Think of <span className="text-stroke">us</span>
-      </h1>
+      </motion.div>
       <p className="text-sm text-gray-400 text-center mt-1">
         A playground for all of your fitness needs <br />
         <span className=" font-semibold"> Web . App . Watch</span>
       </p>
       <div className="mx-auto mt-4 yoga flex-col">
         <div className="">
-        <Link href='/foodsnap'> <div className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all">
+          <Link href="/foodsnap">
             {" "}
-            Snap in
-            <div className="next-svg ml-2 items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 inline-block"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.5"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+            <div className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all">
+              {" "}
+              Snap in
+              <div className="next-svg ml-2 items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 inline-block"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2.5"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
             </div>
-          </div>
-          </Link> 
+          </Link>
           <img
             src="/header 2.png"
             alt=""

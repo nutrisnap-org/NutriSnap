@@ -4,6 +4,7 @@ import "./Header.css";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { useRouter, useEffect } from "next/navigation";
+import { motion } from "framer-motion";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
@@ -129,8 +130,8 @@ const Header = () => {
       </div>
       {isActive && <HamBurger />}
 
-      <div className="bottom-navigation bottom-0 fixed w-full p-4 sm:hidden bg-white shadow-2xl h-fit">
-        <div className="flex items-center justify-around sm:hidden">
+      <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-white shadow-2xl h-fit">
+        <div className="flex items-center justify-around md:hidden">
           <div className="flex flex-col items-center">
             <a href="/foodsnap">
               <img
