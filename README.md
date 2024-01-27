@@ -18,8 +18,13 @@
     <a href="https://github.com/NutriSnap/issues">Report Bug</a>
     ·
     <a href="https://github.com/NutriSnap/issues">Request Feature</a>
+        <a href="https://github.com/NutriSnap/issues">Ai Chat Bot</a>
   </p>
 </div>
+
+
+https://github.com/prathikshetty2002/NutriSnap/assets/133371863/6cb2ae21-cc68-426b-b611-36c544d0924e
+
 
 
 
