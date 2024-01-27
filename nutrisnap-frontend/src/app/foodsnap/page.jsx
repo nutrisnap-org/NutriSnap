@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
+import { ThreeDots} from 'react-loader-spinner';
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 const firebaseConfig = {
@@ -24,6 +25,7 @@ const db = getFirestore(app);
 
 const ImageUploader = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [user, setUser] = useState(null);
@@ -80,26 +82,44 @@ const ImageUploader = () => {
       console.error("Error updating image URL: ", error);
     }
   };
-
   const fetchAnalysisData = async (imageUrl) => {
     try {
-      const response = await fetch(
-        // console.log(imageUrl),
-        console.log(imageUrl),
-        `http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`
-      );
-      const data = await response.json();
-      console.log(data);
+      setLoading(true); 
+        const response = await fetch(
+            `http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`
+        );
+        const data = await response.json();
+        console.log(data);
 
-      // Parse the result string into a JSON object
-      const parsedResult = JSON.parse(data.result);
+        let parsedResult;
 
-      // Update analysisResults state with the parsed result
-      setAnalysisResults([...analysisResults, parsedResult]);
+        // Check if data.result is a string and contains the JSON marker
+        if (typeof data.result === 'string' && data.result.startsWith(' ```json') && data.result.endsWith('```')) {
+            // Extract JSON content without the markers
+            const jsonContent = data.result.slice(8, -3).trim(); // Remove ' ```json' and '```'
+
+            try {
+                // Attempt to parse JSON content
+                parsedResult = JSON.parse(jsonContent);
+            } catch (error) {
+                console.error("Error parsing JSON data:", error);
+                // Handle the error or set parsedResult to null or an appropriate value
+                parsedResult = {};
+            }
+        } else {
+            // If data.result is not in the expected format, handle it accordingly
+            console.error("Invalid JSON format:", data.result);
+            parsedResult = {};
+        }
+
+        // Update analysisResults state with the parsed result
+        setAnalysisResults([...analysisResults, parsedResult]);
     } catch (error) {
-      console.error("Error fetching analysis data: ", error);
+        console.error("Error fetching analysis data: ", error);
+    }finally {
+      setLoading(false); // Set loading to false when analysis is done
     }
-  };
+};
 
   return (
     <>
@@ -144,11 +164,22 @@ const ImageUploader = () => {
                 )}
               </div>
             </div>
-            {imageUrls.length > 0 && (
+            {imageUrls.length > 0 && !loading &&(
               <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 Analyze
               </div>
             )}
+             {loading && <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"><ThreeDots
+  visible={true}
+  height="80"
+  width="80"
+  color="#600FC7"
+  radius="9"
+  ariaLabel="three-dots-loading"
+  wrapperStyle={{}}
+  wrapperClass=""
+  />
+  </div>}
           </div>
           <div>
             {analysisResults.map((result, index) => (

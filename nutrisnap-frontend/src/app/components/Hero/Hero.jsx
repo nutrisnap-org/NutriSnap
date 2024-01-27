@@ -80,7 +80,7 @@ const Hero = () => {
       </p>
       <div className="mx-auto mt-4 yoga flex-col">
         <div className="">
-          <Link href="/foodsnap">
+          <Link href="/login">
             {" "}
             <motion.div
               variants={textVariants2}
