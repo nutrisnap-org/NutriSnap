@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
-import { ThreeDots} from 'react-loader-spinner';
+import { ThreeDots } from "react-loader-spinner";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { gsap } from "gsap";
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
@@ -85,62 +86,100 @@ const ImageUploader = () => {
 
   const fetchAnalysisData = async (imageUrl) => {
     try {
-      setLoading(true); 
-        const response = await fetch(
-            `http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`
+      setLoading(true);
+      const response = await fetch(
+        `http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`
+      );
+      const data = await response.json();
+      console.log(data);
+
+      let parsedResult;
+
+      // Check if data.result is a string
+      if (typeof data.result === "string") {
+        // Remove non-printable characters and control characters using regex
+        const sanitizedResult = data.result.replace(
+          /[\x00-\x1F\x7F-\x9F]/g,
+          ""
         );
-        const data = await response.json();
-        console.log(data);
 
-        let parsedResult;
+        // Check if sanitizedResult contains JSON markers
+        if (
+          sanitizedResult.startsWith("```json") &&
+          sanitizedResult.endsWith("```")
+        ) {
+          // Extract JSON content without the markers
+          const jsonContent = sanitizedResult.slice(8, -3).trim();
 
-        // Check if data.result is a string
-        if (typeof data.result === 'string') {
-            // Remove non-printable characters and control characters using regex
-            const sanitizedResult = data.result.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
-
-            // Check if sanitizedResult contains JSON markers
-            if (sanitizedResult.startsWith('```json') && sanitizedResult.endsWith('```')) {
-                // Extract JSON content without the markers
-                const jsonContent = sanitizedResult.slice(8, -3).trim();
-
-                try {
-                    // Attempt to parse JSON content
-                    parsedResult = JSON.parse(jsonContent);
-                } catch (error) {
-                    console.error("Error parsing JSON data:", error);
-                    // Handle the error or set parsedResult to null or an appropriate value
-                    parsedResult = null;
-                }
-            } else {
-                // If data.result does not contain JSON markers, attempt to parse it directly
-                try {
-                    parsedResult = JSON.parse(sanitizedResult);
-                } catch (error) {
-                    console.error("Error parsing JSON data:", error);
-                    parsedResult = null;
-                }
-            }
+          try {
+            // Attempt to parse JSON content
+            parsedResult = JSON.parse(jsonContent);
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
+            // Handle the error or set parsedResult to null or an appropriate value
+            parsedResult = null;
+          }
         } else {
-            // If data.result is not a string, assign it directly to parsedResult
-            parsedResult = data.result;
+          // If data.result does not contain JSON markers, attempt to parse it directly
+          try {
+            parsedResult = JSON.parse(sanitizedResult);
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
+            parsedResult = null;
+          }
         }
+      } else {
+        // If data.result is not a string, assign it directly to parsedResult
+        parsedResult = data.result;
+      }
 
-        // Update analysisResults state with the parsed result
-        setAnalysisResults([...analysisResults, parsedResult]);
+      // Update analysisResults state with the parsed result
+      setAnalysisResults([...analysisResults, parsedResult]);
     } catch (error) {
-        console.error("Error fetching analysis data: ", error);
-    }finally {
+      console.error("Error fetching analysis data: ", error);
+    } finally {
       setLoading(false); // Set loading to false when analysis is done
     }
-};
-
-
+  };
+  useEffect(() => {
+    gsap.set(".greenball", { xPercent: -50, yPercent: -50 });
+    let targets = gsap.utils.toArray(".greenball");
+    window.addEventListener("mouseleave", (e) => {
+      gsap.to(targets, {
+        duration: 0.5,
+        scale: 0,
+        ease: "power1.out",
+        overwrite: "auto",
+        stagger: 0.02,
+      });
+    });
+    window.addEventListener("mouseenter", (e) => {
+      gsap.to(targets, {
+        duration: 0.5,
+        scale: 1,
+        ease: "power1.out",
+        overwrite: "auto",
+        stagger: 0.02,
+      });
+    });
+    window.addEventListener("mousemove", (e) => {
+      gsap.to(targets, {
+        duration: 0.5,
+        x: e.clientX,
+        y: e.clientY,
+        ease: "power1.out",
+        overwrite: "auto",
+        stagger: 0.02,
+      });
+    });
+  }, []);
   return (
     <>
+      <div className="greenball blur-3xl bg-yellow-400/20 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
+
       <div>
         <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
-          Ready to send us your <span className="text-grad">"BodySnap"</span> ?
+          Ready to send us your <span className="yellowtext">"BodySnap"</span> ?
         </div>
         <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
           Choose a file or open camera to send us pics to analyze the food and
@@ -148,7 +187,7 @@ const ImageUploader = () => {
         </p>
         <div className="flex max-md:flex-col mx-auto justify-center mt-8 px-24 max-sm:px-4">
           <div className="w-full">
-            <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-violet-100 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
+            <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-yellow-100 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
               <div className=" flex-col items-center justify-center">
                 <input
                   type="file"
@@ -179,22 +218,25 @@ const ImageUploader = () => {
                 )}
               </div>
             </div>
-            {imageUrls.length > 0 && !loading &&(
+            {imageUrls.length > 0 && !loading && (
               <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 Analyze
               </div>
             )}
-             {loading && <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"><ThreeDots
-  visible={true}
-  height="80"
-  width="80"
-  color="#600FC7"
-  radius="9"
-  ariaLabel="three-dots-loading"
-  wrapperStyle={{}}
-  wrapperClass=""
-  />
-  </div>}
+            {loading && (
+              <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+                <ThreeDots
+                  visible={true}
+                  height="80"
+                  width="80"
+                  color="#600FC7"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              </div>
+            )}
           </div>
           <div>
             {analysisResults.map((result, index) => (

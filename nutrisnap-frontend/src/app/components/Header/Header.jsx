@@ -105,7 +105,7 @@ const Header = () => {
                   href="/skinsnap"
                   className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
                 >
-                  Face
+                  Skin
                 </a>
               </li>
               <li>

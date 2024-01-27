@@ -70,3 +70,37 @@ background-clip: text;
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 }
+
+.nutricon{
+   /* text gradient from webkit */
+   background: linear-gradient(269deg, #00575C 29.96%, #00cfda 93.86%);
+   background-clip: text;
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+
+}
+.blueball{
+  z-index: -10;
+  filter: blur(100px);
+}
+.greenball{
+  z-index: -10;
+  filter: blur(100px);
+}
+.container{
+  z-index: -100;
+}
+
+.greentext{
+  background: linear-gradient(269deg, #5C0000 29.96%, #D21111 93.86%);
+background-clip: text;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+.yellowtext{
+  background: linear-gradient(269deg, #615a00 29.96%, #d6a400 93.86%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+}
