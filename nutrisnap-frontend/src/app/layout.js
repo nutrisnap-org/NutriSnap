@@ -1,6 +1,6 @@
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-import Bot from "./components/Bot/Bot";
+import Bot from "./components/Bot/Bot.js";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 const inter = DM_Sans({ subsets: ["latin"] });
