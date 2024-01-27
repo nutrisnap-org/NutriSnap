@@ -85,6 +85,7 @@ const ImageUploader = () => {
     try {
       const response = await fetch(
         // console.log(imageUrl),
+        console.log(imageUrl),
         `http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`
       );
       const data = await response.json();

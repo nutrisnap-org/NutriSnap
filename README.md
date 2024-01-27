@@ -18,8 +18,18 @@
     <a href="https://github.com/NutriSnap/issues">Report Bug</a>
     ·
     <a href="https://github.com/NutriSnap/issues">Request Feature</a>
+        <a href="https://github.com/NutriSnap/issues">Ai Chat Bot</a>
   </p>
 </div>
+
+
+<p align="center">
+  <a href="https://youtu.be/dkfoVbClsvc?si=bUftNCQuxuDnq9lx">
+    <img src="https://img.youtube.com/vi/dkfoVbClsvc/0.jpg" alt="Video">
+  </a>
+</p>
+
+
 
 
 
