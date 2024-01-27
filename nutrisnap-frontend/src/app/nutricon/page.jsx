@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getCalApi } from "@calcom/embed-react";
 import nutritionistsData from "./nutritionist.json"; // Assuming you have the JSON data in a file
 
 export default function NutritionistsPage() {
@@ -10,6 +11,25 @@ export default function NutritionistsPage() {
     console.log("Booking Zoom meeting with:", nutritionist.name);
     setSelectedNutritionist(nutritionist);
   };
+
+  useEffect(() => {
+    (async function () {
+      try {
+        const cal = await getCalApi();
+        console.log("Calendar API initialized:", cal);
+        console.log("Namespace:", cal.ns);
+        if (cal.ns) {
+          cal.ns["15min"]("ui", {
+            styles: { branding: { brandColor: "#000000" } },
+            hideEventTypeDetails: false,
+            layout: "month_view",
+          });
+        }
+      } catch (error) {
+        console.error("Error initializing calendar API:", error);
+      }
+    })();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -41,7 +61,7 @@ export default function NutritionistsPage() {
           </div>
         ))}
       </div>
-      <h1 className="text-2xl mt-10 font-bold mb-6">skin experts</h1>
+      <h1 className="text-2xl mt-10 font-bold mb-6">Skin Experts</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {nutritionistsData.skin_experts.map((skin_expert) => (
           <div
@@ -76,9 +96,6 @@ export default function NutritionistsPage() {
               Book a Zoom Meeting with {selectedNutritionist.name}
             </h2>
             {/* Add your booking form or details here */}
-            <div className="px-2 py-1 bg-gray-200 rounded-md mb-4">
-              https://meet.google.com/hbh-upkz-yos?ijlm=1706322448147&adhoc=1&hs=187
-            </div>
             <button
               onClick={() => setSelectedNutritionist(null)}
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
@@ -88,6 +105,14 @@ export default function NutritionistsPage() {
           </div>
         </div>
       )}
+      <button
+        data-cal-namespace="15min"
+        data-cal-link="prathik-shetty/15min"
+        data-cal-config='{"layout":"month_view"}'
+      >
+        Click me
+      </button>
+      ;
     </div>
   );
 }
