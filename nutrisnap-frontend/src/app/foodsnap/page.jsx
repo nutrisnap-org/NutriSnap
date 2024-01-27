@@ -6,6 +6,8 @@ import { ThreeDots } from "react-loader-spinner";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
+import html2canvas from "html2canvas";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
@@ -36,7 +38,7 @@ const ImageUploader = () => {
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
-    } 
+    }
   }, []);
 
   const uploadImage = async (e) => {

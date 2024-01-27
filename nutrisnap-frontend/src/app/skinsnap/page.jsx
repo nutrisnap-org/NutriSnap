@@ -6,6 +6,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { useRouter } from "next/navigation";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import gsap from "gsap";
+import html2canvas from "html2canvas";
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
@@ -24,6 +25,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// screenshot
+const divShot = () => {
+  html2canvas(document.querySelector("#capture"), {
+    imageTimeout: 20000,
+  }).then((canvas) => {
+    var link = document.createElement("a");
+    link.download = `remedies.png`;
+    link.href = canvas.toDataURL();
+
+    link.click();
+  });
+};
+
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
@@ -36,7 +50,7 @@ const ImageUploader = () => {
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
-    } 
+    }
   }, []);
 
   const uploadImage = async (e) => {
@@ -206,12 +220,7 @@ const ImageUploader = () => {
                   <div>
                     {imageUrls.map((url, index) => (
                       <div key={index} className="m-8">
-                        <Image
-                          cloudName="dmdhep1qp"
-                          publicId={url}
-                          width="400"
-                          crop="cover"
-                        />
+                        <img src={imageUrls} alt="" />
                       </div>
                     ))}
                   </div>
@@ -219,9 +228,17 @@ const ImageUploader = () => {
               </div>
             </div>
             {imageUrls.length > 0 && !loading && (
-              <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
-                Analyze
-              </div>
+              <>
+                <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+                  Analyze
+                </div>
+                <div
+                  className="Download Remedies mb-8 cursor-pointer mx-auto px-4 py-2 text-black border rounded-full w-fit border-black"
+                  onClick={divShot}
+                >
+                  Download Remedies
+                </div>
+              </>
             )}
             {loading && (
               <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
@@ -240,7 +257,7 @@ const ImageUploader = () => {
           </div>
           <div>
             {analysisResults.map((result, index) => (
-              <div className="w-full">
+              <div className="w-full" id="capture">
                 <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
                 <div key={index} className="card px-4 max-md:px-2">
                   <div
