@@ -68,7 +68,7 @@ const Header = () => {
             ""
           )}
         </div>
-        <ul className="hidden list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
+        <ul className="list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
           {/* <li>
             <a href="/login">Login</a>
           </li> */}
@@ -86,7 +86,7 @@ const Header = () => {
               <li>
                 <a
                   href="/foodsnap"
-                  className=" rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
                 >
                   Food
                 </a>
@@ -94,7 +94,7 @@ const Header = () => {
               <li>
                 <a
                   href="/bodysnap"
-                  className=" rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
                 >
                   Body
                 </a>
@@ -102,7 +102,7 @@ const Header = () => {
               <li>
                 <a
                   href="/skinsnap"
-                  className=" rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
                 >
                   Face
                 </a>
@@ -110,7 +110,7 @@ const Header = () => {
               <li>
                 <a
                   href="/nutricon"
-                  className=" rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
                 >
                   NutriCon
                 </a>

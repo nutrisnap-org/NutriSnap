@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { useRouter } from 'next/navigation';  
+import { useRouter } from "next/navigation";
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
@@ -23,9 +23,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const ImageUploader = () => {
+  const router = useRouter();
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-  const router = useRouter(); 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -103,7 +103,7 @@ const ImageUploader = () => {
   return (
     <>
       <div className="px-4">
-        <div className=" mx-auto text-center text-7xl max-sm:text-4xl max-md:text-6xl font-bold mt-10 leading-relaxed">
+        <div className=" mx-auto text-center text-7xl max-sm:text-4xl max-md:text-6xl font-bold mt-10">
           Ready to send us your <span className="text-grad">"Foodsnap"</span> ?
         </div>
         <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
@@ -134,7 +134,7 @@ const ImageUploader = () => {
                         <Image
                           cloudName="dmdhep1qp"
                           publicId={url}
-                          height="400"
+                          width="400"
                           crop="cover"
                         />
                       </div>
