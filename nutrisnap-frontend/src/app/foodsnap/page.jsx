@@ -26,7 +26,6 @@ const ImageUploader = () => {
   const router = useRouter();
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -135,7 +134,7 @@ const ImageUploader = () => {
                         <Image
                           cloudName="dmdhep1qp"
                           publicId={url}
-                          height="400"
+                          width="400"
                           crop="cover"
                         />
                       </div>

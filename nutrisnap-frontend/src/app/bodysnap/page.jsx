@@ -134,7 +134,7 @@ const ImageUploader = () => {
                         <Image
                           cloudName="dmdhep1qp"
                           publicId={url}
-                          height="400"
+                          width="400"
                           crop="cover"
                         />
                       </div>
@@ -156,13 +156,13 @@ const ImageUploader = () => {
                 <div key={index} className="card px-4 max-md:px-2">
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-                      result.status === "unhealthy"
+                      result.status !== "healthy"
                         ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
                         : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
                     }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
                   >
                     Status:{" "}
-                    {result.status === "unhealthy" ? "Unhealthy" : "Healthy"}
+                    {result.status !== "healthy" ? result.status : "Healthy"}
                   </div>
                   <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
