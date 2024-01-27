@@ -63,7 +63,7 @@ const Hero = () => {
       </p>
       <div className="mx-auto mt-4 yoga flex-col">
         <div className="">
-          <Link href="/foodsnap">
+          <Link href="/login">
             {" "}
             <div className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all">
               {" "}

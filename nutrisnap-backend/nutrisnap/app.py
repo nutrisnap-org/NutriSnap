@@ -113,6 +113,7 @@ def get_csv_from_url():
         # Create a file-like object from the response content
         content = io.BytesIO(response.content)
 
+
         # Read the CSV data into a pandas DataFrame
         df = pd.read_csv(content)
         df.drop(['Average weight (kg)', 'Max weight (kg)', 'Min weight (kg)', 'Average heart rate (bpm)', 'Min heart rate (bpm)', 'Max heart rate (bpm)'], inplace=True, axis=1)
@@ -135,7 +136,7 @@ def get_csv_from_url():
         return res
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    
+
 if __name__ == '__main__':
     app.run(debug=True)
 

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
+import { ThreeDots} from 'react-loader-spinner';
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 const firebaseConfig = {
@@ -25,7 +26,7 @@ const db = getFirestore(app);
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [user, setUser] = useState(null);
 
@@ -84,21 +85,56 @@ const ImageUploader = () => {
 
   const fetchAnalysisData = async (imageUrl) => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`
-      );
-      const data = await response.json();
-      console.log(data);
+      setLoading(true); 
+        const response = await fetch(
+            `http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`
+        );
+        const data = await response.json();
+        console.log(data);
 
-      // Parse the result string into a JSON object
-      const parsedResult = JSON.parse(data.result);
+        let parsedResult;
 
-      // Update analysisResults state with the parsed result
-      setAnalysisResults([...analysisResults, parsedResult]);
+        // Check if data.result is a string
+        if (typeof data.result === 'string') {
+            // Remove non-printable characters and control characters using regex
+            const sanitizedResult = data.result.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+
+            // Check if sanitizedResult contains JSON markers
+            if (sanitizedResult.startsWith('```json') && sanitizedResult.endsWith('```')) {
+                // Extract JSON content without the markers
+                const jsonContent = sanitizedResult.slice(8, -3).trim();
+
+                try {
+                    // Attempt to parse JSON content
+                    parsedResult = JSON.parse(jsonContent);
+                } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                    // Handle the error or set parsedResult to null or an appropriate value
+                    parsedResult = null;
+                }
+            } else {
+                // If data.result does not contain JSON markers, attempt to parse it directly
+                try {
+                    parsedResult = JSON.parse(sanitizedResult);
+                } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                    parsedResult = null;
+                }
+            }
+        } else {
+            // If data.result is not a string, assign it directly to parsedResult
+            parsedResult = data.result;
+        }
+
+        // Update analysisResults state with the parsed result
+        setAnalysisResults([...analysisResults, parsedResult]);
     } catch (error) {
-      console.error("Error fetching analysis data: ", error);
+        console.error("Error fetching analysis data: ", error);
+    }finally {
+      setLoading(false); // Set loading to false when analysis is done
     }
-  };
+};
+
 
   return (
     <>
@@ -143,11 +179,22 @@ const ImageUploader = () => {
                 )}
               </div>
             </div>
-            {imageUrls.length > 0 && (
+            {imageUrls.length > 0 && !loading &&(
               <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 Analyze
               </div>
             )}
+             {loading && <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"><ThreeDots
+  visible={true}
+  height="80"
+  width="80"
+  color="#600FC7"
+  radius="9"
+  ariaLabel="three-dots-loading"
+  wrapperStyle={{}}
+  wrapperClass=""
+  />
+  </div>}
           </div>
           <div>
             {analysisResults.map((result, index) => (
