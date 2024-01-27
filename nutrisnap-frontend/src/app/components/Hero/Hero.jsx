@@ -5,10 +5,26 @@ import { gsap } from "gsap";
 import Link from "next/link";
 import { motion } from "framer-motion";
 const Hero = () => {
+  const floatAnimation = {
+    y: [0, -10, 0], // Float up and down
+    transition: {
+      y: {
+        duration: 1, // Repeat indefinitely
+        yoyo: Infinity, // Repeat the animation indefinitely
+        ease: "easeInOut", // You can adjust the easing function
+      },
+    },
+  };
   const textVariants = {
     hidden: { opacity: 0, x: -50 },
     visible: { opacity: 1, x: 0, transition: { duration: 1 } },
   };
+  const textVariants2 = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 1.5 } },
+  };
+  // Initial and final positions
+
   useEffect(() => {
     gsap.set(".ball", { xPercent: -50, yPercent: -50 });
     let targets = gsap.utils.toArray(".ball");
@@ -41,6 +57,7 @@ const Hero = () => {
       });
     });
   }, []);
+
   return (
     <div className="Hero mt-2">
       <div className="ball bg-violet-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
@@ -65,7 +82,12 @@ const Hero = () => {
         <div className="">
           <Link href="/foodsnap">
             {" "}
-            <div className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all">
+            <motion.div
+              variants={textVariants2}
+              initial="hidden"
+              animate="visible"
+              className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all"
+            >
               {" "}
               Snap in
               <div className="next-svg ml-2 items-center">
@@ -84,15 +106,17 @@ const Hero = () => {
                   />
                 </svg>
               </div>
-            </div>
+            </motion.div>
           </Link>
-          <img
-            src="/header 2.png"
-            alt=""
-            height={600}
-            width={600}
-            className="mx-auto yoga -mt-15"
-          />
+          <motion.div animate={floatAnimation} while={{ y: 0 }}>
+            <img
+              src="/header 2.png"
+              alt=""
+              height={600}
+              width={600}
+              className="mx-auto yoga -mt-15"
+            />
+          </motion.div>
         </div>
       </div>
     </div>
