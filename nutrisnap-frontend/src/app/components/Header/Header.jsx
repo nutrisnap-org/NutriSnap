@@ -1,8 +1,28 @@
 "use client";
 import { useState } from "react";
 import "./Header.css";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { useRouter, useEffect } from "next/navigation";
 
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
+
+  authDomain: "nutrisnap-e6cf9.firebaseapp.com",
+
+  projectId: "nutrisnap-e6cf9",
+
+  storageBucket: "nutrisnap-e6cf9.appspot.com",
+
+  messagingSenderId: "169090435206",
+
+  appId: "1:169090435206:web:45f0d96b834969ca236907",
+
+  measurementId: "G-VHL1DB60YR",
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const Header = () => {
   const [isActive, setIsActive] = useState(false);
 
@@ -11,6 +31,18 @@ const Header = () => {
     setIsActive(!isActive);
   }
 
+  const handleLogout = () => {
+    auth
+      .signOut()
+      .then(() => {
+        // setUser(null);
+        sessionStorage.removeItem("user");
+        router.push('/'); // Remove user data from session storage
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
+  };
   return (
     <>
       <div
@@ -27,17 +59,18 @@ const Header = () => {
             />
             <h1 className="md:block font-bold text-xl">Nutrisnap</h1>
           </a>
+          <button onClick={handleLogout}>logout</button>
         </div>
         <ul className="hidden list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
-          <li>
-            <a href="#Contact">Login</a>
-          </li>
+          {/* <li>
+            <a href="/login">Login</a>
+          </li> */}
           <li>
             <a
-              href="#Faq"
+              href="/login"
               className=" rounded-full px-4 py-2 -ml-4 text-gray-100 bg-black hover:bg-white hover:text-black transition duration-300 ease-in-out"
             >
-              Register
+             Login
             </a>
           </li>
         </ul>
@@ -79,7 +112,7 @@ const Header = () => {
             </a>
           </div>
           <div className="flex flex-col items-center">
-            <a href="/">
+            <a href="/bodysnap">
               <img
                 src="/body.png"
                 alt=""

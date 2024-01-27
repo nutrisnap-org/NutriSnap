@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
+import { useRouter } from 'next/navigation';  
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -25,7 +26,7 @@ const db = getFirestore(app);
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-
+  const router = useRouter(); 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -33,6 +34,9 @@ const ImageUploader = () => {
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
+    }
+    else{
+      router.push('/login');
     }
   }, []);
 
