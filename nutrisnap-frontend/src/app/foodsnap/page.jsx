@@ -84,8 +84,8 @@ const ImageUploader = () => {
   const fetchAnalysisData = async (imageUrl) => {
     try {
       const response = await fetch(
-        // console.log(imageUrl),
-        `http://127.0.0.1:5000/food-snap?img_url=https://res.cloudinary.com/dmdhep1qp/image/upload/v1706315326/s25cyl3nis9dgaxdwxyi.jpg`
+        console.log(imageUrl),
+        `http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`
       );
       const data = await response.json();
       console.log(data);
