@@ -15,7 +15,35 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+::-webkit-scrollbar {
+  width: 4px;
+}
 
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #bf0feb;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #bf0feb;
+  border-radius: 6px;
+}
+
+/* Handle on active/dragging */
+::-webkit-scrollbar-thumb:active {
+  background-color: #bf0feb;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f100;
+}
+
+/* Corner */
+::-webkit-scrollbar-corner {
+  background: #f1f1f1;
+}
 body {
   color: #000000;
   background: #ffffff;
