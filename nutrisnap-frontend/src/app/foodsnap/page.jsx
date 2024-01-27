@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
-
+import { useRouter } from 'next/navigation';  
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
@@ -25,7 +25,7 @@ const db = getFirestore(app);
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-
+  const router = useRouter(); 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
