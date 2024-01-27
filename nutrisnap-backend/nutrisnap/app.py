@@ -115,12 +115,24 @@ def get_csv_from_url():
 
         # Read the CSV data into a pandas DataFrame
         df = pd.read_csv(content)
+        df.drop(['Average weight (kg)', 'Max weight (kg)', 'Min weight (kg)', 'Average heart rate (bpm)', 'Min heart rate (bpm)', 'Max heart rate (bpm)'], inplace=True, axis=1)
+        df.index = pd.to_datetime(df.index)
 
+        df["workoutMonth"] = df.index.month_name()
+
+        df["workoutWeekDay"] = df.index.day_name()
+
+        df["workoutYear"] = df.index.year
+        df = df[df["Step count"] > 2000]
+        df.replace('undefined', pd.NA, inplace=True)
+        df.fillna(0, inplace=True)
         # Convert DataFrame to list of dictionaries
         data = df.to_dict(orient='records')
 
         # Return the CSV data as JSON
-        return jsonify({'success': True, 'data': data})
+
+        res= jsonify({'success': True, 'data': data})
+        return res
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     
