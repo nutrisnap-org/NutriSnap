@@ -2,6 +2,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { gsap } from "gsap";
+import Link from "next/link";
 
 const Hero = () => {
   useEffect(() => {
@@ -53,7 +54,7 @@ const Hero = () => {
       </p>
       <div className="mx-auto mt-4 yoga flex-col">
         <div className="">
-          <div className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all">
+        <Link href='/foodsnap'> <div className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all">
             {" "}
             Snap in
             <div className="next-svg ml-2 items-center">
@@ -73,6 +74,7 @@ const Hero = () => {
               </svg>
             </div>
           </div>
+          </Link> 
           <img
             src="/header 2.png"
             alt=""
