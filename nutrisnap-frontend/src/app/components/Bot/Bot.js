@@ -16,7 +16,7 @@ const Bot = () => {
         <img src="/bot.png" height={40} width={40} alt="" />
       </div>
       <div
-        className={`bottom-[31rem] right-1 fixed m-8 z-40 p-4 cursor-pointer rounded-full ${
+        className={`bottom-[31rem] max-sm:bottom-[30rem] right-1 fixed m-8 z-40 p-4 cursor-pointer rounded-full ${
           isActive ? "block" : "hidden"
         }`}
         onClick={handleClick}
@@ -26,8 +26,8 @@ const Bot = () => {
       {isActive && (
         <>
           <iframe
-            className="bottom-0 right-0 fixed m-8 rounded-md backdrop-blur-md shadow-xl border border-violet-600/30"
-            width={320}
+            className="bottom-0 max-sm:w-11/12 max-sm:m-2 right-0 fixed m-8 rounded-md backdrop-blur-md shadow-xl border border-violet-600/30"
+            width={450}
             height={560}
             src="https://nutrisnap-chat.vercel.app/"
           ></iframe>

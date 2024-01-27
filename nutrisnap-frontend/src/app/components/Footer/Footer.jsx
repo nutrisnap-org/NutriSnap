@@ -96,18 +96,33 @@ const Footer = () => {
                 </a>
               </p>
               <p className="mb-4">
-                <a href="/" className=" text-black">
+                <a href="/foodsnap" className=" text-black">
                   Foodsnap
                 </a>
               </p>
               <p className="mb-4">
-                <a href="/" className=" text-black">
+                <a href="/bodysnap" className=" text-black">
                   Bodysnap
                 </a>
               </p>
-              <p>
-                <a href="/" className=" text-black">
+              <p className="mb-4">
+                <a href="/skinsnap" className=" text-black">
                   Skinsnap
+                </a>
+              </p>
+              <p className="mb-4">
+                <a href="/wearos" className=" text-black">
+                  WearOS
+                </a>
+              </p>
+              <p className="mb-4">
+                <a href="/nutricon" className=" text-black">
+                  Nutricon
+                </a>
+              </p>
+              <p className="mb-4">
+                <a href="/pricings" className=" text-black">
+                  Pricings
                 </a>
               </p>
             </div>
