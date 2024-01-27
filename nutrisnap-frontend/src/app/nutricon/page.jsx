@@ -1,13 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
-import { getCalApi } from "@calcom/embed-react";
+/* The line `import { getCalApi } from "@calcom/embed-react";` is importing the `getCalApi` function
+from the `@calcom/embed-react` package. This function is used to initialize the Calendar API
+provided by Cal.com. */
+// import { getCalApi } from "@calcom/embed-react";
 import nutritionistsData from "./nutritionist.json"; // Assuming you have the JSON data in a file
 
 export default function NutritionistsPage() {
   const [selectedNutritionist, setSelectedNutritionist] = useState(null);
 
   const handleBookMeeting = (nutritionist) => {
-    // Implement your booking logic here, such as opening a modal or redirecting to a booking page
     console.log("Booking Zoom meeting with:", nutritionist.name);
     setSelectedNutritionist(nutritionist);
   };
@@ -95,13 +97,14 @@ export default function NutritionistsPage() {
             <h2 className="text-xl font-bold mb-4">
               Book a Zoom Meeting with {selectedNutritionist.name}
             </h2>
-            {/* Add your booking form or details here */}
-            <button
-              onClick={() => setSelectedNutritionist(null)}
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
-            >
-              Close
-            </button>
+            <a href="https://cal.com/prathik-shetty/15min" target="_blank">
+              <button
+                onClick={() => setSelectedNutritionist(null)}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                Book Now
+              </button>
+            </a>
           </div>
         </div>
       )}
