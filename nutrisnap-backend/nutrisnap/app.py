@@ -6,9 +6,10 @@ from dotenv import load_dotenv
 from PIL import Image
 import requests
 from io import BytesIO
-
+import pandas as pd
 from flask_cors import CORS
-
+from io import StringIO
+import io
 load_dotenv()
 GOOGLE_API_KEY=os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
@@ -99,7 +100,30 @@ def skin_analyse():
         return jsonify({"error": "img_url parameter is required"}), 400
 
 
+@app.route('/get-csv-from-url', methods=['GET'])
+def get_csv_from_url():
+    # Get the URL from the request query parameters
+    url = request.args.get('url')
+    
+    try:
+        # Fetch the CSV file from the URL
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an error for invalid response
 
+        # Create a file-like object from the response content
+        content = io.BytesIO(response.content)
+
+        # Read the CSV data into a pandas DataFrame
+        df = pd.read_csv(content)
+
+        # Convert DataFrame to list of dictionaries
+        data = df.to_dict(orient='records')
+
+        # Return the CSV data as JSON
+        return jsonify({'success': True, 'data': data})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    
 if __name__ == '__main__':
     app.run(debug=True)
 
