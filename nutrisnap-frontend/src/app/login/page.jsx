@@ -33,8 +33,9 @@ const LoginWithGoogle = () => {
       if (authUser) {
         setUser(authUser);
         // Store user data in Firestore
-        saveUserDataToFirestore(authUser);
+        
         router.push('/foodsnap');
+        saveUserDataToFirestore(authUser);
       } else {
         setUser(null);
       }

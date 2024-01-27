@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState ,useEffect } from "react";
 import "./Header.css";
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { useRouter, useEffect } from "next/navigation";
+import { getAuth , signOut ,onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 const firebaseConfig = {
@@ -24,42 +24,49 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const Header = () => {
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(null);
   const [isActive, setIsActive] = useState(false);
-
   const router = useRouter();
+  //  const router = useRouter();
   function toggleActive() {
     setIsActive(!isActive);
   }
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        console.log(user.photoURL)
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   const handleLogout = () => {
-    auth
-      .signOut()
+    signOut(auth)
       .then(() => {
-        // setUser(null);
         sessionStorage.removeItem("user");
+        setUser(null);
         router.push("/");
-        setUser(!user); // Remove user data from session storage
       })
       .catch((error) => {
         console.error("Error signing out: ", error);
       });
   };
+
   return (
     <>
-      <div
-        className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4 `}
-      >
+      <div className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4`}>
         <div className="flex md:mx-12 items-center gap-2">
           <a href="/" className="flex">
-            <img
-              src="/logo.png"
-              alt=""
-              height={30}
-              width={30}
-              className="mr-4"
-            />
-            <h1 className="md:block font-bold text-xl">Nutrisnap</h1>
+          {user ? (
+      <img src={`${user.photoURL}`} alt="" height={30} width={30} className="mr-4 rounded-full" /> 
+    ) : (
+      <img src="/logo.png" alt="" height={30} width={30} className="mr-4" />
+    )}
+            <h1 className="md:block font-bold text-xl">{user ? `Welcome, ${user.displayName}` : "Nutrisnap"}</h1>
           </a>
           {user ? (
             <button onClick={handleLogout}>
@@ -70,14 +77,11 @@ const Header = () => {
           )}
         </div>
         <ul className="list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
-          {/* <li>
-            <a href="/login">Login</a>
-          </li> */}
           {!user ? (
             <li>
               <a
                 href="/login"
-                className=" rounded-full px-4 py-2 -ml-4 text-gray-100 bg-black hover:bg-white hover:text-black transition duration-300 ease-in-out"
+                className="rounded-full px-4 py-2 -ml-4 text-gray-100 bg-black hover:bg-white hover:text-black transition duration-300 ease-in-out"
               >
                 Login
               </a>
