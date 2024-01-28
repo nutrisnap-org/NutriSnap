@@ -1,4 +1,4 @@
-    "use client";
+"use client";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
@@ -9,7 +9,7 @@ import {
   doc,
   updateDoc,
   arrayUnion,
-  getDoc // Add getDoc function import
+  getDoc, // Add getDoc function import
 } from "firebase/firestore";
 import gsap from "gsap";
 import html2canvas from "html2canvas";
@@ -30,7 +30,6 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 // screenshot
 const divShot = () => {
   html2canvas(document.querySelector("#capture"), {
@@ -64,7 +63,7 @@ const ImageUploader = () => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        setUserXP(userData.xp );
+        setUserXP(userData.xp);
       } else {
         console.log("No such document!");
       }
@@ -73,41 +72,45 @@ const ImageUploader = () => {
     }
   };
 
-useEffect(() => {
-    if (user) {
-      fetchUserXP();
-    }
-  }, [user] ,[]);
-const updateUserXP = async (xpToAdd) => {
+  useEffect(
+    () => {
+      if (user) {
+        fetchUserXP();
+      }
+    },
+    [user],
+    []
+  );
+  const updateUserXP = async (xpToAdd) => {
     try {
-        if (user) {
-            // Fetch the current XP from the database
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
+      if (user) {
+        // Fetch the current XP from the database
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                const currentXP = userData.xp || 0;
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          const currentXP = userData.xp || 0;
 
-                // Calculate the updated XP by adding the new XP to the current XP
-                const updatedXP = currentXP + xpToAdd;
+          // Calculate the updated XP by adding the new XP to the current XP
+          const updatedXP = currentXP + xpToAdd;
 
-                // Update the XP in the database
-                await updateDoc(docRef, {
-                    xp: updatedXP
-                });
+          // Update the XP in the database
+          await updateDoc(docRef, {
+            xp: updatedXP,
+          });
 
-                console.log("User XP successfully updated in Firestore!");
-            } else {
-                console.error("No such document!");
-            }
+          console.log("User XP successfully updated in Firestore!");
         } else {
-            console.error("User not found in session storage");
+          console.error("No such document!");
         }
+      } else {
+        console.error("User not found in session storage");
+      }
     } catch (error) {
-        console.error("Error updating user XP:", error);
+      console.error("Error updating user XP:", error);
     }
-};
+  };
 
   const uploadImage = async (e) => {
     const file = e.target.files[0];
@@ -208,7 +211,6 @@ const updateUserXP = async (xpToAdd) => {
       if (parsedResult.XP) {
         updateUserXP(parseInt(parsedResult.XP));
       }
-
     } catch (error) {
       console.error("Error fetching analysis data: ", error);
     } finally {
@@ -320,18 +322,17 @@ const updateUserXP = async (xpToAdd) => {
               <div className="w-full" id="capture">
                 <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
                 <div key={index} className="card px-4 max-md:px-2">
-                  
-                <div
-  className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-    result.XP >= 1 && result.XP <= 3
-      ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-      : result.XP >= 4 && result.XP <= 7
-      ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
-      : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-  } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
->
-  XP: {result.XP}
-</div>
+                  <div
+                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+                      result.XP >= 1 && result.XP <= 3
+                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+                        : result.XP >= 4 && result.XP <= 7
+                        ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
+                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+                    } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+                  >
+                    XP: {result.XP}
+                  </div>
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
                       result.status === "unhealthy"
@@ -360,7 +361,7 @@ const updateUserXP = async (xpToAdd) => {
           </div>
         </div>
       </div>
-      <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-white shadow-2xl h-fit">
+      <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-gradient-to-b from-white to-transparent backdrop-blur-md shadow-2xl h-fit">
         <div className="flex items-center justify-around md:hidden">
           <div className="flex flex-col items-center">
             <a href="/foodsnap">

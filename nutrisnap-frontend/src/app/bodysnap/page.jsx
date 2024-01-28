@@ -8,7 +8,7 @@ import {
   doc,
   updateDoc,
   arrayUnion,
-  getDoc // Add getDoc function import
+  getDoc, // Add getDoc function import
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
@@ -43,7 +43,7 @@ const ImageUploader = () => {
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
-    } 
+    }
   }, []);
   const fetchUserXP = async () => {
     try {
@@ -51,7 +51,7 @@ const ImageUploader = () => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        setUserXP(userData.xp );
+        setUserXP(userData.xp);
       } else {
         console.log("No such document!");
       }
@@ -60,41 +60,45 @@ const ImageUploader = () => {
     }
   };
 
-useEffect(() => {
-    if (user) {
-      fetchUserXP();
-    }
-  }, [user] ,[]);
-const updateUserXP = async (xpToAdd) => {
+  useEffect(
+    () => {
+      if (user) {
+        fetchUserXP();
+      }
+    },
+    [user],
+    []
+  );
+  const updateUserXP = async (xpToAdd) => {
     try {
-        if (user) {
-            // Fetch the current XP from the database
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
+      if (user) {
+        // Fetch the current XP from the database
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                const currentXP = userData.xp || 0;
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          const currentXP = userData.xp || 0;
 
-                // Calculate the updated XP by adding the new XP to the current XP
-                const updatedXP = currentXP + xpToAdd;
+          // Calculate the updated XP by adding the new XP to the current XP
+          const updatedXP = currentXP + xpToAdd;
 
-                // Update the XP in the database
-                await updateDoc(docRef, {
-                    xp: updatedXP
-                });
+          // Update the XP in the database
+          await updateDoc(docRef, {
+            xp: updatedXP,
+          });
 
-                console.log("User XP successfully updated in Firestore!");
-            } else {
-                console.error("No such document!");
-            }
+          console.log("User XP successfully updated in Firestore!");
         } else {
-            console.error("User not found in session storage");
+          console.error("No such document!");
         }
+      } else {
+        console.error("User not found in session storage");
+      }
     } catch (error) {
-        console.error("Error updating user XP:", error);
+      console.error("Error updating user XP:", error);
     }
-};
+  };
   const uploadImage = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
@@ -158,48 +162,45 @@ const updateUserXP = async (xpToAdd) => {
         );
 
         // Check if sanitizedResult contains JSON markers
-if (
-  sanitizedResult.startsWith("```json") &&
-  sanitizedResult.endsWith("```")
-) {
-  // Extract JSON content without the markers
-  const jsonContent = sanitizedResult.slice(8, -3).trim();
+        if (
+          sanitizedResult.startsWith("```json") &&
+          sanitizedResult.endsWith("```")
+        ) {
+          // Extract JSON content without the markers
+          const jsonContent = sanitizedResult.slice(8, -3).trim();
 
-  try {
-    // Attempt to parse JSON content
-    parsedResult = JSON.parse(jsonContent);
-  } catch (error) {
-    console.error("Error parsing JSON data:", error);
-    // Handle the error or set parsedResult to null or an appropriate value
-    parsedResult = null;
-  }
-} else if (
-    sanitizedResult.startsWith('```') &&
-  sanitizedResult.endsWith('```')
-) {
-  // Extract JSON content without the markers
- const jsonContent = sanitizedResult.slice(6, -3).trim();
-  try {
-    // Attempt to parse JSON content
-    parsedResult = JSON.parse(jsonContent);
-  } catch (error) {
-    console.error("Error parsing JSON data:", error);
-    // Handle the error or set parsedResult to null or an appropriate value
-    parsedResult = null;
-  }
-} else {
-  // If data.result does not contain JSON markers, attempt to parse it directly
-  try {
-    parsedResult = JSON.parse(sanitizedResult);
-  } catch (error) {
-    console.error("Error parsing JSON data:", error);
-    parsedResult = null;
-  }
-}
+          try {
+            // Attempt to parse JSON content
+            parsedResult = JSON.parse(jsonContent);
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
+            // Handle the error or set parsedResult to null or an appropriate value
+            parsedResult = null;
+          }
+        } else if (
+          sanitizedResult.startsWith("```") &&
+          sanitizedResult.endsWith("```")
+        ) {
+          // Extract JSON content without the markers
+          const jsonContent = sanitizedResult.slice(6, -3).trim();
+          try {
+            // Attempt to parse JSON content
+            parsedResult = JSON.parse(jsonContent);
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
+            // Handle the error or set parsedResult to null or an appropriate value
+            parsedResult = null;
+          }
+        } else {
+          // If data.result does not contain JSON markers, attempt to parse it directly
+          try {
+            parsedResult = JSON.parse(sanitizedResult);
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
+            parsedResult = null;
+          }
         }
-
-
-      else {
+      } else {
         // If data.result is not a string, assign it directly to parsedResult
         parsedResult = data.result;
       }
@@ -317,17 +318,17 @@ if (
               <div className="w-full">
                 <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
                 <div key={index} className="card px-4 max-md:px-2">
-                <div
-  className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-    result.XP >= 1 && result.XP <= 3
-      ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-      : result.XP >= 4 && result.XP <= 7
-      ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
-      : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-  } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
->
-  XP: {result.XP}
-</div>
+                  <div
+                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+                      result.XP >= 1 && result.XP <= 3
+                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+                        : result.XP >= 4 && result.XP <= 7
+                        ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
+                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+                    } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+                  >
+                    XP: {result.XP}
+                  </div>
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
                       result.status !== "healthy"
@@ -356,7 +357,7 @@ if (
           </div>
         </div>
       </div>
-      <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-white shadow-2xl h-fit">
+      <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-gradient-to-b from-white to-transparent backdrop-blur-md shadow-2xl h-fit">
         <div className="flex items-center justify-around md:hidden">
           <div className="flex flex-col items-center">
             <a href="/foodsnap">

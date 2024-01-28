@@ -1,11 +1,10 @@
 "use client";
-import { useState ,useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Header.css";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { getAuth , signOut ,onAuthStateChanged } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
@@ -27,7 +26,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const Header = () => {
   const [user, setUser] = useState(null);
-  const [userXP, setUserXP] = useState();
+  const [userXP, setUserXP] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const router = useRouter();
   //  const router = useRouter();
@@ -44,11 +43,11 @@ const Header = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const userData = docSnap.data();
-          setUserXP(userData.xp );
+          setUserXP(userData.xp);
         }
       } else {
         setUser(null);
-         // Reset user's XP if not logged in
+        // Reset user's XP if not logged in
       }
     });
     return () => unsubscribe();
@@ -68,19 +67,38 @@ const Header = () => {
 
   return (
     <>
-      <div className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4`}>
+      <div
+        className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4`}
+      >
         <div className="flex md:mx-12 items-center gap-2">
           <a href="/" className="flex">
-          {user ? (
-      <img src={`${user.photoURL}`} alt="" height={30} width={30} className="mr-4 rounded-full" /> 
-    ) : (
-      <img src="/logo.png" alt="" height={30} width={30} className="mr-4" />
-    )}
-            <h1 className="md:block font-bold text-xl">{user ? `Welcome, ${user.displayName}` : "Nutrisnap"}</h1>
+            {user ? (
+              <img
+                src={`${user.photoURL}`}
+                alt=""
+                height={30}
+                width={30}
+                className="mr-4 rounded-full"
+              />
+            ) : (
+              <img
+                src="/logo.png"
+                alt=""
+                height={30}
+                width={30}
+                className="mr-4"
+              />
+            )}
+            <h1 className="md:block font-bold text-xl max-md:text-sm">
+              {user ? `Welcome, ${user.displayName}` : "Nutrisnap"}
+            </h1>
           </a>
 
-           {user && <span className="text-sm ml-2">XP: {userXP}</span>}
-
+          {user && (
+            <span className="text-sm flex font-bold px-4 py-1 rounded-full border border-black">
+              XP: {userXP}
+            </span>
+          )}
 
           {user ? (
             <button onClick={handleLogout}>

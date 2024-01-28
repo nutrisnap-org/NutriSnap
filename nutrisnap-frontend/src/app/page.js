@@ -8,7 +8,7 @@ export default function Home() {
       <Hero />
       
     </main>
-    <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-white shadow-2xl h-fit">
+    <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-gradient-to-b from-white to-transparent backdrop-blur-md shadow-2xl h-fit">
         <div className="flex items-center justify-around md:hidden">
           <div className="flex flex-col items-center">
             <a href="/foodsnap">

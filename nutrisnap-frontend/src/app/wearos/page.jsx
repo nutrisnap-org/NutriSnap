@@ -1,11 +1,10 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import Plots from "./plots";
 
 import { gsap } from "gsap";
-import html2canvas from "html2canvas";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
@@ -33,7 +32,7 @@ const CsvUploader = () => {
   const [showPlots, setShowPlots] = useState(false);
 
   useEffect(() => {
-    const userFromSession = sessionStorage.getItem('user');
+    const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
     }
@@ -42,14 +41,14 @@ const CsvUploader = () => {
   const uploadCsv = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'lodrnpjl');
+    formData.append("file", file);
+    formData.append("upload_preset", "lodrnpjl");
 
     try {
       const response = await fetch(
-        'https://api.cloudinary.com/v1_1/dmdhep1qp/raw/upload',
+        "https://api.cloudinary.com/v1_1/dmdhep1qp/raw/upload",
         {
-          method: 'POST',
+          method: "POST",
           body: formData,
         }
       );
@@ -58,22 +57,22 @@ const CsvUploader = () => {
       setCsvUrls([...csvUrls, newCsvUrl]);
       updateUserDataWithCsvUrl(newCsvUrl);
     } catch (err) {
-      console.error('Error uploading CSV: ', err);
+      console.error("Error uploading CSV: ", err);
     }
   };
 
   const updateUserDataWithCsvUrl = async (csvUrl) => {
     try {
       if (user) {
-        await updateDoc(doc(db, 'users', user.uid), {
+        await updateDoc(doc(db, "users", user.uid), {
           CsvUrls: arrayUnion(csvUrl),
         });
         fetchAnalysisData(csvUrl);
       } else {
-        console.error('User not found in session storage');
+        console.error("User not found in session storage");
       }
     } catch (error) {
-      console.error('Error updating CSV URL: ', error);
+      console.error("Error updating CSV URL: ", error);
     }
   };
 
@@ -135,50 +134,47 @@ const CsvUploader = () => {
         Upload your CSV file and let our AI do the magic
       </p>
       <div className="flex max-md:flex-col mx-auto justify-center mt-8 px-24 max-sm:px-4">
-          <div className="w-full">
-            <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-green-100 border border-green-300 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
-              <div className=" flex-col items-center justify-center"></div>
-      <input
-        type="file"
-        id="file"
-        accept=".csv"
-        onChange={uploadCsv}
-        className="sr-only"
-      />
-      <label
-        htmlFor="file"
-        className="items-center cursor-pointer border border-gray-800 text-black px-4 py-2 rounded-md hover:bg-black hover:text-white transition duration-300 ease-in-out block mx-auto"
-        >
-        Upload CSV
-      </label>
-      {csvUrls.length > 0 &&
-        csvUrls.map((url, index) => (
-          <div key={index} className="mt-4">
-            <p>{url}</p>
+        <div className="w-full">
+          <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-green-100 border border-green-300 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
+            <div className=" flex-col items-center justify-center"></div>
+            <input
+              type="file"
+              id="file"
+              accept=".csv"
+              onChange={uploadCsv}
+              className="sr-only"
+            />
+            <label
+              htmlFor="file"
+              className="items-center cursor-pointer border border-gray-800 text-black px-4 py-2 rounded-md hover:bg-black hover:text-white transition duration-300 ease-in-out block mx-auto"
+            >
+              Upload CSV
+            </label>
+            {csvUrls.length > 0 &&
+              csvUrls.map((url, index) => (
+                <div key={index} className="mt-4">
+                  <p>{url}</p>
+                </div>
+              ))}
           </div>
-        ))}
+        </div>
       </div>
-</div>
-</div>
-<div className="mt-8 flex justify-center">
-  <button
-    onClick={handleAnalyse}
-    className="items-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-800 transition duration-300 ease-in-out"
-  >
-    Analyze
-  </button>
-</div>
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={handleAnalyse}
+          className="items-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-800 transition duration-300 ease-in-out"
+        >
+          Analyze
+        </button>
+      </div>
 
-
-          {showPlots && (
-  <div className="flex justify-center">
-    <div className="w-1/2 mx-2">
-      <Plots analysisResults={analysisResults[3]} />
-    </div>
-  </div>
-)}
-
-       
+      {showPlots && (
+        <div className="flex justify-center">
+          <div className="w-1/2 mx-2">
+            <Plots analysisResults={analysisResults[3]} />
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -5,6 +5,23 @@ import { gsap } from "gsap";
 import Link from "next/link";
 import { motion } from "framer-motion";
 const Hero = () => {
+  const videoUrl =
+    "https://res.cloudinary.com/db5b6tsjm/video/upload/c_scale,h_589,w_480/v1706400141/WhatsApp_Video_2024-01-28_at_05.02.54_u1xeix.mp4";
+
+  const handleDownload = () => {
+    // Create a link element
+    const downloadLink = document.createElement("a");
+    // Set the href attribute to the video URL
+    downloadLink.href = videoUrl;
+    // Specify that the link triggers a download
+    downloadLink.download = "your_video_filename.mp4";
+    // Append the link to the body
+    document.body.appendChild(downloadLink);
+    // Trigger a click on the link
+    downloadLink.click();
+    // Remove the link from the body
+    document.body.removeChild(downloadLink);
+  };
   const floatAnimation = {
     y: [0, -10, 0], // Float up and down
     transition: {
@@ -24,10 +41,10 @@ const Hero = () => {
     visible: { opacity: 1, x: 0, transition: { duration: 1.5 } },
   };
   // Initial and final positions
-const [initial, setInitial] = useState(false);
-const buttons = () => {
-  setInitial(!initial)
-}
+  const [initial, setInitial] = useState(false);
+  const buttons = () => {
+    setInitial(!initial);
+  };
   useEffect(() => {
     gsap.set(".ball", { xPercent: -50, yPercent: -50 });
     let targets = gsap.utils.toArray(".ball");
@@ -63,9 +80,6 @@ const buttons = () => {
 
   return (
     <div className="Hero mt-2">
-      
-   
-     
       <div className="ball bg-violet-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
       <div className="text-sm text-center max-sm:text-xs text-white px-4 py-2 m-4 border border-gray-600 bg-black rounded-full w-fit mx-auto backdrop-blur-sm bg-opacity-90">
         Fitness Playground ⛹️‍♂️{" "}
@@ -114,8 +128,13 @@ const buttons = () => {
               </div>
             </motion.div>
           </Link>
-          <div className="px-4 py-2 rounded-full mx-auto text-center border border-black w-fit m-4 cursor-pointer" onClick={buttons}>Health Wrapped</div>
-          
+          <div
+            className="px-4 py-2 rounded-full mx-auto text-center border border-black w-fit m-4 cursor-pointer"
+            onClick={buttons}
+          >
+            Health Wrapped
+          </div>
+
           <motion.div animate={floatAnimation} while={{ y: 0 }}>
             <img
               src="/header 2.png"
@@ -125,10 +144,33 @@ const buttons = () => {
               className="mx-auto yoga -mt-15"
             />
           </motion.div>
-          <video autoPlay loop muted className={`aspect-auto mx-auto ${initial ? "block":"hidden"}`}>
-        <source src="https://res.cloudinary.com/db5b6tsjm/video/upload/c_scale,h_589,w_480/v1706400141/WhatsApp_Video_2024-01-28_at_05.02.54_u1xeix.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+          <div className="text-center">
+            <div
+              className="relative"
+              style={{ paddingBottom: "56.25%", height: 0 }}
+            >
+              <video
+                autoPlay
+                loop
+                className={`absolute top-0 left-0 w-full h-full ${
+                  initial ? "block" : "hidden"
+                }`}
+              >
+                <source
+                  src="https://res.cloudinary.com/db5b6tsjm/video/upload/c_scale,h_589,w_480/v1706400141/WhatsApp_Video_2024-01-28_at_05.02.54_u1xeix.mp4"
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
+            <button
+              onClick={handleDownload}
+              className="mt-4 bg-blue-500 text-white px-4 py-2"
+            >
+              Download Video
+            </button>
+          </div>
         </div>
       </div>
     </div>
