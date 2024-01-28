@@ -87,6 +87,10 @@ background-clip: text;
   z-index: -10;
   filter: blur(100px);
 }
+.redball{
+  z-index: -10;
+  filter: blur(100px);
+}
 .container{
   z-index: -100;
 }
@@ -99,6 +103,13 @@ background-clip: text;
 }
 .yellowtext{
   background: linear-gradient(269deg, #615a00 29.96%, #d6a400 93.86%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+}
+.redtext{
+  background: linear-gradient(269deg, #006117 29.96%, #00d60e 93.86%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

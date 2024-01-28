@@ -6,6 +6,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 

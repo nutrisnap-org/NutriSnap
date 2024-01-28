@@ -9,7 +9,7 @@ const FitbitDataAnalysis = () => {
     const sleepHours = [7, 6.5, 8, 7.5, 6];
     const distances = [3.5, 4.2, 5.1, 4.7, 6.0];
     const caloriesBurned = [300, 350, 400, 320, 380];
-
+    const stress = [50,35,40,65,70];
     useEffect(() => {
         // Fetch Fitbit data and update state if necessary
     }, []);
@@ -90,6 +90,23 @@ const FitbitDataAnalysis = () => {
                         title: 'Daily Distances',
                         xaxis: { title: 'Date' },
                         yaxis: { title: 'Distance (km)' }
+                    }}
+                />
+            </div>
+            <div>
+                <h2>Stress Monitoring</h2>
+                <Plot
+                    data={[
+                        {
+                            labels: heartRates,
+                            values: stress,
+                            type: 'pie',
+                            name: 'Stess Level',
+                            marker: { colors: ['#2CA02C', '#D62728', '#7F7F7F' ,'#9467BD', '#FF7F0E'] }
+                        }
+                    ]}
+                    layout={{
+                        title: 'Daily Sleep Hours',
                     }}
                 />
             </div>

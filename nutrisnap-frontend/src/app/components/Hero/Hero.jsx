@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
@@ -24,7 +24,10 @@ const Hero = () => {
     visible: { opacity: 1, x: 0, transition: { duration: 1.5 } },
   };
   // Initial and final positions
-
+const [initial, setInitial] = useState(false);
+const buttons = () => {
+  setInitial(!initial)
+}
   useEffect(() => {
     gsap.set(".ball", { xPercent: -50, yPercent: -50 });
     let targets = gsap.utils.toArray(".ball");
@@ -60,6 +63,9 @@ const Hero = () => {
 
   return (
     <div className="Hero mt-2">
+      
+   
+     
       <div className="ball bg-violet-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
       <div className="text-sm text-center max-sm:text-xs text-white px-4 py-2 m-4 border border-gray-600 bg-black rounded-full w-fit mx-auto backdrop-blur-sm bg-opacity-90">
         Fitness Playground ⛹️‍♂️{" "}
@@ -108,6 +114,8 @@ const Hero = () => {
               </div>
             </motion.div>
           </Link>
+          <div className="px-4 py-2 rounded-full mx-auto text-center border border-black w-fit m-4 cursor-pointer" onClick={buttons}>Health Wrapped</div>
+          
           <motion.div animate={floatAnimation} while={{ y: 0 }}>
             <img
               src="/header 2.png"
@@ -117,6 +125,10 @@ const Hero = () => {
               className="mx-auto yoga -mt-15"
             />
           </motion.div>
+          <video autoPlay loop muted className={`aspect-auto mx-auto ${initial ? "block":"hidden"}`}>
+        <source src="https://res.cloudinary.com/db5b6tsjm/video/upload/c_scale,h_589,w_480/v1706400141/WhatsApp_Video_2024-01-28_at_05.02.54_u1xeix.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
         </div>
       </div>
     </div>
