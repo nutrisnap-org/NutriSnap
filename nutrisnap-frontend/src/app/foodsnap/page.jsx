@@ -3,7 +3,13 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
-import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc // Add getDoc function import
+} from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import html2canvas from "html2canvas";
@@ -32,7 +38,7 @@ const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [user, setUser] = useState(null);
-
+  const [userXP, setUserXP] = useState(0);
   useEffect(() => {
     // Retrieve user from session storage
     const userFromSession = sessionStorage.getItem("user");
@@ -40,6 +46,56 @@ const ImageUploader = () => {
       setUser(JSON.parse(userFromSession));
     }
   }, []);
+ const fetchUserXP = async () => {
+    try {
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setUserXP(userData.xp );
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching user XP:", error);
+    }
+  };
+
+useEffect(() => {
+    if (user) {
+      fetchUserXP();
+    }
+  }, [user] ,[]);
+const updateUserXP = async (xpToAdd) => {
+    try {
+        if (user) {
+            // Fetch the current XP from the database
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                const currentXP = userData.xp || 0;
+
+                // Calculate the updated XP by adding the new XP to the current XP
+                const updatedXP = currentXP + xpToAdd;
+
+                // Update the XP in the database
+                await updateDoc(docRef, {
+                    xp: updatedXP
+                });
+
+                console.log("User XP successfully updated in Firestore!");
+            } else {
+                console.error("No such document!");
+            }
+        } else {
+            console.error("User not found in session storage");
+        }
+    } catch (error) {
+        console.error("Error updating user XP:", error);
+    }
+};
 
   const uploadImage = async (e) => {
     const file = e.target.files[0];
@@ -109,16 +165,23 @@ const ImageUploader = () => {
         } catch (error) {
           console.error("Error parsing JSON data:", error);
           // Handle the error or set parsedResult to null or an appropriate value
-          parsedResult = {};
+           parsedResult = null;
         }
-      } else {
-        // If data.result is not in the expected format, handle it accordingly
-        console.error("Invalid JSON format:", data.result);
-        parsedResult = {};
-      }
+      }else {
+          // If data.result does not contain JSON markers, attempt to parse it directly
+          try {
+            parsedResult = JSON.parse(sanitizedResult);
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
+            parsedResult = null;
+          }
+        }
 
       // Update analysisResults state with the parsed result
       setAnalysisResults([...analysisResults, parsedResult]);
+if (parsedResult.XP) {
+      updateUserXP(parseInt(parsedResult.XP));
+    }
     } catch (error) {
       console.error("Error fetching analysis data: ", error);
     } finally {
@@ -225,8 +288,19 @@ const ImageUploader = () => {
           <div>
             {analysisResults.map((result, index) => (
               <div className="w-full">
-                <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
+                <div className="text-4xl mt-4 mb-4 px-4 max-md:px-2">Report:</div>
                 <div key={index} className="card px-4 max-md:px-2">
+                <div
+  className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+    result.XP >= 1 && result.XP <= 3
+      ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+      : result.XP >= 4 && result.XP <= 7
+      ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
+      : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+  } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+>
+  XP: {result.XP}
+</div>
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
                       result.status === "unhealthy"
@@ -249,6 +323,8 @@ const ImageUploader = () => {
                     </span>{" "}
                     {result.est_calories}
                   </p>
+              
+
                 </div>
               </div>
             ))}

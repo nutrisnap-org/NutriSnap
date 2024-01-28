@@ -2,6 +2,7 @@
 import { useState ,useEffect } from "react";
 import "./Header.css";
 import { initializeApp } from "firebase/app";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth , signOut ,onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -23,8 +24,10 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const Header = () => {
   const [user, setUser] = useState(null);
+  const [userXP, setUserXP] = useState();
   const [isActive, setIsActive] = useState(false);
   const router = useRouter();
   //  const router = useRouter();
@@ -33,22 +36,29 @@ const Header = () => {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        console.log(user.photoURL)
+        // Fetch user's XP from Firestore
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setUserXP(userData.xp );
+        }
       } else {
         setUser(null);
+         // Reset user's XP if not logged in
       }
     });
     return () => unsubscribe();
   }, []);
-
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
         sessionStorage.removeItem("user");
         setUser(null);
+
         router.push("/");
       })
       .catch((error) => {
@@ -68,6 +78,10 @@ const Header = () => {
     )}
             <h1 className="md:block font-bold text-xl">{user ? `Welcome, ${user.displayName}` : "Nutrisnap"}</h1>
           </a>
+
+           {user && <span className="text-sm ml-2">XP: {userXP}</span>}
+
+
           {user ? (
             <button onClick={handleLogout}>
               <img src="/exit.png" height={30} width={30} alt="" />
