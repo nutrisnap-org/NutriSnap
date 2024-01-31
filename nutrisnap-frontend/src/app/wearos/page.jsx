@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import Plots from "./plots";
-
+import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
@@ -26,6 +27,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const CsvUploader = () => {
+  const router = useRouter();
   const [csvUrls, setCsvUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [user, setUser] = useState(null);
