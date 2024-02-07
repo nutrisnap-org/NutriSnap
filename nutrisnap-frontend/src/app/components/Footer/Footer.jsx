@@ -131,15 +131,28 @@ const Footer = () => {
                 Contributors
               </h6>
               <p className="mb-4 flex items-center justify-center md:justify-start">
-                <img src="/prathik.png" alt="" />
-                New York, NY 10012, US
+                <img
+                  src="/prathik.jpeg"
+                  alt=""
+                  className="w-8 mr-2 rounded-full"
+                />
+                Prathik Shetty
               </p>
               <p className="mb-4 flex items-center justify-center md:justify-start">
-                <img src="/rishabh.png" alt="" />
-                info@example.com
+                <img
+                  src="/rishabh.jpeg"
+                  alt=""
+                  className="w-8 mr-2 rounded-full"
+                />
+                Rishabh Pandey
               </p>
               <p className="mb-4 flex items-center justify-center md:justify-start">
-                <img src="/rahul.png" alt="" />+ 01 234 567 88
+                <img
+                  src="/rahul.jpeg"
+                  alt=""
+                  className="w-8 mr-2 rounded-full "
+                />
+                Rahul Singh
               </p>
             </div>
           </div>
