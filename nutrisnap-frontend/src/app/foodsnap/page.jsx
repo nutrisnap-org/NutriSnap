@@ -328,6 +328,12 @@ const ImageUploader = () => {
                     </span>{" "}
                     {result.est_calories}
                   </p>
+                  <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+                    <span className="font-bold text-lg max-sm:text-md">
+                      Diet for you:
+                    </span>{" "}
+                    {result.diet}
+                  </p>
                 </div>
               </div>
             ))}

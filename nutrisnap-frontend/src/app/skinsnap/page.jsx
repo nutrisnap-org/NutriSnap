@@ -334,15 +334,16 @@ const ImageUploader = () => {
                     XP: {result.XP}
                   </div>
                   <div
-                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-                      result.status === "unhealthy"
-                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-                    }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
-                  >
-                    Status:{" "}
-                    {result.status === "unhealthy" ? "Unhealthy" : "Healthy"}
-                  </div>
+  className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+    result.status === "oily" || result.status === "dark" ||result.status === "dry" || result.status === "acne"
+      ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+      : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+  }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+>
+  Status: {result.status === "oily" || result.status === "dark" || result.status === "dry" || result.status === "acne" ? "Unhealthy" : "Healthy"}
+</div>
+
+
                   <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
                       Description:
@@ -354,6 +355,12 @@ const ImageUploader = () => {
                       Remedies and Solutions:
                     </span>{" "}
                     {result.remedies}
+                  </p>
+                  <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+                    <span className="font-bold text-lg max-sm:text-md">
+                      Products for you:
+                    </span>{" "}
+                    {result.products}
                   </p>
                 </div>
               </div>
