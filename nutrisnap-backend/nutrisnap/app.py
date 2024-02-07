@@ -62,7 +62,7 @@ def food_snap():
            
             model = genai.GenerativeModel('gemini-pro-vision')
 
-            response = model.generate_content(["Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'400-500 cal', XP:'6 the value ranges from 1-10 depending on the health of the person'}", image], stream=True)
+            response = model.generate_content(["Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'400-500 cal', XP:'the value ranges from 1-10 depending on the food health', diet: 'suggest a good diet for the person to stay fit and healthy'} pls do not halucinate and give unique recommendations and output for new food images", image], stream=True)
             response.resolve()
 
            
@@ -89,7 +89,7 @@ def skin_analyse():
            
             model = genai.GenerativeModel('gemini-pro-vision')
 
-            response = model.generate_content(["Analyse the skin of this human and suggest any remedies if necessary eg in json format {status:'healthy' ,description:'The skin appears to be healthy and clear', remedies:'However, the person may want to consider using a moisturizer to keep their skin hydrated, especially if they live in a dry climate. Additionally, the person may want to consider using a sunscreen with an SPF of 30 or higher to protect their skin from the sun's harmful UV rays. example remedy',XP:'6 the value ranges from 1-10 depending on the health of the person'}", image], stream=True)
+            response = model.generate_content(["Analyse the skin of this human and give output eg in json format {status:'dark/oily/clear/acne/mild/dry/etc  depending on skin type complexion and texture' ,description:'The skin appears to be healthy and clear and more description abt the person skin', remedies:'suggest some remedies to the person to take care of their skin and get a glow',XP:' the value ranges from 1-10 depending on the skin health of the person pls give lesser XP if they have even slightly oily/dry/dark skin' products:'suggest some good and trusted skincare prodcust in points space seperated  ' } also pls dont halucinate give unique response for new images", image], stream=True)
             response.resolve()
 
            
