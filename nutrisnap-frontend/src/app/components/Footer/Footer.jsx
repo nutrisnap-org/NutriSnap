@@ -149,7 +149,7 @@ const Footer = () => {
           <span>© 2023 Copyright:</span>
           <a
             className="font-semibold text-black"
-            href="https://github.com/DhrishP/VH23-29-HookHeroes"
+            href="https://github.com/prathikshetty2002/NutriSnap"
           >
             {" "}
             BrockBand
