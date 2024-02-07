@@ -137,7 +137,7 @@ const Hero = () => {
 
           <motion.div animate={floatAnimation} while={{ y: 0 }}>
             <img
-              src="/header 2.png"
+              src="/header 2.webp"
               alt=""
               height={600}
               width={600}
@@ -150,7 +150,6 @@ const Hero = () => {
               style={{ paddingBottom: "56.25%", height: 0 }}
             >
               <video
-                autoPlay
                 loop
                 className={`absolute top-0 left-0 w-full h-full ${
                   initial ? "block" : "hidden"
