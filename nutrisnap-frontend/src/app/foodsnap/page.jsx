@@ -7,7 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import {
-
+setDoc,
   getFirestore,
   doc,
   updateDoc,
@@ -46,6 +46,27 @@ const ImageUploader = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
+        const saveUserDataToFirestore = async (user) => {
+          try {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+        
+            if (!docSnap.exists()) {
+              await setDoc(docRef, {
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                // You can add more user data as needed
+              });
+              console.log("User data successfully stored in Firestore!");
+            } else {
+              console.log("User already exists in Firestore!");
+            }
+          } catch (error) {
+            console.error("Error storing user data: ", error);
+          }
+        };
+        saveUserDataToFirestore(user);
         // Fetch user's XP from Firestore
       } else {
         setUser(null);
