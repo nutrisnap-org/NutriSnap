@@ -159,7 +159,7 @@ const ImageUploader = () => {
   const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEYI);
       const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
       const generationConfig = {
