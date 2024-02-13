@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { useRouter } from "next/navigation";
 import {
@@ -32,6 +33,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 // screenshot
 const divShot = () => {
   html2canvas(document.querySelector("#capture"), {
@@ -53,11 +55,18 @@ const ImageUploader = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
   useEffect(() => {
-    // Retrieve user from session storage
-    const userFromSession = sessionStorage.getItem("user");
-    if (userFromSession) {
-      setUser(JSON.parse(userFromSession));
-    }
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUser(user);
+        // Fetch user's XP from Firestore
+      } else {
+        setUser(null);
+        router.push('/login')
+
+        // Reset user's XP if not logged in
+      }
+    });
+    return () => unsubscribe();
   }, []);
   const fetchUserXP = async () => {
     try {

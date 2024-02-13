@@ -11,10 +11,11 @@ import {
 } from "firebase/firestore";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { ThreeDots } from "react-loader-spinner";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { Image } from "cloudinary-react";
 import { gsap } from "gsap";
 // import fs from 'fs';
-// import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // Initialize Firebase app
 const firebaseConfig = {
@@ -35,7 +36,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+const auth = getAuth(app);
 const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
@@ -44,12 +45,20 @@ const ImageUploader = () => {
   const [userXP, setUserXP] = useState();
   const [data64, setData64] = useState(null);
   // const router = useRouter();
-
+  const router = useRouter();
   useEffect(() => {
-    const userFromSession = sessionStorage.getItem("user");
-    if (userFromSession) {
-      setUser(JSON.parse(userFromSession));
-    }
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUser(user);
+        // Fetch user's XP from Firestore
+      } else {
+        setUser(null);
+        router.push('/login')
+
+        // Reset user's XP if not logged in
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
