@@ -1,5 +1,5 @@
 "use client";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import { useState, useEffect } from "react";
 import "./Header.css";
 import { initializeApp } from "firebase/app";
@@ -52,7 +52,7 @@ const Header = () => {
         }
       } else {
         setUser(null);
-         // Reset user's XP if not logged in
+        // Reset user's XP if not logged in
       }
     });
     return () => unsubscribe();
@@ -72,12 +72,12 @@ const Header = () => {
 
   return (
     <>
-    <Analytics />
+      <Analytics />
       <div
         className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4`}
       >
         <div className="flex md:mx-12 items-center gap-2">
-          <a href="/" className="flex">
+          <a href="/" className="flex items-center">
             {user ? (
               <img
                 src={`${user.photoURL}`}

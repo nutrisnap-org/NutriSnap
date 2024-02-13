@@ -6,7 +6,12 @@ import Footer from "./components/Footer/Footer";
 const inter = DM_Sans({ subsets: ["latin"] });
 export const metadata = {
   title: "Nutrisnap",
-  description: "Think of Fitness Think of Us Creation By Prathik Shetty, Rahul Singh , Rishabh Pandey",
+  description:
+    "Think of Fitness Think of Us Creation By Prathik Shetty, Rahul Singh , Rishabh Pandey",
+  image: "/logo.png",
+  url: "https://nutrisnap.vercel.app/",
+  type: "website",
+  siteName: "Nutrisnap",
 };
 
 export default function RootLayout({ children }) {
@@ -15,9 +20,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Header />
         {children}
-
         <Bot />
-       
         <Footer />
       </body>
     </html>
