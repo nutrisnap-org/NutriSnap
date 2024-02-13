@@ -98,6 +98,7 @@ const LoginWithGoogle = () => {
   }
 
   return (
+    
     // <div>
     //   {user ? (
     //     <div>
@@ -110,10 +111,12 @@ const LoginWithGoogle = () => {
     //     </div>
     //   )}
     // </div>
+    
     <div className="flex items-center justify-center p-8 min-h-screen -mt-24">
       <div className="w-[400px] bg-white border border-gray-300 shadow-2xl rounded-lg h-fit p-4">
         <div className="border-gray-300 px-4 py-4">
           <div className="text-2xl font-semibold mb-6">
+          <Analytics />
             Sign in{" "}
             <span className="text-gray-600 font-normal text-xl">
               to Unlock Best Features of{" "}

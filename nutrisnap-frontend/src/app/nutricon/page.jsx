@@ -66,6 +66,7 @@ export default function NutritionistsPage() {
   }, []);
   return (
     <>
+    <Analytics />
       <div className="blueball blur-3xl bg-cyan-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
       <div className="container mx-auto px-4 py-8 z-1">
         <h1 className="text-7xl max-sm:text-5xl nutricon font-bold mx-auto text-center">

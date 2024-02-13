@@ -18,6 +18,7 @@ const FitbitDataAnalysis = () => {
     return (
         <div>
             <div>
+            <Analytics />
                 <h2>Daily Steps</h2>
                 <Plot
                     data={[

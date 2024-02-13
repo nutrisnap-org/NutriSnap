@@ -71,6 +71,7 @@ const Header = () => {
 
   return (
     <>
+    <Analytics />
       <div
         className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4`}
       >

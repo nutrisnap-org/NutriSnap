@@ -253,6 +253,7 @@ const ImageUploader = () => {
   }, []);
   return (
     <>
+    <Analytics />
       <div className="greenball blur-3xl bg-yellow-400/20 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div>

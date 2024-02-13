@@ -6,6 +6,7 @@ const Footer = () => {
       <footer className="bg-gray-900 bg-opacity-30 text-center justify-center dark:bg-transparent text-black lg:text-left mt-20">
         <div className="flex items-center justify-center border-b-2 border-neutral-700 p-6 dark:border-neutral-500 lg:justify-between">
           <div className="mr-12 hidden lg:block">
+          <Analytics />
             <span>Get connected with us on social networks:</span>
           </div>
           <div className="flex justify-center">

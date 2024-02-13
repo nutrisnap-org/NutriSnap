@@ -109,6 +109,7 @@ const Hero = () => {
               className="mx-auto text-center px-4 py-2 bg-violet-600 w-fit rounded-full text-white flex justify-center items-center cursor-pointer hover:bg-violet-900 transition-all"
             >
               {" "}
+              <Analytics />
               Snap in
               <div className="next-svg ml-2 items-center">
                 <svg

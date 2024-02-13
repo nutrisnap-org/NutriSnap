@@ -127,6 +127,7 @@ const CsvUploader = () => {
   }, []);
   return (
     <>
+    <Analytics />
       <div className="redball blur-3xl bg-green-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div className="mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10">
