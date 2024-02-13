@@ -1,4 +1,5 @@
 "use client";
+import { Analytics } from '@vercel/analytics/react';
 import { useState, useEffect } from "react";
 import "./Header.css";
 import { initializeApp } from "firebase/app";

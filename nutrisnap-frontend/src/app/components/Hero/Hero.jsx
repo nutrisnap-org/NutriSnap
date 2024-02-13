@@ -1,4 +1,5 @@
 "use client";
+import { Analytics } from '@vercel/analytics/react';
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { gsap } from "gsap";

@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Analytics } from '@vercel/analytics/react';
 const Footer = () => {
   return (
     <div>

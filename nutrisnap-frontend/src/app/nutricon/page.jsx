@@ -1,4 +1,5 @@
 "use client";
+import { Analytics } from '@vercel/analytics/react';
 import { useState, useEffect } from "react";
 /* The line `import { getCalApi } from "@calcom/embed-react";` is importing the `getCalApi` function
 from the `@calcom/embed-react` package. This function is used to initialize the Calendar API
