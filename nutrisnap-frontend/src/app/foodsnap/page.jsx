@@ -2,6 +2,7 @@
 import { Analytics } from '@vercel/analytics/react';
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 
@@ -34,6 +35,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const ImageUploader = () => {
   // const router = useRouter();
