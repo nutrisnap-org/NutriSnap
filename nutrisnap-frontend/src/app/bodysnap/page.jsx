@@ -95,6 +95,7 @@ const ImageUploader = () => {
         }
       } else {
         console.error("User not found in session storage");
+        router.push('/login');
       }
     } catch (error) {
       console.error("Error updating user XP:", error);

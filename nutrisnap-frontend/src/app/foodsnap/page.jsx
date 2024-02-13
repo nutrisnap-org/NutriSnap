@@ -2,7 +2,6 @@
 import { Analytics } from '@vercel/analytics/react';
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 
@@ -15,7 +14,7 @@ import {
   arrayUnion,
   getDoc, // Add getDoc function import
 } from "firebase/firestore";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 
 const firebaseConfig = {
@@ -35,7 +34,6 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
 const ImageUploader = () => {
   // const router = useRouter();
@@ -45,19 +43,11 @@ const ImageUploader = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
   useEffect(() => {
-    // Set up Google Auth here...
-
-    // Listen for changes in user authentication state
-    // and update the user state accordingly
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
+    // Retrieve user from session storage
+    const userFromSession = sessionStorage.getItem("user");
+    if (userFromSession) {
+      setUser(JSON.parse(userFromSession));
+    }
   }, []);
   const fetchUserXP = async () => {
     try {
@@ -108,6 +98,8 @@ const ImageUploader = () => {
         }
       } else {
         console.error("User not found in session storage");
+        router.push('/login');
+
       }
     } catch (error) {
       console.error("Error updating user XP:", error);

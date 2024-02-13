@@ -152,6 +152,7 @@ const ImageUploader = () => {
         fetchAnalysisData(file);
       } else {
         console.error("User not found in session storage");
+        router.push('/login');
       }
     } catch (error) {
       console.error("Error updating image URL: ", error);
