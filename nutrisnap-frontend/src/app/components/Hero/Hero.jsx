@@ -1,8 +1,9 @@
 "use client";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { gsap } from "gsap";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 const Hero = () => {
@@ -138,7 +139,7 @@ const Hero = () => {
           </div>
 
           <motion.div animate={floatAnimation} while={{ y: 0 }}>
-            <img
+            <Image
               src="/header 2.webp"
               alt=""
               height={600}
