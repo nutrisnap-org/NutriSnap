@@ -32,11 +32,12 @@ const LoginWithGoogle = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
+        saveUserDataToFirestore(authUser);
         setUser(authUser);
         // Store user data in Firestore
         
         router.push('/');
-        saveUserDataToFirestore(authUser);
+        
       } else {
         setUser(null);
       }
@@ -45,13 +46,16 @@ const LoginWithGoogle = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin =  () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((result) => {
         // User signed in
         const user = result.user;
         setUser(user);
+        saveUserDataToFirestore(user);
+        //   console.log("User data successfully stored in Firestore!");
+        // } 
         sessionStorage.setItem("user", JSON.stringify(user));
       })
       .catch((error) => {
