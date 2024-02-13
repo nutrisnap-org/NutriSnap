@@ -138,6 +138,14 @@ const Footer = () => {
                 />
                 Prathik Shetty
               </p>
+              <a target="_blank" href="https://rahulol.me" ><p className="mb-4 flex items-center justify-center md:justify-start">
+                <img
+                  src="/rahul.jpeg"
+                  alt=""
+                  className="w-8 mr-2 rounded-full "
+                />
+                Rahul Singh
+              </p> </a>
               <p className="mb-4 flex items-center justify-center md:justify-start">
                 <img
                   src="/rishabh.jpeg"
@@ -146,14 +154,7 @@ const Footer = () => {
                 />
                 Rishabh Pandey
               </p>
-              <p className="mb-4 flex items-center justify-center md:justify-start">
-                <img
-                  src="/rahul.jpeg"
-                  alt=""
-                  className="w-8 mr-2 rounded-full "
-                />
-                Rahul Singh
-              </p>
+              
             </div>
           </div>
         </div>

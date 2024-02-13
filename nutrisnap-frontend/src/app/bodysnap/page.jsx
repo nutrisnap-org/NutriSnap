@@ -1,19 +1,23 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { Image } from "cloudinary-react";
-import { ThreeDots } from "react-loader-spinner";
 import {
   getFirestore,
   doc,
   updateDoc,
   arrayUnion,
-  getDoc, // Add getDoc function import
+  getDoc,
 } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import { ThreeDots } from "react-loader-spinner";
+import { Image } from "cloudinary-react";
 import { gsap } from "gsap";
+// import fs from 'fs';
+// import { useRouter } from "next/router";
 
+// Initialize Firebase app
 const firebaseConfig = {
+  // Your Firebase config here
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
   authDomain: "nutrisnap-e6cf9.firebaseapp.com",
@@ -35,22 +39,31 @@ const ImageUploader = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const [user, setUser] = useState(null);
+  const [userXP, setUserXP] = useState();
+  const [data64, setData64] = useState(null);
+  // const router = useRouter();
 
   useEffect(() => {
-    // Retrieve user from session storage
     const userFromSession = sessionStorage.getItem("user");
     if (userFromSession) {
       setUser(JSON.parse(userFromSession));
     }
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserXP();
+    }
+  }, [user]);
+
   const fetchUserXP = async () => {
     try {
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
+        // Assuming userData.xp exists in your Firestore document
         setUserXP(userData.xp);
       } else {
         console.log("No such document!");
@@ -60,30 +73,17 @@ const ImageUploader = () => {
     }
   };
 
-  useEffect(
-    () => {
-      if (user) {
-        fetchUserXP();
-      }
-    },
-    [user],
-    []
-  );
   const updateUserXP = async (xpToAdd) => {
     try {
       if (user) {
-        // Fetch the current XP from the database
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const userData = docSnap.data();
           const currentXP = userData.xp || 0;
-
-          // Calculate the updated XP by adding the new XP to the current XP
           const updatedXP = currentXP + xpToAdd;
 
-          // Update the XP in the database
           await updateDoc(docRef, {
             xp: updatedXP,
           });
@@ -99,11 +99,13 @@ const ImageUploader = () => {
       console.error("Error updating user XP:", error);
     }
   };
+
   const uploadImage = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
+  
     formData.append("file", file);
-    formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
+    formData.append("upload_preset", "lodrnpjl");
 
     try {
       const response = await fetch(
@@ -116,24 +118,21 @@ const ImageUploader = () => {
       const data = await response.json();
       const newImageUrl = data.secure_url;
 
-      // Update state with new image URL
       setImageUrls([...imageUrls, newImageUrl]);
-
-      // Update Firestore document with image URL
-      updateUserDataWithImageUrl(newImageUrl);
+      updateUserDataWithImageUrl(newImageUrl, file);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl) => {
+  const updateUserDataWithImageUrl = async (imageUrl, file) => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
           bodysnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
-        fetchAnalysisData(imageUrl);
+        fetchAnalysisData(file);
       } else {
         console.error("User not found in session storage");
       }
@@ -142,79 +141,83 @@ const ImageUploader = () => {
     }
   };
 
-  const fetchAnalysisData = async (imageUrl) => {
+  const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://127.0.0.1:5000/body-analyse?img_url=${imageUrl}`
-      );
-      const data = await response.json();
-      console.log(data);
+      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
-      let parsedResult;
+      const generationConfig = {
+        temperature: 0.4,
+        topK: 32,
+        topP: 1,
+        maxOutputTokens: 4096,
+      };
 
-      // Check if data.result is a string
-      if (typeof data.result === "string") {
-        // Remove non-printable characters and control characters using regex
-        const sanitizedResult = data.result.replace(
-          /[\x00-\x1F\x7F-\x9F]/g,
-          ""
-        );
+      const safetySettings = [
+        // Add your safety settings here
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+      ];
 
-        // Check if sanitizedResult contains JSON markers
-        if (
-          sanitizedResult.startsWith("```json") &&
-          sanitizedResult.endsWith("```")
-        ) {
-          // Extract JSON content without the markers
-          const jsonContent = sanitizedResult.slice(8, -3).trim();
-
-          try {
-            // Attempt to parse JSON content
-            parsedResult = JSON.parse(jsonContent);
-          } catch (error) {
-            console.error("Error parsing JSON data:", error);
-            // Handle the error or set parsedResult to null or an appropriate value
-            parsedResult = null;
-          }
-        } else if (
-          sanitizedResult.startsWith("```") &&
-          sanitizedResult.endsWith("```")
-        ) {
-          // Extract JSON content without the markers
-          const jsonContent = sanitizedResult.slice(6, -3).trim();
-          try {
-            // Attempt to parse JSON content
-            parsedResult = JSON.parse(jsonContent);
-          } catch (error) {
-            console.error("Error parsing JSON data:", error);
-            // Handle the error or set parsedResult to null or an appropriate value
-            parsedResult = null;
-          }
-        } else {
-          // If data.result does not contain JSON markers, attempt to parse it directly
-          try {
-            parsedResult = JSON.parse(sanitizedResult);
-          } catch (error) {
-            console.error("Error parsing JSON data:", error);
-            parsedResult = null;
-          }
+      const parts = [
+        await fileToGenerativePart(file),
+        {
+          text: "Analyse the person and give output in this manner in a json format eg {status:'healthy',description:'the person looks healthy and active lean', bodyfat:'30 percent', remedies:'maintain diet and cardio' pls give a comprehensive report in remedies pointwise, XP:'6 the value ranges from 1-10 depending on the health of the person'\n"
         }
-      } else {
-        // If data.result is not a string, assign it directly to parsedResult
-        parsedResult = data.result;
-      }
+      ];
 
-      // Update analysisResults state with the parsed result
-      setAnalysisResults([...analysisResults, parsedResult]);
-      if (parsedResult.XP) {
-        updateUserXP(parseInt(parsedResult.XP));
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts }],
+        generationConfig,
+        safetySettings,
+      });
+      const data = result.response.text() ;
+      const data2 = result.response[1];
+      const data3 = JSON.parse(data);
+      setAnalysisResults([...analysisResults, data3]);
+      console.log(analysisResults);
+      console.log(data2)
+
+
+
+
+// regex error fix end
+ 
+      // Update analysisResults state with parsed result
+      // Parse and set analysis results
+      if (data3.XP) {
+        updateUserXP(parseInt(data3.XP));
       }
     } catch (error) {
       console.error("Error fetching analysis data: ", error);
     } finally {
       setLoading(false); // Set loading to false when analysis is done
     }
+  };
+  const fileToGenerativePart = async (file) => {
+    const base64EncodedDataPromise = new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.readAsDataURL(file);
+    });
+    return {
+      inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+    };
   };
   useEffect(() => {
     gsap.set(".greenball", { xPercent: -50, yPercent: -50 });
@@ -314,46 +317,44 @@ const ImageUploader = () => {
             )}
           </div>
           <div>
-            {analysisResults.map((result, index) => (
-              <div className="w-full">
-                <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
-                <div key={index} className="card px-4 max-md:px-2">
-                  <div
-                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-                      result.XP >= 1 && result.XP <= 3
-                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-                        : result.XP >= 4 && result.XP <= 7
-                        ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
-                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-                    } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
-                  >
-                    XP: {result.XP}
-                  </div>
-                  <div
-                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-                      result.status !== "healthy"
-                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-                    }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
-                  >
-                    Status:{" "}
-                    {result.status !== "healthy" ? result.status : "Healthy"}
-                  </div>
-                  <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
-                    <span className="font-bold text-lg max-sm:text-md">
-                      Description:
-                    </span>{" "}
-                    {result.description}
-                  </p>
-                  <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+          {analysisResults.map((result, index) => (
+  <div className="w-full" key={index}>
+    <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
+    <div className="card px-4 max-md:px-2">
+      <div
+        className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+          result.XP >= 1 && result.XP <= 3
+            ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+            : result.XP >= 4 && result.XP <= 7
+            ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
+            : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+        } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+      >
+        XP: {result.XP}
+      </div>
+      <div
+        className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+          result.status !== "healthy"
+            ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+            : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+        }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+      >
+        Status: {result.status !== "healthy" ? result.status : "Healthy"}
+      </div>
+      <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+        <span className="font-bold text-lg max-sm:text-md">Description:</span>{" "}
+        {result.description}
+      </p>
+      <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
                       Remedies and Solutions:
                     </span>{" "}
                     {result.remedies}
                   </p>
-                </div>
-              </div>
-            ))}
+    </div>
+  </div>
+))}
+
           </div>
         </div>
       </div>

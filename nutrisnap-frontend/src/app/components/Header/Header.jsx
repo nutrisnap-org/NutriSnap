@@ -44,10 +44,14 @@ const Header = () => {
         if (docSnap.exists()) {
           const userData = docSnap.data();
           setUserXP(userData.xp);
+          setUserXP(userData.xp || 0); // Set XP to 0 if userData.xp is undefined
+        } else {
+          // Handle case where user document doesn't exist
+          setUserXP(0);
         }
       } else {
         setUser(null);
-        // Reset user's XP if not logged in
+         // Reset user's XP if not logged in
       }
     });
     return () => unsubscribe();

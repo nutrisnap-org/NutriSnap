@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
+
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import {
+
   getFirestore,
   doc,
   updateDoc,
@@ -32,7 +35,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const ImageUploader = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
@@ -120,21 +123,20 @@ const ImageUploader = () => {
       // Update state with new image URL
       setImageUrls([...imageUrls, newImageUrl]);
 
-      // Update Firestore document with image URL
-      updateUserDataWithImageUrl(newImageUrl);
+      updateUserDataWithImageUrl(newImageUrl, file);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl) => {
+  const updateUserDataWithImageUrl = async (imageUrl, file) => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
-          foodsnapUrls: arrayUnion(imageUrl),
+          bodysnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
-        fetchAnalysisData(imageUrl);
+        fetchAnalysisData(file);
       } else {
         console.error("User not found in session storage");
       }
@@ -142,54 +144,83 @@ const ImageUploader = () => {
       console.error("Error updating image URL: ", error);
     }
   };
-  const fetchAnalysisData = async (imageUrl) => {
+  const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://127.0.0.1:5000/food-snap?img_url=${imageUrl}`
-      );
-      const data = await response.json();
-      console.log(data);
+      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
-      let parsedResult;
+      const generationConfig = {
+        temperature: 0.4,
+        topK: 32,
+        topP: 1,
+        maxOutputTokens: 4096,
+      };
 
-      // Check if data.result is a string and contains the JSON marker
-      if (
-        typeof data.result === "string" &&
-        data.result.startsWith(" ```json") &&
-        data.result.endsWith("```")
-      ) {
-        // Extract JSON content without the markers
-        const jsonContent = data.result.slice(8, -3).trim(); // Remove ' ```json' and '```'
+      const safetySettings = [
+        // Add your safety settings here
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+      ];
 
-        try {
-          // Attempt to parse JSON content
-          parsedResult = JSON.parse(jsonContent);
-        } catch (error) {
-          console.error("Error parsing JSON data:", error);
-          // Handle the error or set parsedResult to null or an appropriate value
-          parsedResult = null;
+      const parts = [
+        await fileToGenerativePart(file),
+        {
+          text: "Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'400-500 cal', XP:'the value ranges from 1-10 depending on the food health', diet: 'suggest a good diet for the person to stay fit and healthy'} pls do not halucinate and give unique recommendations and output for new food images"
         }
-      } else {
-        // If data.result does not contain JSON markers, attempt to parse it directly
-        try {
-          parsedResult = JSON.parse(sanitizedResult);
-        } catch (error) {
-          console.error("Error parsing JSON data:", error);
-          parsedResult = null;
-        }
-      }
+      ];
 
-      // Update analysisResults state with the parsed result
-      setAnalysisResults([...analysisResults, parsedResult]);
-      if (parsedResult.XP) {
-        updateUserXP(parseInt(parsedResult.XP));
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts }],
+        generationConfig,
+        safetySettings,
+      });
+      const data = result.response.text() ;
+      const data2 = result.response[1];
+      const data3 = JSON.parse(data);
+      setAnalysisResults([...analysisResults, data3]);
+      console.log(analysisResults);
+      console.log(data2)
+
+
+
+
+// regex error fix end
+ 
+      // Update analysisResults state with parsed result
+      // Parse and set analysis results
+      if (data3.XP) {
+        updateUserXP(parseInt(data3.XP));
       }
     } catch (error) {
       console.error("Error fetching analysis data: ", error);
     } finally {
       setLoading(false); // Set loading to false when analysis is done
     }
+  };
+  const fileToGenerativePart = async (file) => {
+    const base64EncodedDataPromise = new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.readAsDataURL(file);
+    });
+    return {
+      inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+    };
   };
   useEffect(() => {
     gsap.set(".ball", { xPercent: -50, yPercent: -50 });
