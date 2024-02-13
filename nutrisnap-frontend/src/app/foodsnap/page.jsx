@@ -14,7 +14,7 @@ import {
   arrayUnion,
   getDoc, // Add getDoc function import
 } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 
 const firebaseConfig = {
@@ -43,11 +43,19 @@ const ImageUploader = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
   useEffect(() => {
-    // Retrieve user from session storage
-    const userFromSession = sessionStorage.getItem("user");
-    if (userFromSession) {
-      setUser(JSON.parse(userFromSession));
-    }
+    // Set up Google Auth here...
+
+    // Listen for changes in user authentication state
+    // and update the user state accordingly
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
   const fetchUserXP = async () => {
     try {
