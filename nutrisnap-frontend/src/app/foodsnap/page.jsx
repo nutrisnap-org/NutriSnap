@@ -359,7 +359,7 @@ const ImageUploader = () => {
                   wrapperStyle={{}}
                   wrapperClass=""
                 />
-                <p classname="max-sm:text-xs text-sm">Good things takes time but it's worth! *10-15 seconds* </p>
+                <p classname="max-sm:text-xs text-black text-center text-sm">Good things takes time but it's worth! *10-15 seconds* </p>
               </div>
             )}
           </div>
