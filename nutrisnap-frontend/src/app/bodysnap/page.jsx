@@ -337,7 +337,7 @@ const ImageUploader = () => {
               </div>
             )}
             {loading && (
-              <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div className="loader mb-8  mx-auto   text-black w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 <ThreeDots
                   visible={true}
                   height="80"
