@@ -1,13 +1,17 @@
 "use client";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import {
-setDoc,
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from "@google/generative-ai";
+import {
+  setDoc,
   getFirestore,
   doc,
   updateDoc,
@@ -50,7 +54,7 @@ const ImageUploader = () => {
           try {
             const docRef = doc(db, "users", user.uid);
             const docSnap = await getDoc(docRef);
-        
+
             if (!docSnap.exists()) {
               await setDoc(docRef, {
                 displayName: user.displayName,
@@ -70,7 +74,7 @@ const ImageUploader = () => {
         // Fetch user's XP from Firestore
       } else {
         setUser(null);
-        router.push('/login')
+        router.push("/login");
 
         // Reset user's XP if not logged in
       }
@@ -84,7 +88,7 @@ const ImageUploader = () => {
   //     setUser(JSON.parse(userFromSession));
   //   }
   //   if(!userFromSession){
-      
+
   //   }
   // }, []);
   const fetchUserXP = async () => {
@@ -135,10 +139,8 @@ const ImageUploader = () => {
           console.error("No such document!");
         }
       } else {
-        router.push('/login');
+        router.push("/login");
         console.error("User not found in session storage");
-       
-
       }
     } catch (error) {
       console.error("Error updating user XP:", error);
@@ -189,7 +191,9 @@ const ImageUploader = () => {
   const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+      const genAI = new GoogleGenerativeAI(
+        process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+      );
       const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
       const generationConfig = {
@@ -222,8 +226,8 @@ const ImageUploader = () => {
       const parts = [
         await fileToGenerativePart(file),
         {
-          text: "Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'400-500 cal', XP:'the value ranges from 1-10 depending on the food health', diet: 'suggest a good diet for the person to stay fit and healthy'} pls do not halucinate and give unique recommendations and output for new food images"
-        }
+          text: "Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'400-500 cal', XP:'the value ranges from 1-10 depending on the food health', diet: 'suggest a good diet for the person to stay fit and healthy'} pls do not halucinate and give unique recommendations and output for new food images",
+        },
       ];
 
       const result = await model.generateContent({
@@ -231,18 +235,15 @@ const ImageUploader = () => {
         generationConfig,
         safetySettings,
       });
-      const data = result.response.text() ;
+      const data = result.response.text();
       const data2 = result.response[1];
       const data3 = JSON.parse(data);
       setAnalysisResults([...analysisResults, data3]);
       console.log(analysisResults);
-      console.log(data2)
+      console.log(data2);
 
+      // regex error fix end
 
-
-
-// regex error fix end
- 
       // Update analysisResults state with parsed result
       // Parse and set analysis results
       if (data3.XP) {
@@ -257,7 +258,7 @@ const ImageUploader = () => {
   const fileToGenerativePart = async (file) => {
     const base64EncodedDataPromise = new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.onloadend = () => resolve(reader.result.split(",")[1]);
       reader.readAsDataURL(file);
     });
     return {
@@ -298,7 +299,7 @@ const ImageUploader = () => {
   }, []);
   return (
     <>
-    <Analytics />
+      <Analytics />
       <div className="ball blur-3xl bg-purple-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div className="px-4">
@@ -348,7 +349,7 @@ const ImageUploader = () => {
               </div>
             )}
             {loading && (
-              <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div className="loader mb-8  mx-auto w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 <ThreeDots
                   visible={true}
                   height="80"
@@ -359,7 +360,9 @@ const ImageUploader = () => {
                   wrapperStyle={{}}
                   wrapperClass=""
                 />
-                <p classname="max-sm:text-xs text-black text-center text-sm">Good things takes time but it's worth! *10-15 seconds* </p>
+                <p classname="max-sm:text-xs text-black text-center text-sm">
+                  Good things takes time but it's worth! *10-15 seconds*{" "}
+                </p>
               </div>
             )}
           </div>
