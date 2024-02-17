@@ -90,6 +90,9 @@ const ImageUploader = () => {
     });
     return () => unsubscribe();
   }, []);
+    const reload = () => {
+     window.location.reload();
+  };
   const fetchUserXP = async () => {
     try {
       const docRef = doc(db, "users", user.uid);
@@ -342,7 +345,7 @@ const ImageUploader = () => {
             </div>
             {imageUrls.length > 0 && !loading && (
               <>
-                <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+                <div onClick={reload} className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                   Analyze
                 </div>
                 <div

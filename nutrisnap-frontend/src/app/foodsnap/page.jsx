@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged, reload } from "firebase/auth";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import {
 setDoc,
@@ -101,7 +101,9 @@ const ImageUploader = () => {
       console.error("Error fetching user XP:", error);
     }
   };
-
+  const reload = () => {
+     window.location.reload();
+  };
   useEffect(
     () => {
       if (user) {
@@ -343,7 +345,7 @@ const ImageUploader = () => {
               </div>
             </div>
             {imageUrls.length > 0 && !loading && (
-              <div className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div onClick={reload} className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 Analyze
               </div>
             )}
