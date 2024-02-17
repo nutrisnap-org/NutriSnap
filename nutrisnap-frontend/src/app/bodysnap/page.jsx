@@ -1,5 +1,5 @@
 "use client";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import {
@@ -10,7 +10,11 @@ import {
   setDoc,
   getDoc,
 } from "firebase/firestore";
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from "@google/generative-ai";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { Image } from "cloudinary-react";
@@ -56,7 +60,7 @@ const ImageUploader = () => {
           try {
             const docRef = doc(db, "users", user.uid);
             const docSnap = await getDoc(docRef);
-        
+
             if (!docSnap.exists()) {
               await setDoc(docRef, {
                 displayName: user.displayName,
@@ -76,7 +80,7 @@ const ImageUploader = () => {
         // Fetchys user's XP from Firestore
       } else {
         setUser(null);
-        router.push('/login')
+        router.push("/login");
 
         // Reset user's XP if not logged in
       }
@@ -130,7 +134,7 @@ const ImageUploader = () => {
         }
       } else {
         console.error("User not found in session storage");
-        router.push('/login');
+        router.push("/login");
       }
     } catch (error) {
       console.error("Error updating user XP:", error);
@@ -140,7 +144,7 @@ const ImageUploader = () => {
   const uploadImage = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
-  
+
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl");
 
@@ -181,7 +185,9 @@ const ImageUploader = () => {
   const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEYII);
+      const genAI = new GoogleGenerativeAI(
+        process.env.NEXT_PUBLIC_GOOGLE_API_KEYII
+      );
       const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
       const generationConfig = {
@@ -214,8 +220,8 @@ const ImageUploader = () => {
       const parts = [
         await fileToGenerativePart(file),
         {
-          text: "Analyse the person and give output in this manner in a json format eg {status:'healthy',description:'the person looks healthy and active lean', bodyfat:'30 percent', remedies:'maintain diet and cardio' pls give a comprehensive report in remedies pointwise, XP:'6 the value ranges from 1-10 depending on the health of the person'\n"
-        }
+          text: "Analyse the person and give output in this manner in a json format eg {status:'healthy',description:'the person looks healthy and active lean', bodyfat:'30 percent', remedies:'maintain diet and cardio' pls give a comprehensive report in remedies pointwise, XP:'6 the value ranges from 1-10 depending on the health of the person'\n",
+        },
       ];
 
       const result = await model.generateContent({
@@ -223,18 +229,15 @@ const ImageUploader = () => {
         generationConfig,
         safetySettings,
       });
-      const data = result.response.text() ;
+      const data = result.response.text();
       const data2 = result.response[1];
       const data3 = JSON.parse(data);
       setAnalysisResults([...analysisResults, data3]);
       console.log(analysisResults);
-      console.log(data2)
+      console.log(data2);
 
+      // regex error fix end
 
-
-
-// regex error fix end
- 
       // Update analysisResults state with parsed result
       // Parse and set analysis results
       if (data3.XP) {
@@ -249,7 +252,7 @@ const ImageUploader = () => {
   const fileToGenerativePart = async (file) => {
     const base64EncodedDataPromise = new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.onloadend = () => resolve(reader.result.split(",")[1]);
       reader.readAsDataURL(file);
     });
     return {
@@ -290,7 +293,7 @@ const ImageUploader = () => {
   }, []);
   return (
     <>
-    <Analytics />
+      <Analytics />
       <div className="greenball blur-3xl bg-yellow-400/20 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div>
@@ -340,7 +343,7 @@ const ImageUploader = () => {
               </div>
             )}
             {loading && (
-              <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div className="loader mb-8 items-center mx-auto w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 <ThreeDots
                   visible={true}
                   height="80"
@@ -351,48 +354,53 @@ const ImageUploader = () => {
                   wrapperStyle={{}}
                   wrapperClass=""
                 />
+                <p classname="max-sm:text-xs text-black text-center text-sm">
+                  Good things takes time but it's worth! *10-15 seconds*{" "}
+                </p>
               </div>
             )}
           </div>
           <div>
-          {analysisResults.map((result, index) => (
-  <div className="w-full" key={index}>
-    <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
-    <div className="card px-4 max-md:px-2">
-      <div
-        className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-          result.XP >= 1 && result.XP <= 3
-            ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-            : result.XP >= 4 && result.XP <= 7
-            ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
-            : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-        } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
-      >
-        XP: {result.XP}
-      </div>
-      <div
-        className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-          result.status !== "healthy"
-            ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-            : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-        }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
-      >
-        Status: {result.status !== "healthy" ? result.status : "Healthy"}
-      </div>
-      <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
-        <span className="font-bold text-lg max-sm:text-md">Description:</span>{" "}
-        {result.description}
-      </p>
-      <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+            {analysisResults.map((result, index) => (
+              <div className="w-full" key={index}>
+                <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
+                <div className="card px-4 max-md:px-2">
+                  <div
+                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+                      result.XP >= 1 && result.XP <= 3
+                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+                        : result.XP >= 4 && result.XP <= 7
+                        ? "bg-yellow-100 rounded-md text-yellow-900 border-l-4 border-yellow-900"
+                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+                    } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+                  >
+                    XP: {result.XP}
+                  </div>
+                  <div
+                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+                      result.status !== "healthy"
+                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+                    }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+                  >
+                    Status:{" "}
+                    {result.status !== "healthy" ? result.status : "Healthy"}
+                  </div>
+                  <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+                    <span className="font-bold text-lg max-sm:text-md">
+                      Description:
+                    </span>{" "}
+                    {result.description}
+                  </p>
+                  <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
                       Remedies and Solutions:
                     </span>{" "}
                     {result.remedies}
                   </p>
-    </div>
-  </div>
-))}
-
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -1,11 +1,15 @@
 "use client";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from "@google/generative-ai";
 import { useRouter } from "next/navigation";
 import {
   getFirestore,
@@ -63,7 +67,7 @@ const ImageUploader = () => {
           try {
             const docRef = doc(db, "users", user.uid);
             const docSnap = await getDoc(docRef);
-        
+
             if (!docSnap.exists()) {
               await setDoc(docRef, {
                 displayName: user.displayName,
@@ -83,7 +87,7 @@ const ImageUploader = () => {
         // Fetch user's XP from Firestore
       } else {
         setUser(null);
-        router.push('/login')
+        router.push("/login");
 
         // Reset user's XP if not logged in
       }
@@ -186,7 +190,7 @@ const ImageUploader = () => {
         fetchAnalysisData(file);
       } else {
         console.error("User not found in session storage");
-        router.push('/login');
+        router.push("/login");
       }
     } catch (error) {
       console.error("Error updating image URL: ", error);
@@ -195,7 +199,9 @@ const ImageUploader = () => {
   const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEYI);
+      const genAI = new GoogleGenerativeAI(
+        process.env.NEXT_PUBLIC_GOOGLE_API_KEYI
+      );
       const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
       const generationConfig = {
@@ -228,8 +234,8 @@ const ImageUploader = () => {
       const parts = [
         await fileToGenerativePart(file),
         {
-          text: "Analyse the skin of this human and give output eg in json format {status:'dark/oily/clear/acne/mild/dry/etc  depending on skin type complexion and texture' ,description:'The skin appears to be healthy and clear and more description abt the person skin', remedies:'suggest some remedies to the person to take care of their skin and get a glow',XP:' the value ranges from 1-10 depending on the skin health of the person pls give lesser XP if they have even slightly oily/dry/dark skin' products:'suggest some good and trusted skincare prodcust in points space seperated  ' } also pls dont halucinate give unique response for new images"
-        }
+          text: "Analyse the skin of this human and give output eg in json format {status:'dark/oily/clear/acne/mild/dry/etc  depending on skin type complexion and texture' ,description:'The skin appears to be healthy and clear and more description abt the person skin', remedies:'suggest some remedies to the person to take care of their skin and get a glow',XP:' the value ranges from 1-10 depending on the skin health of the person pls give lesser XP if they have even slightly oily/dry/dark skin' products:'suggest some good and trusted skincare prodcust in points space seperated  ' } also pls dont halucinate give unique response for new images",
+        },
       ];
 
       const result = await model.generateContent({
@@ -237,18 +243,15 @@ const ImageUploader = () => {
         generationConfig,
         safetySettings,
       });
-      const data = result.response.text() ;
+      const data = result.response.text();
       const data2 = result.response[1];
       const data3 = JSON.parse(data);
       setAnalysisResults([...analysisResults, data3]);
       console.log(analysisResults);
-      console.log(data2)
+      console.log(data2);
 
+      // regex error fix end
 
-
-
-// regex error fix end
- 
       // Update analysisResults state with parsed result
       // Parse and set analysis results
       if (data3.XP) {
@@ -263,7 +266,7 @@ const ImageUploader = () => {
   const fileToGenerativePart = async (file) => {
     const base64EncodedDataPromise = new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.onloadend = () => resolve(reader.result.split(",")[1]);
       reader.readAsDataURL(file);
     });
     return {
@@ -304,7 +307,7 @@ const ImageUploader = () => {
   }, []);
   return (
     <>
-    <Analytics />
+      <Analytics />
       <div className="greenball blur-3xl bg-red-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div className="">
@@ -357,7 +360,7 @@ const ImageUploader = () => {
               </>
             )}
             {loading && (
-              <div className="loader mb-8  mx-auto   text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div className="loader mb-8  mx-auto w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 <ThreeDots
                   visible={true}
                   height="80"
@@ -368,6 +371,9 @@ const ImageUploader = () => {
                   wrapperStyle={{}}
                   wrapperClass=""
                 />
+                <p classname="max-sm:text-xs text-black text-center text-sm">
+                  Good things takes time but it's worth! *10-15 seconds*{" "}
+                </p>
               </div>
             )}
           </div>
@@ -388,15 +394,23 @@ const ImageUploader = () => {
                     XP: {result.XP}
                   </div>
                   <div
-  className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
-    result.status === "oily" || result.status === "dark" ||result.status === "dry" || result.status === "acne"
-      ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
-      : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
-  }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
->
-  Status: {result.status === "oily" || result.status === "dark" || result.status === "dry" || result.status === "acne" ? "Unhealthy" : "Healthy"}
-</div>
-
+                    className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
+                      result.status === "oily" ||
+                      result.status === "dark" ||
+                      result.status === "dry" ||
+                      result.status === "acne"
+                        ? "bg-red-100 rounded-md text-red-900 border-l-4 border-red-900"
+                        : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
+                    }  shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
+                  >
+                    Status:{" "}
+                    {result.status === "oily" ||
+                    result.status === "dark" ||
+                    result.status === "dry" ||
+                    result.status === "acne"
+                      ? "Unhealthy"
+                      : "Healthy"}
+                  </div>
 
                   <p className="text-md max-sm:text-sm text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
