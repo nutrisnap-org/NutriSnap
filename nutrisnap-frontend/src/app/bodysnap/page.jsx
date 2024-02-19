@@ -159,6 +159,7 @@ const ImageUploader = () => {
     const file = e.target.files[0];
     const formData = new FormData();
 
+    fetchAnalysisData(file);
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl");
     async function generateHash(data) {
@@ -178,7 +179,9 @@ const ImageUploader = () => {
       const imageUrlHash = await generateHash(newImageUrl);
 
       setImageUrls([...imageUrls, imageUrlHash]);
-      updateUserDataWithImageUrl(newImageUrl, file);
+      console.log(imageUrlHash);
+
+      updateUserDataWithImageUrl(imageUrlHash);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
@@ -191,7 +194,6 @@ const ImageUploader = () => {
           bodysnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
-        fetchAnalysisData(file);
       } else {
         console.error("User not found in session storage");
       }
@@ -318,10 +320,10 @@ const ImageUploader = () => {
       <div className="greenball blur-3xl bg-yellow-400/20 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div>
-        <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
+        <div className="px-6 mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
           Ready to send us your <span className="yellowtext">"BodySnap"</span> ?
         </div>
-        <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
+        <p className="px-6 text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
           Choose a file or open camera to send us pics to analyze the food and
           provide you the necesary data
         </p>
