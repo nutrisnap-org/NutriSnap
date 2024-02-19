@@ -2,6 +2,7 @@
 import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
+import bcrypt from "bcryptjs";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged, reload } from "firebase/auth";
@@ -40,6 +41,18 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const ImageUploader = () => {
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
@@ -106,7 +119,7 @@ const ImageUploader = () => {
     }
   };
   const reload = () => {
-     window.location.reload();
+    window.location.reload();
   };
   useEffect(
     () => {
@@ -150,11 +163,16 @@ const ImageUploader = () => {
   };
 
   const uploadImage = async (e) => {
+    handleFileInputChange(e);
+
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
-
+    async function generateHash(data) {
+      const saltRounds = 1; // Adjust the salt rounds as needed
+      return await bcrypt.hash(data, saltRounds);
+    }
     try {
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload",
@@ -165,11 +183,11 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
+      const imageUrlHash = await generateHash(newImageUrl);
 
-      // Update state with new image URL
-      setImageUrls([...imageUrls, newImageUrl]);
+      setImageUrls([...imageUrls, imageUrlHash]);
 
-      updateUserDataWithImageUrl(newImageUrl, file);
+      updateUserDataWithImageUrl(imageUrlHash);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
@@ -331,22 +349,24 @@ const ImageUploader = () => {
                 </label>
                 {imageUrls.length > 0 && (
                   <div>
-                    {imageUrls.map((url, index) => (
-                      <div key={index} className="m-8">
-                        <Image
-                          cloudName="dmdhep1qp"
-                          publicId={url}
-                          width="400"
-                          crop="cover"
+                    {previewImage && (
+                      <div className="m-8">
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="w-400 h-400"
                         />
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
             </div>
             {imageUrls.length > 0 && !loading && (
-              <div onClick={reload} className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div
+                onClick={reload}
+                className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
+              >
                 Analyze
               </div>
             )}

@@ -186,7 +186,7 @@ const ImageUploader = () => {
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl, file) => {
+  const updateUserDataWithImageUrl = async (imageUrl) => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {

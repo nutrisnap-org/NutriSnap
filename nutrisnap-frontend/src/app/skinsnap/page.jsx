@@ -5,6 +5,7 @@ import { initializeApp } from "firebase/app";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import bcrypt from "bcryptjs";
 import {
   GoogleGenerativeAI,
   HarmCategory,
@@ -53,6 +54,18 @@ const divShot = () => {
 };
 
 const ImageUploader = () => {
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -94,8 +107,8 @@ const ImageUploader = () => {
     });
     return () => unsubscribe();
   }, []);
-    const reload = () => {
-     window.location.reload();
+  const reload = () => {
+    window.location.reload();
   };
   const fetchUserXP = async () => {
     try {
@@ -153,10 +166,15 @@ const ImageUploader = () => {
   };
 
   const uploadImage = async (e) => {
+    handleFileInputChange(e);
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
+    async function generateHash(data) {
+      const saltRounds = 1; // Adjust the salt rounds as needed
+      return await bcrypt.hash(data, saltRounds);
+    }
 
     try {
       setLoading(true);
@@ -169,12 +187,12 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
+      const imageUrlHash = await generateHash(newImageUrl);
 
-      // Update state with new image URL
-      setImageUrls([...imageUrls, newImageUrl]);
+      setImageUrls([...imageUrls, imageUrlHash]);
 
       // Update Firestore document with image URL
-      updateUserDataWithImageUrl(newImageUrl, file);
+      updateUserDataWithImageUrl(imageUrlHash);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
@@ -337,18 +355,25 @@ const ImageUploader = () => {
                 </label>
                 {imageUrls.length > 0 && (
                   <div>
-                    {imageUrls.map((url, index) => (
-                      <div key={index} className="m-8">
-                        <img src={imageUrls} alt="" />
+                    {previewImage && (
+                      <div className="m-8">
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="w-400 h-400"
+                        />
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
             </div>
             {imageUrls.length > 0 && !loading && (
               <>
-                <div onClick={reload} className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+                <div
+                  onClick={reload}
+                  className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
+                >
                   Analyze
                 </div>
                 <div
