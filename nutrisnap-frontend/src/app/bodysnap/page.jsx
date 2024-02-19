@@ -176,7 +176,6 @@ const ImageUploader = () => {
       const data = await response.json();
       const newImageUrl = data.secure_url;
       const imageUrlHash = await generateHash(newImageUrl);
-      console.log("Image URL hash: ", imageUrlHash);
 
       setImageUrls([...imageUrls, imageUrlHash]);
       updateUserDataWithImageUrl(newImageUrl, file);

@@ -147,7 +147,7 @@ const Hero = () => {
               className="mx-auto yoga -mt-15"
             />
           </motion.div>
-          <div className="text-center">
+          {/* <div className="text-center">
             <div
               className="relative"
               style={{ paddingBottom: "56.25%", height: 0 }}
@@ -172,7 +172,7 @@ const Hero = () => {
             >
               Download Video
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
