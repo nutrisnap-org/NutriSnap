@@ -145,15 +145,17 @@ const ImageUploader = () => {
     return await bcrypt.hash(data, saltRounds);
   }
 
-  const uploadImage = async (e) => {
+    const uploadImage = async (e) => {
+    handleFileInputChange(e);
+
     const file = e.target.files[0];
     const formData = new FormData();
-
     formData.append("file", file);
-    formData.append("upload_preset", "lodrnpjl");
-
-    reader.readAsDataURL(file);
-
+    formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
+    async function generateHash(data) {
+      const saltRounds = 1; // Adjust the salt rounds as needed
+      return await bcrypt.hash(data, saltRounds);
+    }
     try {
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload",
@@ -165,16 +167,17 @@ const ImageUploader = () => {
       const data = await response.json();
       const newImageUrl = data.secure_url;
       fetchAnalysisData(file);
-      const hashedImageUrl = await generateHash(newImageUrl);
-      console.log(hashedImageUrl);
-      setImageUrls([...imageUrls, hashedImageUrl]);
-      updateUserDataWithImageUrl(newImageUrl, file);
+      const imageUrlHash = await generateHash(newImageUrl);
+
+      setImageUrls([...imageUrls, imageUrlHash]);
+
+      updateUserDataWithImageUrl(imageUrlHash);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl, file) => {
+  const updateUserDataWithImageUrl = async (imageUrl) => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
