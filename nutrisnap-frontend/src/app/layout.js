@@ -1,4 +1,5 @@
 import { DM_Sans } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css";
 import Bot from "./components/Bot/Bot.js";
 import Header from "./components/Header/Header";
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Header />
         {children}
+        <SpeedInsights />
         <Bot />
         <Footer />
       </body>
