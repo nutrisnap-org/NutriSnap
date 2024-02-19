@@ -19,7 +19,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { Image } from "cloudinary-react";
 import { gsap } from "gsap";
-
+import bcrypt from "bcryptjs";
 // import fs from 'fs';
 import { useRouter } from "next/navigation";
 
@@ -48,6 +48,7 @@ const ImageUploader = () => {
   const [analysisResults, setAnalysisResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [file, setFile] = useState(null);
   const [userXP, setUserXP] = useState();
   const [data64, setData64] = useState(null);
   // const router = useRouter();
@@ -109,8 +110,8 @@ const ImageUploader = () => {
       console.error("Error fetching user XP:", error);
     }
   };
-    const reload = () => {
-     window.location.reload();
+  const reload = () => {
+    window.location.reload();
   };
 
   const updateUserXP = async (xpToAdd) => {
@@ -140,9 +141,13 @@ const ImageUploader = () => {
       console.error("Error updating user XP:", error);
     }
   };
+  async function generateHash(data) {
+    const saltRounds = 10;
+    return await bcrypt.hash(data, saltRounds);
+  }
 
   const uploadImage = async (e) => {
-    const file = e.target.files[0];
+    setFile(e.target.files[0]);
     const formData = new FormData();
 
     formData.append("file", file);
@@ -159,7 +164,9 @@ const ImageUploader = () => {
       const data = await response.json();
       const newImageUrl = data.secure_url;
 
-      setImageUrls([...imageUrls, newImageUrl]);
+      const hashedImageUrl = await generateHash(newImageUrl);
+      console.log(hashedImageUrl);
+      setImageUrls([...imageUrls, hashedImageUrl]);
       updateUserDataWithImageUrl(newImageUrl, file);
     } catch (err) {
       console.error("Error uploading image: ", err);
@@ -323,22 +330,16 @@ const ImageUploader = () => {
                 </label>
                 {imageUrls.length > 0 && (
                   <div>
-                    {imageUrls.map((url, index) => (
-                      <div key={index} className="m-8">
-                        <Image
-                          cloudName="dmdhep1qp"
-                          publicId={url}
-                          width="400"
-                          crop="cover"
-                        />
-                      </div>
-                    ))}
+                    <img src={file} alt="img" className="m-8 rounded-md" />
                   </div>
                 )}
               </div>
             </div>
             {imageUrls.length > 0 && !loading && (
-              <div onClick={reload} className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div
+                onClick={reload}
+                className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
+              >
                 Analyze
               </div>
             )}
