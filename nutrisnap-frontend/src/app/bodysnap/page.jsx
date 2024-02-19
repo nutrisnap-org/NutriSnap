@@ -17,9 +17,10 @@ import {
 } from "@google/generative-ai";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { Image } from "cloudinary-react";
+// import { Image } from "cloudinary-react";
 import { gsap } from "gsap";
 import bcrypt from "bcryptjs";
+
 // import fs from 'fs';
 import { useRouter } from "next/navigation";
 
@@ -44,11 +45,22 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const ImageUploader = () => {
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
-  const [file, setFile] = useState(null);
   const [userXP, setUserXP] = useState();
   const [data64, setData64] = useState(null);
   // const router = useRouter();
@@ -141,18 +153,18 @@ const ImageUploader = () => {
       console.error("Error updating user XP:", error);
     }
   };
-  async function generateHash(data) {
-    const saltRounds = 10;
-    return await bcrypt.hash(data, saltRounds);
-  }
 
   const uploadImage = async (e) => {
-    setFile(e.target.files[0]);
+    handleFileInputChange(e);
+    const file = e.target.files[0];
     const formData = new FormData();
 
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl");
-
+    async function generateHash(data) {
+      const saltRounds = 10; // Adjust the salt rounds as needed
+      return await bcrypt.hash(data, saltRounds);
+    }
     try {
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload",
@@ -163,10 +175,10 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
+      const imageUrlHash = await generateHash(newImageUrl);
+      console.log("Image URL hash: ", imageUrlHash);
 
-      const hashedImageUrl = await generateHash(newImageUrl);
-      console.log(hashedImageUrl);
-      setImageUrls([...imageUrls, hashedImageUrl]);
+      setImageUrls([...imageUrls, imageUrlHash]);
       updateUserDataWithImageUrl(newImageUrl, file);
     } catch (err) {
       console.error("Error uploading image: ", err);
@@ -263,7 +275,10 @@ const ImageUploader = () => {
       reader.readAsDataURL(file);
     });
     return {
-      inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+      inlineData: {
+        data: await base64EncodedDataPromise,
+        mimeType: file.type,
+      },
     };
   };
   useEffect(() => {
@@ -330,7 +345,15 @@ const ImageUploader = () => {
                 </label>
                 {imageUrls.length > 0 && (
                   <div>
-                    <img src={file} alt="img" className="m-8 rounded-md" />
+                    {previewImage && (
+                      <div className="m-8">
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="w-400 h-400"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
