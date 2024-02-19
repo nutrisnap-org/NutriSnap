@@ -179,7 +179,6 @@ const ImageUploader = () => {
       const imageUrlHash = await generateHash(newImageUrl);
 
       setImageUrls([...imageUrls, imageUrlHash]);
-      console.log(imageUrlHash);
 
       updateUserDataWithImageUrl(imageUrlHash);
     } catch (err) {
