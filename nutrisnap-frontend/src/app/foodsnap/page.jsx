@@ -183,6 +183,7 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
+      fetchAnalysisData(file);
       const imageUrlHash = await generateHash(newImageUrl);
 
       setImageUrls([...imageUrls, imageUrlHash]);
@@ -197,7 +198,7 @@ const ImageUploader = () => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
-          bodysnapUrls: arrayUnion(imageUrl),
+          foodsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
         fetchAnalysisData(file);

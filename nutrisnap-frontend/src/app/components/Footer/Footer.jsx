@@ -1,12 +1,12 @@
 import React from "react";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 const Footer = () => {
   return (
     <div>
       <footer className="bg-gray-900 bg-opacity-30 text-center justify-center dark:bg-transparent text-black lg:text-left mt-20">
         <div className="flex items-center justify-center border-b-2 border-neutral-700 p-6 dark:border-neutral-500 lg:justify-between">
           <div className="mr-12 hidden lg:block">
-          <Analytics />
+            <Analytics />
             <span>Get connected with us on social networks:</span>
           </div>
           <div className="flex justify-center">
@@ -139,23 +139,26 @@ const Footer = () => {
                 />
                 Prathik Shetty
               </p>
-              <a target="_blank" href="https://rahulol.me" ><p className="mb-4 flex items-center justify-center md:justify-start">
-                <img
-                  src="/rahul.jpeg"
-                  alt=""
-                  className="w-8 mr-2 rounded-full "
-                />
-                Rahul Singh
-              </p> </a>
-              <p className="mb-4 flex items-center justify-center md:justify-start">
-                <img
-                  src="/rishabh.jpeg"
-                  alt=""
-                  className="w-8 mr-2 rounded-full"
-                />
-                Rishabh Pandey
-              </p>
-              
+              <a target="_blank" href="https://rahulol.me">
+                <p className="mb-4 flex items-center justify-center md:justify-start">
+                  <img
+                    src="/rahul.jpeg"
+                    alt=""
+                    className="w-8 mr-2 rounded-full "
+                  />
+                  Rahul Singh
+                </p>{" "}
+              </a>
+              <a target="_blank" href="https://rizzabh.xyz">
+                <p className="mb-4 flex items-center justify-center md:justify-start">
+                  <img
+                    src="/rishabh.jpeg"
+                    alt=""
+                    className="w-8 mr-2 rounded-full"
+                  />
+                  Rishabh Pandey
+                </p>
+              </a>
             </div>
           </div>
         </div>

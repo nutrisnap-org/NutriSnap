@@ -17,10 +17,9 @@ import {
 } from "@google/generative-ai";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-// import { Image } from "cloudinary-react";
+import { Image } from "cloudinary-react";
 import { gsap } from "gsap";
 import bcrypt from "bcryptjs";
-
 // import fs from 'fs';
 import { useRouter } from "next/navigation";
 
@@ -45,18 +44,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const ImageUploader = () => {
-  const [previewImage, setPreviewImage] = useState(null);
-
-  const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -153,19 +140,20 @@ const ImageUploader = () => {
       console.error("Error updating user XP:", error);
     }
   };
+  async function generateHash(data) {
+    const saltRounds = 10;
+    return await bcrypt.hash(data, saltRounds);
+  }
 
   const uploadImage = async (e) => {
-    handleFileInputChange(e);
     const file = e.target.files[0];
     const formData = new FormData();
 
-    fetchAnalysisData(file);
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl");
-    async function generateHash(data) {
-      const saltRounds = 1; // Adjust the salt rounds as needed
-      return await bcrypt.hash(data, saltRounds);
-    }
+
+    reader.readAsDataURL(file);
+
     try {
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload",
@@ -176,17 +164,17 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
-      const imageUrlHash = await generateHash(newImageUrl);
-
-      setImageUrls([...imageUrls, imageUrlHash]);
-
-      updateUserDataWithImageUrl(imageUrlHash);
+      fetchAnalysisData(file);
+      const hashedImageUrl = await generateHash(newImageUrl);
+      console.log(hashedImageUrl);
+      setImageUrls([...imageUrls, hashedImageUrl]);
+      updateUserDataWithImageUrl(newImageUrl, file);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl) => {
+  const updateUserDataWithImageUrl = async (imageUrl, file) => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
@@ -275,10 +263,7 @@ const ImageUploader = () => {
       reader.readAsDataURL(file);
     });
     return {
-      inlineData: {
-        data: await base64EncodedDataPromise,
-        mimeType: file.type,
-      },
+      inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
     };
   };
   useEffect(() => {
@@ -313,16 +298,17 @@ const ImageUploader = () => {
       });
     });
   }, []);
+
   return (
     <>
       <Analytics />
       <div className="greenball blur-3xl bg-yellow-400/20 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div>
-        <div className="px-6 mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
+        <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10 leading-relaxed">
           Ready to send us your <span className="yellowtext">"BodySnap"</span> ?
         </div>
-        <p className="px-6 text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
+        <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
           Choose a file or open camera to send us pics to analyze the food and
           provide you the necesary data
         </p>
@@ -345,15 +331,7 @@ const ImageUploader = () => {
                 </label>
                 {imageUrls.length > 0 && (
                   <div>
-                    {previewImage && (
-                      <div className="m-8">
-                        <img
-                          src={previewImage}
-                          alt="Preview"
-                          className="w-400 h-400"
-                        />
-                      </div>
-                    )}
+                    <img src={imageData} alt="img" className="m-8 rounded-md" />
                   </div>
                 )}
               </div>

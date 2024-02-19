@@ -187,6 +187,7 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
+      fetchAnalysisData(file);
       const imageUrlHash = await generateHash(newImageUrl);
 
       setImageUrls([...imageUrls, imageUrlHash]);
@@ -202,7 +203,7 @@ const ImageUploader = () => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
-          bodysnapUrls: arrayUnion(imageUrl),
+          SkinsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
         fetchAnalysisData(file);
@@ -329,10 +330,10 @@ const ImageUploader = () => {
       <div className="greenball blur-3xl bg-red-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div className="">
-        <div className=" mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10">
+        <div className="px-6 mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10">
           Ready to Analyse your <span className="greentext">"Skin snap"</span> ?
         </div>
-        <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
+        <p className="px-12 text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
           Choose a file or open camera to send us pics to get a skin care
           routine and analyse your skin using our AI
         </p>
