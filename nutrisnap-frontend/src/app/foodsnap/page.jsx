@@ -194,14 +194,14 @@ const ImageUploader = () => {
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl, file) => {
+  const updateUserDataWithImageUrl = async (imageUrl) => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
           foodsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
-        fetchAnalysisData(file);
+        
       } else {
         console.error("User not found in session storage");
       }
