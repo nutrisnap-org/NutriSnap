@@ -163,7 +163,7 @@ const ImageUploader = () => {
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl");
     async function generateHash(data) {
-      const saltRounds = 10; // Adjust the salt rounds as needed
+      const saltRounds = 1; // Adjust the salt rounds as needed
       return await bcrypt.hash(data, saltRounds);
     }
     try {
