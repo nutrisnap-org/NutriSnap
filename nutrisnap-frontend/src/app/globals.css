@@ -16,23 +16,23 @@
   }
 }
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #bf0feb;
+  background: #494949;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #bf0feb;
+  background: #6b6b6b;
   border-radius: 6px;
 }
 
 /* Handle on active/dragging */
 ::-webkit-scrollbar-thumb:active {
-  background-color: #bf0feb;
+  background-color: #6b6b6b;
 }
 
 /* Track */
@@ -57,6 +57,9 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+.search_input {
+  @apply block w-4/12 max-md:w-7/12 max-sm:w-8/12 rounded-md border border-gray-200 bg-white py-2.5 pl-5 pr-12 text-sm shadow-lg font-medium focus:border-black focus:outline-none focus:ring-0;
 }
 .ball{
   z-index: -1;

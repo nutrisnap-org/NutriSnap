@@ -201,7 +201,6 @@ const ImageUploader = () => {
           foodsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
-        
       } else {
         console.error("User not found in session storage");
       }
@@ -481,7 +480,7 @@ const ImageUploader = () => {
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="/ranking">
+            <a href="/scoreboard">
               <img
                 src="/nutricon.png"
                 alt=""
@@ -489,7 +488,7 @@ const ImageUploader = () => {
                 width={30}
                 className={` mx-auto opacity-40`}
               />
-              <div className="text-xs text-center">Nutricon</div>
+              <div className="text-xs text-center">Scoreboard</div>
             </a>
           </div>
         </div>
