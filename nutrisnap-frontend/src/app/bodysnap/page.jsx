@@ -352,7 +352,15 @@ const ImageUploader = () => {
                 </label>
                 {imageUrls.length > 0 && (
                   <div>
-                    <img src={imageData} alt="img" className="m-8 rounded-md" />
+                    {previewImage && (
+                      <div className="m-8">
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="w-400 h-400"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
