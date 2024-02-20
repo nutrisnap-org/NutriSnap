@@ -48,7 +48,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="/ranking">
+            <a href="/scoreboard">
               <img
                 src="/nutricon.png"
                 alt=""
