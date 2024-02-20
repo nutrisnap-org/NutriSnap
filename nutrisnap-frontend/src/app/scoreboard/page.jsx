@@ -124,7 +124,7 @@ const UserRankingPage = () => {
     <>
       <div className="blueball blur-3xl bg-cyan-400/20 w-96  h-96 fixed top-0 left-0 rounded-full"></div>
 
-      <div className="mt-2">
+      <div className="mt-2 lg:px-36">
         <h1 className="text-7xl max-sm:text-5xl nutricon font-bold mx-auto text-center mb-2 leading-tight ">
           User Ranking
         </h1>

@@ -131,12 +131,17 @@ const Hero = () => {
               </div>
             </motion.div>
           </Link>
-          <div
+          {/* <div
             className="px-4 py-2 rounded-full mx-auto text-center border border-black w-fit m-4 cursor-pointer"
             onClick={buttons}
           >
             Health Wrapped
-          </div>
+          </div> */}
+          <a href="/scoreboard">
+            <div className="px-4 py-2 rounded-full mx-auto text-center border border-black w-fit m-4 cursor-pointer">
+              View Scoreboard
+            </div>
+          </a>
 
           <motion.div animate={floatAnimation} while={{ y: 0 }}>
             <Image
