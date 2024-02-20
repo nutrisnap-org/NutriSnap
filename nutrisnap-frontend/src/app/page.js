@@ -48,7 +48,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="/nutricon">
+            <a href="/ranking">
               <img
                 src="/nutricon.png"
                 alt=""
@@ -56,7 +56,7 @@ export default function Home() {
                 width={30}
                 className={` mx-auto opacity-40`}
               />
-              <div className="text-xs text-center">Nutricon</div>
+              <div className="text-xs text-center">Score Board</div>
             </a>
           </div>
         </div>
