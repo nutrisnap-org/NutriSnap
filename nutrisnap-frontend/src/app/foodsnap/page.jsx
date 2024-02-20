@@ -2,6 +2,7 @@
 import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
+import html2canvas from "html2canvas";
 import bcrypt from "bcryptjs";
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
@@ -42,7 +43,17 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const ImageUploader = () => {
   const [previewImage, setPreviewImage] = useState(null);
+  const divShot = () => {
+    html2canvas(document.querySelector("#capture"), {
+      imageTimeout: 20000,
+    }).then((canvas) => {
+      var link = document.createElement("a");
+      link.download = `remedies.png`;
+      link.href = canvas.toDataURL();
 
+      link.click();
+    });
+  };
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -363,12 +374,21 @@ const ImageUploader = () => {
               </div>
             </div>
             {imageUrls.length > 0 && !loading && (
-              <div
-                onClick={reload}
-                className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
-              >
-                Analyze
-              </div>
+              <>
+                <div
+                  onClick={reload}
+                  className=" analyze-button flex mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
+                >
+                  <img src="/refresh.png" alt="" className="mr-2" /> Try
+                  Refreshing
+                </div>
+                <div
+                  className="Download Remedies mb-8 cursor-pointer mx-auto px-4 py-2 text-black border rounded-full w-fit border-black"
+                  onClick={divShot}
+                >
+                  Download Remedies
+                </div>
+              </>
             )}
             {loading && (
               <div className="loader mb-8  mx-auto w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
@@ -390,7 +410,7 @@ const ImageUploader = () => {
           </div>
           <div>
             {analysisResults.map((result, index) => (
-              <div className="w-full">
+              <div className="w-full" id="capture">
                 <div className="text-4xl mt-4 mb-4 px-4 max-md:px-2">
                   Report:
                 </div>
