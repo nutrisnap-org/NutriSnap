@@ -481,7 +481,7 @@ const ImageUploader = () => {
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="/nutricon">
+            <a href="/ranking">
               <img
                 src="/nutricon.png"
                 alt=""
