@@ -1,4 +1,5 @@
 "use client";
+import { Analytics } from '@vercel/analytics/react';
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import gsap from "gsap";
@@ -122,6 +123,7 @@ const UserRankingPage = () => {
   }, []);
   return (
     <>
+    <Analytics />
       <div className="blueball blur-3xl bg-cyan-400/20 w-96  h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div className="mt-2 lg:px-36">
