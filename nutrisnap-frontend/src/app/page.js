@@ -1,10 +1,21 @@
+"use client"
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Footer from "./components/Footer/Footer";
 export default function Home() {
-  if(navigator.userAgent.includes("Instagram")){
-    window.location.href = "https://nutrisnap.vercel.app";
-}
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if the user agent includes "Instagram"
+    const isInstagram = navigator.userAgent.includes('Instagram');
+
+    // If the user is accessing from Instagram, redirect to external browser
+    if (isInstagram) {
+      window.location.href = 'https://nutrisnap.vercel.app';
+    }
+  }, []);
   return (
     <>
     <main className="flex flex-col items-center justify-between px-4">
