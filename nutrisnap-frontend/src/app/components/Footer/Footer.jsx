@@ -142,11 +142,11 @@ const Footer = () => {
               <a target="_blank" href="https://rahulol.me">
                 <p className="mb-4 flex items-center justify-center md:justify-start">
                   <img
-                    src="https://ibb.co/mSTNXpH"
+                    src="/rahul.jpeg"
                     alt=""
                     className="w-8 mr-2 rounded-full "
                   />
-                  Tarun Shrivastav
+                 Utsavraj Singh
                 </p>{" "}
               </a>
               <a target="_blank" href="https://rizzabh.xyz">
