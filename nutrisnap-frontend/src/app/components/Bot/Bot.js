@@ -28,7 +28,9 @@ const Bot = () => {
       {isActive && (
         <>
           <iframe
-         
+            className="bottom-0 max-sm:w-11/12 max-sm:m-2 right-0 fixed m-8 rounded-md backdrop-blur-md shadow-xl border border-violet-600/30"
+            width={450}
+            height={560}
             src="https://nutrisnap-chat.vercel.app/"
           ></iframe>
         </>
