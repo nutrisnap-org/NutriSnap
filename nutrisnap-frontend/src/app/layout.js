@@ -31,16 +31,13 @@ export default function RootLayout({ children }) {
         'googlechrome://nutrisnap.tech',
         'firefox://open-url?url=nutrisnap.tech',
         'brave://open-url?url=nutrisnap.tech',
-        'touch-https://nutrisnap.tech',
-        'microsoft-edge-https://nutrisnap.tech',
-        'ddgQuickLink://nutrisnap.tech'
       ];
 
       // Try opening the URL in different browsers
       for (let browser of browsers) {
         try {
           // Open the URL in the current browser
-          window.location.href = browser + encodeURIComponent(url);
+          window.location.href = browser 
           // If successful, break out of the loop
           break;
         } catch (error) {
