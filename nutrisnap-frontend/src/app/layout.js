@@ -28,12 +28,12 @@ export default function RootLayout({ children }) {
     const redirectToBrowser = () => {
       const url = 'https://nutrisnap.tech'; // Replace with your URL
       const browsers = [
-        'googlechrome://',
-        'firefox://open-url?url=',
-        'brave://open-url?url=',
-        'touch-',
-        'microsoft-edge-https://',
-        'ddgQuickLink://'
+        'googlechrome://nutrisnap.tech',
+        'firefox://open-url?url=nutrisnap.tech',
+        'brave://open-url?url=nutrisnap.tech',
+        'touch-https://nutrisnap.tech',
+        'microsoft-edge-https://nutrisnap.tech',
+        'ddgQuickLink://nutrisnap.tech'
       ];
 
       // Try opening the URL in different browsers
