@@ -2,10 +2,17 @@
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect , useState } from "react";
 import Footer from "./components/Footer/Footer";
 export default function Home() {
-  const isInstagramInAppBrowser = navigator.userAgent.includes("Instagram");
+  const [isInstagramInAppBrowser, setIsInstagramInAppBrowser] = useState(false);
+
+  useEffect(() => {
+    // Check if navigator is available (i.e., if code is running in the browser)
+    if (typeof navigator !== "undefined") {
+      setIsInstagramInAppBrowser(navigator.userAgent.includes("Instagram"));
+    }
+  }, []);
   return (
     <>
     <main className="flex flex-col items-center justify-between px-4">
