@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import { useEffect , useState } from "react";
 import Footer from "./components/Footer/Footer";
 export default function Home() {
-  const [isInstagramInAppBrowser, setIsInstagramInAppBrowser] = useState(false);
-
-  useEffect(() => {
-    // Check if navigator is available (i.e., if code is running in the browser)
-    if (typeof navigator !== "undefined") {
-      setIsInstagramInAppBrowser(navigator.userAgent.includes("Instagram"));
+useEffect(() => {
+    // Check if the user is accessing the website through Instagram's in-app browser
+    if (typeof navigator !== "undefined" && navigator.userAgent.includes("Instagram")) {
+      // Redirect the user to the DummyBytes API
+      window.location.href = "https://mywebsite.com/DummyBytes";
     }
   }, []);
   return (
@@ -72,13 +71,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-        {isInstagramInAppBrowser && (
-        <div className="mt-4 text-center">
-          <a href={location.href} target="_blank" download>
-            Open in browser
-          </a>
-        </div>
-      )}
+      
     </>
   );
 }
