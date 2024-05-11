@@ -30,10 +30,22 @@ export default function RootLayout({ children }) {
         {!isIPhone && isInstagramInAppBrowser && (
           <div className="mt-4 text-center">
             <a href={location.href} target="_blank" download>
-              Open in browser (Android)
+            Click to Open in browser 
             </a>
           </div>
         )}
+
+ {/* Render separate button to open Safari directly */}
+ {isIPhone && isInstagramInAppBrowser  && (
+          <div className="mt-4 text-center">
+            <button onClick={() => {
+              window.location.href = 'com-apple-mobilesafari-tab:https://nutrisnap.tech'; // Redirect to Safari
+            }}>
+              Open in Safari
+            </button>
+          </div>
+        )}
+
         {/* Render the special button for iPhone users on Instagram */}
         {isIPhone && isInstagramInAppBrowser && (
           <div className="mt-4 text-center">
@@ -45,7 +57,7 @@ export default function RootLayout({ children }) {
                 window.location.href = 'intent:https://nutrisnap.tech#Intent;end';
               }
             }}>
-              Special Button for iPhone Users on Instagram
+             Click to  Open in browser Chrome
             </button>
           </div>
         )}
