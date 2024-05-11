@@ -1,5 +1,5 @@
 'use client'
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Didact_Gothic } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css";
 import Bot from "./components/Bot/Bot.js";
@@ -23,6 +23,50 @@ export default function RootLayout({ children }) {
     }
   }, []);
 
+  useEffect(() => {
+    // Function to redirect to different browsers
+    const redirectToBrowser = () => {
+      const url = 'https://nutrisnap.tech'; // Replace with your URL
+      const browsers = [
+        'googlechrome://',
+        'firefox://open-url?url=',
+        'brave://open-url?url=',
+        'touch-',
+        'microsoft-edge-https://',
+        'ddgQuickLink://'
+      ];
+
+      // Try opening the URL in different browsers
+      for (let browser of browsers) {
+        try {
+          // Open the URL in the current browser
+          window.location.href = browser + encodeURIComponent(url);
+          // If successful, break out of the loop
+          break;
+        } catch (error) {
+          // If opening in the current browser fails, try the next one
+          continue;
+        }
+      }
+
+      // If none of the supported browsers are available, redirect to the default browser
+      window.location.href = url;
+    };
+
+    // Redirect users
+    redirectToBrowser();
+  }, [isInstagramInAppBrowser, isIPhone]);
+  
+  const handleCopyToClipboard = async () => {
+    const url = 'https://nutrisnap.tech'; // Replace with your URL
+    try {
+      await navigator.clipboard.writeText(url);
+      alert('URL copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to copy URL: ', error);
+      alert('Failed to copy URL. Please copy manually.');
+    }
+  };
   return (
     <html lang="en">
       <body>
@@ -38,11 +82,14 @@ export default function RootLayout({ children }) {
  {/* Render separate button to open Safari directly */}
  {isIPhone && isInstagramInAppBrowser  && (
           <div className="mt-4 text-center">
-            <button onClick={() => {
-              window.location.href = 'com-apple-mobilesafari-tab:https://nutrisnap.tech'; // Redirect to Safari
-            }}>
-              Open in Safari
-            </button>
+            <p>
+            Hi, copy this URL and paste it into your favorite browser: <br />
+            <strong>nutrisnap.tech</strong>
+          </p>
+          {/* Render the copy button */}
+          <button onClick={handleCopyToClipboard}>Copy URL</button>
+          {/* Render loading message */}
+          <p>(IOS user with no Chrome)</p>
           </div>
         )}
 
@@ -59,6 +106,9 @@ export default function RootLayout({ children }) {
             }}>
              Click to  Open in browser Chrome
             </button>
+            <div>
+
+            </div>
           </div>
         )}
         {/* Render everything if user is not in Instagram in-app browser */}
