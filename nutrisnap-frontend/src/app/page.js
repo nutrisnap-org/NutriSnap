@@ -1,17 +1,23 @@
-"use client"
+
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
 import { useRouter } from "next/navigation";
-import { useEffect , useState } from "react";
+
+
+
 import Footer from "./components/Footer/Footer";
+export const metadata = {
+  title: "Nutrisnap",
+  description:
+    "Think of Fitness Think of Us Creation By Prathik Shetty, Rahul Singh , Rishabh Pandey",
+  image: "/logo.png",
+  url: "https://nutrisnap.vercel.app/",
+  type: "website",
+  siteName: "Nutrisnap",
+};
+
 export default function Home() {
-useEffect(() => {
-    // Check if the user is accessing the website through Instagram's in-app browser
-    if (typeof navigator !== "undefined" && navigator.userAgent.includes("Instagram")) {
-      // Redirect the user to the DummyBytes API
-      window.location.href = "https://mywebsite.com/DummyBytes";
-    }
-  }, []);
+ 
   return (
     <>
     <main className="flex flex-col items-center justify-between px-4">
@@ -71,7 +77,7 @@ useEffect(() => {
           </div>
         </div>
       </div>
-      
+        
     </>
   );
 }
