@@ -49,14 +49,12 @@ export default function RootLayout({ children }) {
         }
       }
 
-      // If none of the supported browsers are available, redirect to the default browser
-      window.location.href = url;
     };
 
     // Redirect users
     redirectToBrowser();
   }, [isInstagramInAppBrowser, isIPhone]);
-  
+
   const handleCopyToClipboard = async () => {
     const url = 'https://nutrisnap.tech'; // Replace with your URL
     try {
