@@ -206,7 +206,6 @@ const ImageUploader = () => {
           SkinsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
-        
       } else {
         console.error("User not found in session storage");
         router.push("/login");
@@ -373,9 +372,10 @@ const ImageUploader = () => {
               <>
                 <div
                   onClick={reload}
-                  className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
+                  className=" analyze-button flex mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
                 >
-                  Analyze
+                  <img src="/refresh.png" alt="" className="mr-2" /> Try
+                  Refreshing
                 </div>
                 <div
                   className="Download Remedies mb-8 cursor-pointer mx-auto px-4 py-2 text-black border rounded-full w-fit border-black"
@@ -502,7 +502,7 @@ const ImageUploader = () => {
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="/nutricon">
+            <a href="/scoreboard">
               <img
                 src="/nutricon.png"
                 alt=""
@@ -510,7 +510,7 @@ const ImageUploader = () => {
                 width={30}
                 className={` mx-auto opacity-40`}
               />
-              <div className="text-xs text-center">Nutricon</div>
+              <div className="text-xs text-center">Scoreboard</div>
             </a>
           </div>
         </div>

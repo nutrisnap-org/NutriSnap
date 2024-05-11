@@ -1,7 +1,11 @@
+"use client"
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Footer from "./components/Footer/Footer";
 export default function Home() {
+  
   return (
     <>
     <main className="flex flex-col items-center justify-between px-4">
@@ -48,7 +52,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="/nutricon">
+            <a href="/scoreboard">
               <img
                 src="/nutricon.png"
                 alt=""
@@ -56,7 +60,7 @@ export default function Home() {
                 width={30}
                 className={` mx-auto opacity-40`}
               />
-              <div className="text-xs text-center">Nutricon</div>
+              <div className="text-xs text-center">Score Board</div>
             </a>
           </div>
         </div>

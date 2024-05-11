@@ -1,31 +1,29 @@
 "use client";
 import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
+import html2canvas from "html2canvas";
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  doc,
-  updateDoc,
-  arrayUnion,
-  setDoc,
-  getDoc,
-} from "firebase/firestore";
+import bcrypt from "bcryptjs";
+import { Image } from "cloudinary-react";
+import { ThreeDots } from "react-loader-spinner";
+import { getAuth, signOut, onAuthStateChanged, reload } from "firebase/auth";
 import {
   GoogleGenerativeAI,
   HarmCategory,
   HarmBlockThreshold,
 } from "@google/generative-ai";
-import { ThreeDots } from "react-loader-spinner";
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { Image } from "cloudinary-react";
-import { gsap } from "gsap";
-import bcrypt from "bcryptjs";
-// import fs from 'fs';
+import {
+  setDoc,
+  getFirestore,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc, // Add getDoc function import
+} from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { gsap } from "gsap";
 
-// Initialize Firebase app
 const firebaseConfig = {
-  // Your Firebase config here
   apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
 
   authDomain: "nutrisnap-e6cf9.firebaseapp.com",
@@ -44,14 +42,34 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const ImageUploader = () => {
+  const [previewImage, setPreviewImage] = useState(null);
+  const divShot = () => {
+    html2canvas(document.querySelector("#capture"), {
+      imageTimeout: 20000,
+    }).then((canvas) => {
+      var link = document.createElement("a");
+      link.download = `remedies.png`;
+      link.href = canvas.toDataURL();
+
+      link.click();
+    });
+  };
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
-  const [userXP, setUserXP] = useState();
-  const [data64, setData64] = useState(null);
-  // const router = useRouter();
-  const router = useRouter();
+  const [userXP, setUserXP] = useState(0);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -77,7 +95,7 @@ const ImageUploader = () => {
           }
         };
         saveUserDataToFirestore(user);
-        // Fetchys user's XP from Firestore
+        // Fetch user's XP from Firestore
       } else {
         setUser(null);
         router.push("/login");
@@ -87,20 +105,22 @@ const ImageUploader = () => {
     });
     return () => unsubscribe();
   }, []);
+  // useEffect(() => {
+  //   // Retrieve user from session storage
+  //   const userFromSession = sessionStorage.getItem("user");
+  //   if (userFromSession) {
+  //     setUser(JSON.parse(userFromSession));
+  //   }
+  //   if(!userFromSession){
 
-  useEffect(() => {
-    if (user) {
-      fetchUserXP();
-    }
-  }, [user]);
-
+  //   }
+  // }, []);
   const fetchUserXP = async () => {
     try {
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        // Assuming userData.xp exists in your Firestore document
         setUserXP(userData.xp);
       } else {
         console.log("No such document!");
@@ -112,18 +132,30 @@ const ImageUploader = () => {
   const reload = () => {
     window.location.reload();
   };
-
+  useEffect(
+    () => {
+      if (user) {
+        fetchUserXP();
+      }
+    },
+    [user],
+    []
+  );
   const updateUserXP = async (xpToAdd) => {
     try {
       if (user) {
+        // Fetch the current XP from the database
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const userData = docSnap.data();
           const currentXP = userData.xp || 0;
+
+          // Calculate the updated XP by adding the new XP to the current XP
           const updatedXP = currentXP + xpToAdd;
 
+          // Update the XP in the database
           await updateDoc(docRef, {
             xp: updatedXP,
           });
@@ -133,27 +165,25 @@ const ImageUploader = () => {
           console.error("No such document!");
         }
       } else {
-        console.error("User not found in session storage");
         router.push("/login");
+        console.error("User not found in session storage");
       }
     } catch (error) {
       console.error("Error updating user XP:", error);
     }
   };
-  async function generateHash(data) {
-    const saltRounds = 10;
-    return await bcrypt.hash(data, saltRounds);
-  }
 
   const uploadImage = async (e) => {
+    handleFileInputChange(e);
+
     const file = e.target.files[0];
     const formData = new FormData();
-
     formData.append("file", file);
-    formData.append("upload_preset", "lodrnpjl");
-
-    reader.readAsDataURL(file);
-
+    formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
+    async function generateHash(data) {
+      const saltRounds = 1; // Adjust the salt rounds as needed
+      return await bcrypt.hash(data, saltRounds);
+    }
     try {
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload",
@@ -165,20 +195,21 @@ const ImageUploader = () => {
       const data = await response.json();
       const newImageUrl = data.secure_url;
       fetchAnalysisData(file);
-      const hashedImageUrl = await generateHash(newImageUrl);
-      console.log(hashedImageUrl);
-      setImageUrls([...imageUrls, hashedImageUrl]);
-      updateUserDataWithImageUrl(newImageUrl, file);
+      const imageUrlHash = await generateHash(newImageUrl);
+
+      setImageUrls([...imageUrls, imageUrlHash]);
+
+      updateUserDataWithImageUrl(imageUrlHash);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl, file) => {
+  const updateUserDataWithImageUrl = async (imageUrl) => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
-          bodysnapUrls: arrayUnion(imageUrl),
+          foodsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
       } else {
@@ -331,18 +362,35 @@ const ImageUploader = () => {
                 </label>
                 {imageUrls.length > 0 && (
                   <div>
-                    <img src={imageData} alt="img" className="m-8 rounded-md" />
+                    {previewImage && (
+                      <div className="m-8">
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="w-400 h-400"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             </div>
             {imageUrls.length > 0 && !loading && (
-              <div
-                onClick={reload}
-                className=" analyze-button mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
-              >
-                Analyze
-              </div>
+              <>
+                <div
+                  onClick={reload}
+                  className=" analyze-button flex mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
+                >
+                  <img src="/refresh.png" alt="" className="mr-2" /> Try
+                  Refreshing
+                </div>
+                <div
+                  className="Download Remedies mb-8 cursor-pointer mx-auto px-4 py-2 text-black border rounded-full w-fit border-black"
+                  onClick={divShot}
+                >
+                  Download Remedies
+                </div>
+              </>
             )}
             {loading && (
               <div className="loader mb-8 items-center mx-auto w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
@@ -364,7 +412,7 @@ const ImageUploader = () => {
           </div>
           <div>
             {analysisResults.map((result, index) => (
-              <div className="w-full" key={index}>
+              <div className="w-full" key={index} id="capture">
                 <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
                 <div className="card px-4 max-md:px-2">
                   <div
@@ -446,7 +494,7 @@ const ImageUploader = () => {
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="/nutricon">
+            <a href="/scoreboard">
               <img
                 src="/nutricon.png"
                 alt=""
@@ -454,7 +502,7 @@ const ImageUploader = () => {
                 width={30}
                 className={` mx-auto opacity-40`}
               />
-              <div className="text-xs text-center">Nutricon</div>
+              <div className="text-xs text-center">Scoreboard</div>
             </a>
           </div>
         </div>

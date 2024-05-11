@@ -1,7 +1,7 @@
 
 <br />
 <div align="center">
-  <a href="https://github.com/Hrishikesh332/Nutrisnap-web">
+  <a href="https://github.com/nutrisnap-org/NutriSnap">
     <img src="https://github.com/nutrisnap-org/Nutrisnap-app/blob/main/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -69,15 +69,15 @@ The application is designed to be user-friendly and intuitive. Users can easily 
 Clone the project
 
 ```bash
-  git clone https://github.com/NutriSnap.git
+  git clone https://github.com/nutrisnap-org/NutriSnap.git
 ```
 
 Install dependencies:
 
 ```bash
-  cd NutriSnap
-  
-  pip install -r requirements.txt
+  cd nutrisnap-frontend
+  npm i
+  npm run dev
 ```
 
 ## Usecases
@@ -92,11 +92,14 @@ NFTs can be used as coupons to avail various health services. Here are some of t
 
 🥗 Diet Food Services - Get personalized discount on the Keto Diet Plans from vendors.
 
+   Skincare
+
+
 
 
 ## Feedback
 
-If you have any feedback, please reach out to us at **prathikkshetty15@gmail.com**
+If you have any feedback, please reach out to us at **prathikkshetty15@gmail.com** , **rahulsinghhh2312@gmail.com**
 
 
 

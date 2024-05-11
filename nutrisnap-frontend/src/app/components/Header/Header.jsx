@@ -150,20 +150,28 @@ const Header = () => {
                   Skin
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   href="/wearos"
                   className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
                 >
                   WearOS
                 </a>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <a
                   href="/nutricon"
                   className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
                 >
                   NutriCon
+                </a>
+              </li> */}
+              <li>
+                <a
+                  href="/scoreboard"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                >
+                  Scoreboard
                 </a>
               </li>
             </>

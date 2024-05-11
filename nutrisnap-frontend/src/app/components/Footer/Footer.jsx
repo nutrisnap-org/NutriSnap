@@ -146,7 +146,7 @@ const Footer = () => {
                     alt=""
                     className="w-8 mr-2 rounded-full "
                   />
-                  Rahul Singh
+                 Utsavraj Singh
                 </p>{" "}
               </a>
               <a target="_blank" href="https://rizzabh.xyz">
