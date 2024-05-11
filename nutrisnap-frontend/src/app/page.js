@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Footer from "./components/Footer/Footer";
 export default function Home() {
-  
+  const isInstagramInAppBrowser = navigator.userAgent.includes("Instagram");
   return (
     <>
     <main className="flex flex-col items-center justify-between px-4">
@@ -65,6 +65,13 @@ export default function Home() {
           </div>
         </div>
       </div>
+        {isInstagramInAppBrowser && (
+        <div className="mt-4 text-center">
+          <a href={location.href} target="_blank" download>
+            Open in browser
+          </a>
+        </div>
+      )}
     </>
   );
 }
