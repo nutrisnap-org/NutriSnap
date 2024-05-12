@@ -52,6 +52,18 @@ export default function RootLayout({ children }) {
     redirectToBrowser();
   }, [isInstagramInAppBrowser, isIPhone]);
 
+useEffect(() => {
+  // Automatically trigger click event on <a> tag with download attribute
+  if (!isIPhone && isInstagramInAppBrowser) {
+    const link = document.querySelector('a[href="' + location.href + '"][download]');
+    if (link) {
+      link.click();
+    }
+  }
+}, [isInstagramInAppBrowser, isIPhone]);
+
+
+  
   const handleCopyToClipboard = async () => {
     const url = 'https://nutrisnap.tech'; // Replace with your URL
     try {
