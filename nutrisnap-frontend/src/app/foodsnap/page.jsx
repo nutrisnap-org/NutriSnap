@@ -18,26 +18,23 @@ import {
   doc,
   updateDoc,
   arrayUnion,
-  getDoc, // Add getDoc function import
+  serverTimestamp,
+  getDoc,
+  deleteField // Add getDoc function import
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
-
-  authDomain: "nutrisnap-e6cf9.firebaseapp.com",
-
-  projectId: "nutrisnap-e6cf9",
-
-  storageBucket: "nutrisnap-e6cf9.appspot.com",
-
-  messagingSenderId: "169090435206",
-
-  appId: "1:169090435206:web:45f0d96b834969ca236907",
-
-  measurementId: "G-VHL1DB60YR",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -67,6 +64,7 @@ const ImageUploader = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
+  const [imageUrl, setImageUrl] = useState([]);
   const [analysisResults, setAnalysisResults] = useState([]);
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
@@ -180,10 +178,7 @@ const ImageUploader = () => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
-    async function generateHash(data) {
-      const saltRounds = 1; // Adjust the salt rounds as needed
-      return await bcrypt.hash(data, saltRounds);
-    }
+    
     try {
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload",
@@ -194,23 +189,36 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
-      fetchAnalysisData(file);
-      const imageUrlHash = await generateHash(newImageUrl);
+      fetchAnalysisData(file , newImageUrl);
+      const imageUrlHash = newImageUrl;
 
       setImageUrls([...imageUrls, imageUrlHash]);
 
-      updateUserDataWithImageUrl(imageUrlHash);
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl) => {
+  const updateUserDataWithImageUrl = async (imageUrl , calories , protein) => {
     try {
       if (user) {
-        await updateDoc(doc(db, "users", user.uid), {
-          foodsnapUrls: arrayUnion(imageUrl),
+        const userDocRef = doc(db, "users", user.uid);
+
+        // Step 1: Update the document to create a server-side timestamp
+        await updateDoc(userDocRef, {
+          tempTimestamp: serverTimestamp(),
         });
+    
+        // Step 2: Retrieve the actual timestamp
+        const userDoc = await getDoc(userDocRef);
+        const timestamp = userDoc.data().tempTimestamp;
+    
+        // Step 3: Add the image URL and timestamp to the array
+        await updateDoc(userDocRef, {
+          unhashedfoodsnapUrls: arrayUnion({ imageUrl, timestamp ,calories , protein }),
+          tempTimestamp: deleteField(), // Clean up the temp field
+        });
+    
         console.log("Image URL successfully updated in Firestore!");
       } else {
         console.error("User not found in session storage");
@@ -219,11 +227,11 @@ const ImageUploader = () => {
       console.error("Error updating image URL: ", error);
     }
   };
-  const fetchAnalysisData = async (file) => {
+  const fetchAnalysisData = async (file , newImageUrl) => {
     try {
       setLoading(true);
       const genAI = new GoogleGenerativeAI(
-        process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+        process.env.NEXT_PUBLIC_GOOGLE_API_KEYI
       );
       const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
@@ -257,7 +265,7 @@ const ImageUploader = () => {
       const parts = [
         await fileToGenerativePart(file),
         {
-          text: "Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'400-500 cal', XP:'the value ranges from 1-10 depending on the food health', diet: 'suggest a good diet for the person to stay fit and healthy'} pls do not halucinate and give unique recommendations and output for new food images",
+          text: "Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'Give the calories amount that product has in numbers', est protein:'Give the protein amount that product has in numbers', XP:'the value ranges from 1-10 depending on the food health', diet: 'suggest a good diet for the person to stay fit and healthy'} pls do not halucinate and give unique recommendations and output for new food images",
         },
       ];
 
@@ -274,7 +282,9 @@ const ImageUploader = () => {
       console.log(data2);
 
       // regex error fix end
-
+      const { est_calories, est_protein } = data3;
+      // const imageUrl = imageUrl
+      updateUserDataWithImageUrl(newImageUrl, est_calories, est_protein);
       // Update analysisResults state with parsed result
       // Parse and set analysis results
       if (data3.XP) {
@@ -450,6 +460,12 @@ const ImageUploader = () => {
                   </p>
                   <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
+                    Protein:
+                    </span>{" "}
+                    {result.est_protein}
+                  </p>
+                  <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
+                    <span className="font-bold text-lg max-sm:text-md">
                       Diet for you:
                     </span>{" "}
                     {result.diet}
@@ -487,7 +503,7 @@ const ImageUploader = () => {
             </a>
           </div>
           <div className="flex flex-col items-center">
-            <a href="/bodysnap">
+            <a href="/foodcalender">
               <img
                 src="/body.png"
                 alt=""
@@ -495,7 +511,7 @@ const ImageUploader = () => {
                 width={30}
                 className={` mx-auto opacity-40 active:opacity-100`}
               />
-              <div className="text-xs text-center">Body</div>
+              <div className="text-xs text-center">Track</div>
             </a>
           </div>
 

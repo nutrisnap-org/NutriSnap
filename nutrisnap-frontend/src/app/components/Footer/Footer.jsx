@@ -102,8 +102,8 @@ const Footer = () => {
                 </a>
               </p>
               <p className="mb-4">
-                <a href="/bodysnap" className=" text-black">
-                  Bodysnap
+                <a href="/foodcalender" className=" text-black">
+                  Track
                 </a>
               </p>
               <p className="mb-4">

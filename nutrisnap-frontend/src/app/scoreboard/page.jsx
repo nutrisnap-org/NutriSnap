@@ -13,20 +13,15 @@ import {
 
 const UserRankingPage = () => {
   const firebaseConfig = {
-    apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
-
-    authDomain: "nutrisnap-e6cf9.firebaseapp.com",
-
-    projectId: "nutrisnap-e6cf9",
-
-    storageBucket: "nutrisnap-e6cf9.appspot.com",
-
-    messagingSenderId: "169090435206",
-
-    appId: "1:169090435206:web:45f0d96b834969ca236907",
-
-    measurementId: "G-VHL1DB60YR",
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
   };
+  
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
@@ -247,7 +242,7 @@ const UserRankingPage = () => {
             </a>
           </div>
           <div className="flex flex-col items-center">
-            <a href="/bodysnap">
+            <a href="/foodcalender">
               <img
                 src="/body.png"
                 alt=""
@@ -255,7 +250,7 @@ const UserRankingPage = () => {
                 width={30}
                 className={` mx-auto opacity-40 active:opacity-100`}
               />
-              <div className="text-xs text-center">Body</div>
+              <div className="text-xs text-center">Track</div>
             </a>
           </div>
 

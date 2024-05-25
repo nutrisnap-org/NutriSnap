@@ -51,7 +51,7 @@ export default function Home() {
             </a>
           </div>
           <div className="flex flex-col items-center">
-            <a href="/bodysnap">
+            <a href="/foodcalender">
               <img
                 src="/body.png"
                 alt=""
@@ -59,7 +59,7 @@ export default function Home() {
                 width={30}
                 className={` mx-auto opacity-40 active:opacity-100`}
               />
-              <div className="text-xs text-center">Body</div>
+              <div className="text-xs text-center">Track</div>
             </a>
           </div>
 

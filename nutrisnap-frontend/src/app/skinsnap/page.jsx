@@ -23,20 +23,15 @@ import {
 import gsap from "gsap";
 import html2canvas from "html2canvas";
 const firebaseConfig = {
-  apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
-
-  authDomain: "nutrisnap-e6cf9.firebaseapp.com",
-
-  projectId: "nutrisnap-e6cf9",
-
-  storageBucket: "nutrisnap-e6cf9.appspot.com",
-
-  messagingSenderId: "169090435206",
-
-  appId: "1:169090435206:web:45f0d96b834969ca236907",
-
-  measurementId: "G-VHL1DB60YR",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -171,10 +166,7 @@ const ImageUploader = () => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
-    async function generateHash(data) {
-      const saltRounds = 1; // Adjust the salt rounds as needed
-      return await bcrypt.hash(data, saltRounds);
-    }
+   
 
     try {
       setLoading(true);
@@ -188,7 +180,7 @@ const ImageUploader = () => {
       const data = await response.json();
       const newImageUrl = data.secure_url;
       fetchAnalysisData(file);
-      const imageUrlHash = await generateHash(newImageUrl);
+      const imageUrlHash = newImageUrl;
 
       setImageUrls([...imageUrls, imageUrlHash]);
 
@@ -203,7 +195,7 @@ const ImageUploader = () => {
     try {
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
-          SkinsnapUrls: arrayUnion(imageUrl),
+          unhashedskinsnapUrls: arrayUnion(imageUrl),
         });
         console.log("Image URL successfully updated in Firestore!");
       } else {
@@ -489,7 +481,7 @@ const ImageUploader = () => {
             </a>
           </div>
           <div className="flex flex-col items-center">
-            <a href="/bodysnap">
+            <a href="/foodcalender">
               <img
                 src="/body.png"
                 alt=""
@@ -497,7 +489,7 @@ const ImageUploader = () => {
                 width={30}
                 className={` mx-auto opacity-40 active:opacity-100`}
               />
-              <div className="text-xs text-center">Body</div>
+              <div className="text-xs text-center">Track</div>
             </a>
           </div>
 
