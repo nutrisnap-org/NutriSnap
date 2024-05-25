@@ -53,6 +53,10 @@ body {
   -webkit-text-stroke: 1px #000; /* WebKit browsers (Safari, Chrome) */
   color: white; /* Set the text color */
 }
+.text-stroke-red {
+  -webkit-text-stroke: 1px #ff20b8; /* WebKit browsers (Safari, Chrome) */
+  color: white; /* Set the text color */
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;

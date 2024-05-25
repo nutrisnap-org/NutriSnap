@@ -161,16 +161,16 @@ const renderTree = (data) => {
 
   return (
     <div>
-          <div className="greenball blur-3xl bg-red-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
+          <div className="greenball blur-3xl bg-violet-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
       <h1 className="text-8xl italic  max-sm:text-4xl max-md:text-6xl flex justify-center items-center my-5">Food Calendar</h1>
       {user ? (
         <div>
          
-           <div className="text-center  text-gray-600">
+           <div className="text-center font-bold  text-gray-600">
            <div>Total Intake in Last 24 Hours:</div>
-           <div className="flex text-center justify-center items-center">
-            <h2 className="text-lg p-4 mx-5 text-stroke"> Protein : {totalProtein24Hours}</h2>
-            <h2 className="text-lg mx-5 text-stroke"> Calorie : {totalCalories24Hours}</h2>
+           <div className="flex text-center font-normal justify-center items-center">
+            <h2 className="text-lg p-4  text-stroke"> Protein : <span className="text-stroke-red" >{totalProtein24Hours} 🔥</span> </h2>
+            <h2 className="text-lg  text-stroke"> Calorie : <span className="text-stroke-red" > {totalCalories24Hours} ❤️‍🔥</span></h2>
           </div>
           </div>
           <ul>{renderTree(imageData)}</ul>

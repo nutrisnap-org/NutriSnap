@@ -3,7 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc ,getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 const firebaseConfig = {

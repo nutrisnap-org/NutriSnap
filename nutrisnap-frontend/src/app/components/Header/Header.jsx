@@ -7,24 +7,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAbn4iCEy5W9rSO-UiOmd_8Vbp9nRlkRCI",
-
-  authDomain: "nutrisnap-e6cf9.firebaseapp.com",
-
-  projectId: "nutrisnap-e6cf9",
-
-  storageBucket: "nutrisnap-e6cf9.appspot.com",
-
-  messagingSenderId: "169090435206",
-
-  appId: "1:169090435206:web:45f0d96b834969ca236907",
-
-  measurementId: "G-VHL1DB60YR",
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+import {auth ,db} from "../../utils/firebase"
 const Header = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
