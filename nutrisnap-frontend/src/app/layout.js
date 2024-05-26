@@ -50,7 +50,7 @@ export default function RootLayout({ children }) {
 
     // Redirect users
     redirectToBrowser();
-  }, [isInstagramInAppBrowser, isIPhone]);
+  }, [isInstagramInAppBrowser]);
 
 useEffect(() => {
   // Automatically trigger click event on <a> tag with download attribute
@@ -60,7 +60,7 @@ useEffect(() => {
       link.click();
     }
   }
-}, [isInstagramInAppBrowser, isIPhone]);
+}, [isInstagramInAppBrowser]);
 
 
   
