@@ -131,7 +131,7 @@ const shareOnTwitter = () => {
                 rel="noopener noreferrer"
                 className="text-blue-500 underline"
               >
-               https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET
+               claim.underdogprotocol.com/nfts/{nft.id}
 
               </a> 
               </div>
