@@ -1,15 +1,16 @@
-// components/Profile.js
-import React from 'react';
+'use client'
+import React, { useState } from 'react';
+import Profile from './profile';
 
-const Profile = ({  }) => {
+const Home = () => {
+
+
   return (
     <div>
-      <h1>hi</h1>
-      <p>hi</p>
+      <Profile/>
+      
     </div>
   );
 };
 
-
-
-export default Profile;
+export default Home;

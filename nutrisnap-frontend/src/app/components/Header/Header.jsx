@@ -12,6 +12,13 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
   const router = useRouter();
   //  const router = useRouter();
   function toggleActive() {
@@ -60,42 +67,62 @@ const Header = () => {
         className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4`}
       >
         <div className="flex md:mx-12 items-center gap-2">
-          <a href="/" className="flex items-center">
-            {user ? (
-              <img
-                src={`${user.photoURL}`}
-                alt=""
-                height={30}
-                width={30}
-                className="mr-4 rounded-full"
-              />
-            ) : (
-              <img
-                src="/logo.png"
-                alt=""
-                height={30}
-                width={30}
-                className="mr-4"
-              />
-            )}
-            <h1 className="md:block font-bold text-xl max-md:text-sm">
-              {user ? `Welcome, ${user.displayName}` : "Nutrisnap"}
-            </h1>
-          </a>
+        <div className="relative">
+        <div
+         
+          className="flex items-center cursor-pointer"
+          onClick={toggleDropdown}
+        >
+          {user ? (
+            <img
+              src={`${user.photoURL}`}
+              alt=""
+              height={30}
+              width={30}
+              className="mr-4 rounded-full"
+            />
+          ) : (
+            <img
+              src="/logo.png"
+              alt=""
+              height={30}
+              width={30}
+              className="mr-4"
+            />
+          )}
+          <h1 className="md:block cursor-pointer font-bold text-xl max-md:text-sm">
+            {user ? `Welcome, ${user.displayName}` : "Nutrisnap"}
+          </h1>
+        </div>
+        {dropdownVisible && user && (
+          <div className="absolute  mt-4 py-2 w-48 bg-white border rounded shadow-xl">
+            <a
+              href="/profile"
+              className="block px-4 py-2 mx-6 text-gray-800 hover:bg-indigo-500 hover:text-white"
+          
+            >
+              Profile
+            </a>
 
+            {user ? (
+            <button onClick={handleLogout}>
+         <div className="flex hover:bg-indigo-500 hover:text-white px-6 mx-4">   Logout  <img src="/exit.png" className="mx-2" height={30} width={30} alt="" /> </div>
+            </button>
+          ) : (
+            ""
+          )}
+            {/* Remove Logout from dropdown as per the requirement */}
+          </div>
+        )}
+      </div>
+      
           {user && (
             <span className="text-sm flex font-bold px-4 py-1 rounded-full border border-black">
               XP: {userXP}
             </span>
           )}
 
-          {user ? (
-            <button onClick={handleLogout}>
-              <img src="/exit.png" height={30} width={30} alt="" />
-            </button>
-          ) : (
-            ""
-          )}
+          
         </div>
         <ul className="list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
           {!user ? (

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 
 import Footer from "./components/Footer/Footer";
-export const metadata = {
+export const metadata = {  
   title: "Nutrisnap",
   description:
     "Think of Fitness Think of Us Creation By Prathik Shetty, Rahul Singh , Rishabh Pandey",
