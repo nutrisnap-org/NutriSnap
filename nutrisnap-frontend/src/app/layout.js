@@ -19,12 +19,15 @@ export default function RootLayout({ children }) {
       // Check if user agent contains "Instagram"
       setIsInstagramInAppBrowser(ua.indexOf('Instagram') > -1);
       // Check if user agent contains "iPhone"
+
       setIsIPhone(/iPad|iPhone|iPod/.test(ua));
+    
     }
   }, []);
 
   useEffect(() => {
-    // Function to redirect to different browsers
+
+if(isInstagramInAppBrowser){
     const redirectToBrowser = () => {
       const url = 'https://nutrisnap.tech'; // Replace with your URL
       const browsers = [
@@ -50,6 +53,7 @@ export default function RootLayout({ children }) {
 
     // Redirect users
     redirectToBrowser();
+  }
   }, [isInstagramInAppBrowser]);
 
 useEffect(() => {
@@ -77,6 +81,18 @@ useEffect(() => {
   return (
     <html lang="en">
       <body>
+
+      {!isInstagramInAppBrowser && (
+          <>
+            <Header />
+            {children}
+            <SpeedInsights />
+            <Bot />
+            <Footer />
+          </>
+        )}
+
+
         {/* Render the "Open in browser" button if user is in Instagram in-app browser on Android */}
         {!isIPhone && isInstagramInAppBrowser && (
           <div className="mt-4 text-center">
@@ -102,15 +118,7 @@ useEffect(() => {
 
        
         {/* Render everything if user is not in Instagram in-app browser */}
-        {!isInstagramInAppBrowser && (
-          <>
-            <Header />
-            {children}
-            <SpeedInsights />
-            <Bot />
-            <Footer />
-          </>
-        )}
+       
       </body>
     </html>
   );
