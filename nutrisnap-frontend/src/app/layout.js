@@ -100,24 +100,7 @@ useEffect(() => {
           </div>
         )}
 
-        {/* Render the special button for iPhone users on Instagram */}
-        {isIPhone && isInstagramInAppBrowser && (
-          <div className="mt-4 text-center">
-            <button onClick={() => {
-              // Handle the action for iPhone users on Instagram
-              if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                window.location.href = 'googlechrome://nutrisnap.tech';
-              } else {
-                window.location.href = 'intent:https://nutrisnap.tech#Intent;end';
-              }
-            }}>
-             Click to  Open in browser Chrome
-            </button>
-            <div>
-
-            </div>
-          </div>
-        )}
+       
         {/* Render everything if user is not in Instagram in-app browser */}
         {!isInstagramInAppBrowser && (
           <>
