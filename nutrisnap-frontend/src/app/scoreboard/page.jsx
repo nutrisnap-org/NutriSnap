@@ -8,6 +8,7 @@ import {
   collection,
   query,
   orderBy,
+  limit,
   getDocs,
 } from "firebase/firestore";
 import {auth ,db} from "../utils/firebase"
@@ -25,8 +26,9 @@ const UserRankingPage = () => {
       try {
         const usersCollection = collection(db, "users");
         const usersQuery = query(usersCollection, orderBy("xp", "desc"), limit(20));
+        console.log(usersQuery)
         const querySnapshot = await getDocs(usersQuery);
-
+console.log(querySnapshot)
         const users = [];
         querySnapshot.forEach((doc) => {
           users.push({
