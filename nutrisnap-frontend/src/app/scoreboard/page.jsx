@@ -24,7 +24,7 @@ const UserRankingPage = () => {
     const fetchUserData = async () => {
       try {
         const usersCollection = collection(db, "users");
-        const usersQuery = query(usersCollection, orderBy("xp", "desc"));
+        const usersQuery = query(usersCollection, orderBy("xp", "desc"), limit(20));
         const querySnapshot = await getDocs(usersQuery);
 
         const users = [];
