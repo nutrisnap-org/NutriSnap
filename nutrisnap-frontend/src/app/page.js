@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 import Footer from "./components/Footer/Footer";
 export const metadata = {  
+  manifest: "/manifest.json", 
   title: "Nutrisnap",
   description:
     "Think of Fitness Think of Us Creation By Prathik Shetty, Rahul Singh , Rishabh Pandey",

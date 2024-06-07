@@ -9,7 +9,9 @@ android
 ios
 # testing
 /coverage
-
+sw.*
+workbox-*
+swe-worker-*
 # next.js
 /.next/
 /out/
