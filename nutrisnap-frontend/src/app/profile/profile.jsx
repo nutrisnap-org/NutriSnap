@@ -6,7 +6,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { auth, db } from "../utils/firebase"; // Ensure Firebase is initialized here
 import { ProfileContext } from "../context/profileContext";
-import Loading from "../components/loading";
 
 const Profile = () => {
   const [nft, setNft] = useState(null);
