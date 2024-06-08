@@ -156,7 +156,7 @@ const Profile = () => {
                 claim.underdogprotocol.com/nfts/{nft.id}
               </a>
             </div>
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-8 mb-40">
               <button
                 className="bg-black hover:bg-gray-800 border border-black flex text-white font-bold pt-4 px-4 rounded"
                 style={{
@@ -165,7 +165,7 @@ const Profile = () => {
                 }}
                 onClick={shareOnTwitter}
               >
-                <div>Flex</div>
+                <div>Flex on X</div>
 
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

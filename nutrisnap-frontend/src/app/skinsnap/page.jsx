@@ -198,7 +198,7 @@ const ImageUploader = () => {
     try {
       setLoading(true);
       const genAI = new GoogleGenerativeAI(
-        process.env.NEXT_PUBLIC_GOOGLE_API_KEYI
+        process.env.NEXT_PUBLIC_GOOGLE_API_KEYII
       );
       const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
