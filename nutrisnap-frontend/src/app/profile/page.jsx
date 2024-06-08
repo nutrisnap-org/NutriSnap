@@ -1,14 +1,31 @@
-'use client'
-import React, { useState } from 'react';
-import Profile from './profile';
-
+"use client";
+import React, { useState } from "react";
+import Profile from "./profile";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { ProfileContext } from "../context/profileContext";
+import { useContext } from "react";
 const Home = () => {
-
+  const { darkbg, setDarkbg } = useContext(ProfileContext);
+  const path = usePathname();
+  useEffect(() => {
+    if (path === "/profile") {
+      setDarkbg(true);
+    } else {
+      setDarkbg(false);
+    }
+  });
 
   return (
     <div>
-      <Profile/>
-      <div className="bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-gradient-to-b from-white to-transparent backdrop-blur-md shadow-2xl h-fit">
+      <Profile />
+      <div
+        className={`bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-gradient-to-b ${
+          darkbg
+            ? "from-black to-transparent text-white"
+            : "from-white to-transparent"
+        }  backdrop-blur-md shadow-2xl h-fit`}
+      >
         <div className="flex items-center justify-around md:hidden">
           <div className="flex flex-col items-center">
             <a href="/foodsnap">
@@ -60,7 +77,7 @@ const Home = () => {
             </a>
           </div>
         </div>
-        </div>
+      </div>
     </div>
   );
 };

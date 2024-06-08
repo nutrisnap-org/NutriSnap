@@ -7,6 +7,7 @@ import Header from "./components/Header/Header";
 import { useEffect, useState } from "react";
 import Footer from "./components/Footer/Footer";
 const inter = DM_Sans({ subsets: ["latin"] });
+import { ProfileProvider } from "./context/profileContext";
 
 export default function RootLayout({ children }) {
   const [isInstagramInAppBrowser, setIsInstagramInAppBrowser] = useState(false);
@@ -78,17 +79,21 @@ useEffect(() => {
       alert('Failed to copy URL. Please copy manually.');
     }
   };
+
+  
   return (
     <html lang="en">
       <body>
 
       {!isInstagramInAppBrowser && (
           <>
+          <ProfileProvider>
             <Header />
             {children}
             <SpeedInsights />
             <Bot />
             <Footer />
+            </ProfileProvider>
           </>
         )}
 

@@ -6,14 +6,15 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
-import {auth ,db} from "../../utils/firebase"
+import { usePathname } from "next/navigation";
+import { auth, db } from "../../utils/firebase";
+import { useContext } from "react";
+import { ProfileContext } from "../../context/profileContext";
 const Header = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
-
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
@@ -59,72 +60,53 @@ const Header = () => {
         console.error("Error signing out: ", error);
       });
   };
+  const handleClickOutside = (event) => {
+    if (dropdownVisible && !event.target.closest(".dropdown")) {
+      setDropdownVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownVisible]);
+
+  const { darkbg, setDarkbg } = useContext(ProfileContext);
+  const path = usePathname();
+  useEffect(() => {
+    if (path === "/profile") {
+      setDarkbg(true);
+    } else {
+      setDarkbg(false);
+    }
+  });
 
   return (
     <>
       <Analytics />
       <div
-        className={`text-gray-950 w-full p-4 md:p-6 flex justify-between items-center max-md:mt-4`}
+        className={`${
+          darkbg ? "text-white bg-gray-950" : "text-gray-950"
+        } w-full p-4 md:p-6 flex justify-between items-center`}
       >
         <div className="flex md:mx-12 items-center gap-2">
-        <div className="relative">
-        <div
-         
-          className="flex items-center cursor-pointer"
-          onClick={toggleDropdown}
-        >
-          {user ? (
-            <img
-              src={`${user.photoURL}`}
-              alt=""
-              height={30}
-              width={30}
-              className="mr-4 rounded-full"
-            />
-          ) : (
-            <img
-              src="/logo.png"
-              alt=""
-              height={30}
-              width={30}
-              className="mr-4"
-            />
-          )}
-          <h1 className="md:block cursor-pointer font-bold text-xl max-md:text-sm">
-            {user ? `Welcome, ${user.displayName}` : "Nutrisnap"}
-          </h1>
-        </div>
-        {dropdownVisible && user && (
-          <div className="absolute  mt-4 py-2 w-48 bg-white border rounded shadow-xl">
-            <a
-              href="/profile"
-              className="block px-4 py-2 mx-6 text-gray-800 hover:bg-indigo-500 hover:text-white"
-          
-            >
-              Profile
-            </a>
-
-            {user ? (
-            <button onClick={handleLogout}>
-         <div className="flex hover:bg-indigo-500 hover:text-white px-6 mx-4">   Logout  <img src="/exit.png" className="mx-2" height={30} width={30} alt="" /> </div>
-            </button>
-          ) : (
-            ""
-          )}
-            {/* Remove Logout from dropdown as per the requirement */}
+          <div className="flex gap-3 max-sm:gap-6">
+            <img src="/logo.png" alt="" height={30} width={30} />
+            <h1 className="font-bold text-xl max-sm:hidden">Nutrisnap</h1>
+            {user && (
+              <span className="text-sm text-black flex font-bold px-4 py-1 rounded-full bg-white border border-purple-700 shadow-lg">
+                XP: {userXP}
+              </span>
+            )}
           </div>
-        )}
-      </div>
-      
-          {user && (
-            <span className="text-sm flex font-bold px-4 py-1 rounded-full border border-black">
-              XP: {userXP}
-            </span>
-          )}
-
-          
         </div>
-        <ul className="list-none gap-12 my-4 md:mx-12 text-md text-gray-800 md:flex items-center justify-between">
+        <ul
+          className={`${
+            darkbg ? "text-white " : "text-gray-950"
+          }list-none gap-12 my-4 md:mx-12 text-md  md:flex items-center justify-between`}
+        >
           {!user ? (
             <li>
               <a
@@ -139,7 +121,7 @@ const Header = () => {
               <li>
                 <a
                   href="/foodsnap"
-                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 transition duration-300 ease-in-out"
                 >
                   Food
                 </a>
@@ -147,7 +129,7 @@ const Header = () => {
               <li>
                 <a
                   href="/foodcalender"
-                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 transition duration-300 ease-in-out"
                 >
                   Track
                 </a>
@@ -155,7 +137,7 @@ const Header = () => {
               <li>
                 <a
                   href="/skinsnap"
-                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 transition duration-300 ease-in-out"
                 >
                   Skin
                 </a>
@@ -179,11 +161,65 @@ const Header = () => {
               <li>
                 <a
                   href="/scoreboard"
-                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 text-black hover:bg-gray-300 transition duration-300 ease-in-out"
+                  className="max-md:hidden rounded-full px-2 py-2 -ml-4 transition duration-300 ease-in-out"
                 >
                   Scoreboard
                 </a>
               </li>
+              <div className="relative">
+                <div
+                  className="flex items-center cursor-pointer"
+                  onClick={toggleDropdown}
+                >
+                  {user ? (
+                    <img
+                      src={`${user.photoURL}`}
+                      alt=""
+                      height={30}
+                      width={30}
+                      className="mr-4 rounded-full"
+                    />
+                  ) : (
+                    <img
+                      src="/logo.png"
+                      alt=""
+                      height={30}
+                      width={30}
+                      className="mr-4"
+                    />
+                  )}
+                  {/* <h1 className="md:block cursor-pointer font-bold text-xl max-md:text-sm">
+            {user ? `Welcome, ${user.displayName}` : "Nutrisnap"}
+          </h1> */}
+                </div>
+                {dropdownVisible && user && (
+                  <div className="absolute mt-4 p-2 right-0 w-48 bg-white border rounded-md dropdown shadow-xl">
+                    <div className="py-2 pl-2 rounded-sm hover:bg-gray-200 font-semibold flex gap-2 justify-left items-center">
+                      <img src="./profile.svg" alt="" height={30} width={20} />
+                      <a href="/profile">Profile & NFTs</a>
+                    </div>
+                    <div>
+                      {user && (
+                        <div
+                          className="py-2 pl-2 w-full rounded-sm cursor-pointer hover:bg-red-200 font-semibold flex gap-2 justify-left items-center"
+                          onClick={handleLogout}
+                        >
+                          {" "}
+                          <img
+                            src="/exit.png"
+                            className=""
+                            height={20}
+                            width={20}
+                            alt=""
+                          />
+                          Logout{" "}
+                        </div>
+                      )}
+                    </div>
+                    {/* Remove Logout from dropdown as per the requirement */}
+                  </div>
+                )}
+              </div>
             </>
           )}
         </ul>
