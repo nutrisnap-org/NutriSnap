@@ -89,7 +89,7 @@ const Header = () => {
       <div
         className={`${
           darkbg ? "text-white bg-gray-950" : "text-gray-950"
-        } w-full p-4 md:p-6 flex justify-between items-center`}
+        } w-full p-4 md:p-6 flex justify-between items-center z-50`}
       >
         <div className="flex md:mx-12 items-center gap-2">
           <div className="flex gap-3 max-sm:gap-6">
@@ -193,7 +193,7 @@ const Header = () => {
           </h1> */}
                 </div>
                 {dropdownVisible && user && (
-                  <div className="absolute mt-4 p-2 right-0 w-48 bg-white border rounded-md dropdown shadow-xl">
+                  <div className="absolute mt-4 p-2 right-0 w-48 bg-white border rounded-md dropdown shadow-xl z-50">
                     <div className="py-2 pl-2 rounded-sm hover:bg-gray-200 font-semibold flex gap-2 justify-left items-center">
                       <img src="./profile.svg" alt="" height={30} width={20} />
                       <a href="/profile">Profile & NFTs</a>

@@ -81,9 +81,9 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="Hero mt-2">
-      <div className="ball bg-violet-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
-      <div className="text-sm text-center max-sm:text-xs text-white px-4 py-2 m-4 border border-gray-600 bg-black rounded-full w-fit mx-auto backdrop-blur-sm bg-opacity-90">
+    <div className="Hero mt-2 -z-1">
+      <div className="ball bg-violet-400/50 w-96 h-96 fixed top-0 left-0 -z-1 rounded-full"></div>
+      <div className="text-sm text-center z-0 max-sm:text-xs text-white px-4 py-2 m-4 border border-gray-600 bg-black rounded-full w-fit mx-auto backdrop-blur-sm bg-opacity-90">
         Fitness Playground ⛹️‍♂️{" "}
       </div>
 

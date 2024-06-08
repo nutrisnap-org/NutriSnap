@@ -1,18 +1,30 @@
 "use client";
+
 import React, { useContext, useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
-import { auth, db } from "../utils/firebase"; // Make sure you have the firebase initialized here
-import { set } from "lodash";
+import { auth, db } from "../utils/firebase"; // Ensure Firebase is initialized here
 import { ProfileContext } from "../context/profileContext";
+import Loading from "../components/loading";
 
 const Profile = () => {
   const [nft, setNft] = useState(null);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
+  const { darkbg, setDarkbg } = useContext(ProfileContext);
+  const path = usePathname();
+
+  useEffect(() => {
+    if (path === "/profile") {
+      setDarkbg(true);
+    } else {
+      setDarkbg(false);
+    }
+  }, [path, setDarkbg]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -25,7 +37,7 @@ const Profile = () => {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const fetchData = async (user) => {
     try {
@@ -77,6 +89,8 @@ const Profile = () => {
     } catch (error) {
       console.error("Error fetching/creating NFT:", error);
       setMessage("Error fetching/creating NFT");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,7 +119,7 @@ const Profile = () => {
       setMessage("Error fetching NFT details");
     }
   };
-  // Function to handle Twitter share
+
   const shareOnTwitter = () => {
     if (nft) {
       const tweetText = `Tracking My Progress Using nutrisnap.tech 😋 Love The App! Check out my Progress with an NFT here: https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET`;
@@ -116,71 +130,59 @@ const Profile = () => {
     }
   };
 
-  const { darkbg, setDarkbg } = useContext(ProfileContext);
-  const path = usePathname();
-  useEffect(() => {
-    if (path === "/profile") {
-      setDarkbg(true);
-    } else {
-      setDarkbg(false);
-    }
-  });
-
   return (
-    <div className={`${darkbg ? "bg-gray-950" : ""}`}>
-      <h1 className="text-center text-6xl font-bold uppercase  text-gray-100 max-sm:text-4xl max-md:text-6xl mb-12">
-        Profile
-      </h1>
-      {!nft && <div className="text-gray-400"> *good things take time *</div>}
-      {nft ? (
-        <div>
-          <iframe
-            src={`https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET`}
-            className="w-full h-screen border-gray-200 rounded-lg"
-            title="Claim NFT"
-          ></iframe>
-
-          <div className="flex justify-center items-center mt-10">
-            <span className="font-semibold text-gray-600">
-              Check Your Nft: &nbsp;
-            </span>
-            <a
-              href={`https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline"
-            >
-              claim.underdogprotocol.com/nfts/{nft.id}
-            </a>
-          </div>
-          <div className="flex justify-center mt-8">
-            <button
-              className="bg-black  hover:bg-gray-800 border border-black flex  text-white font-bold pt-4 px-4 rounded"
-              style={{
-                borderRadius: "10px", // Set the border radius
-                // Apply a blur effect
-                backdropFilter: "blur(20px)", // Apply a backdrop blur effect
-              }}
-              onClick={shareOnTwitter}
-            >
-              <div>
-                Flex &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </div>
-              &nbsp;on&nbsp;
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                className="fill-current text-white"
+    <>
+      <div className={`${darkbg ? "bg-gray-950" : ""}`}>
+        <h1 className="text-center text-6xl font-bold uppercase text-gray-100 max-sm:text-4xl max-md:text-6xl mb-12">
+          Profile
+        </h1>
+        {!nft && <div className="text-gray-400">*good things take time*</div>}
+        {nft ? (
+          <div>
+            <iframe
+              src={`https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET`}
+              className="w-full h-screen border-gray-200 rounded-lg"
+              title="Claim NFT"
+            ></iframe>
+            <div className="flex justify-center items-center mt-10">
+              <span className="font-semibold text-gray-600">
+                Check Your NFT: &nbsp;
+              </span>
+              <a
+                href={`https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
               >
-                <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-              </svg>
-            </button>
+                claim.underdogprotocol.com/nfts/{nft.id}
+              </a>
+            </div>
+            <div className="flex justify-center mt-8">
+              <button
+                className="bg-black hover:bg-gray-800 border border-black flex text-white font-bold pt-4 px-4 rounded"
+                style={{
+                  borderRadius: "10px", // Set the border radius
+                  backdropFilter: "blur(20px)", // Apply a backdrop blur effect
+                }}
+                onClick={shareOnTwitter}
+              >
+                <div>Flex</div>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  className="fill-current text-white"
+                >
+                  <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <p className="text-gray-500 text-lg">{message}</p>
-      )}
-    </div>
+        ) : (
+          <p className="text-gray-500 text-lg">{message}</p>
+        )}
+      </div>
+    </>
   );
 };
 
