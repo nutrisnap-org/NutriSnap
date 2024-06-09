@@ -137,7 +137,7 @@ const Profile = () => {
           Profile
         </h1>
         {!nft && (
-          <div className="text-gray-400 pt-64 pb-[25rem] flex justify-center w-full mx-auto">
+          <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
             <Loader />
           </div>
         )}

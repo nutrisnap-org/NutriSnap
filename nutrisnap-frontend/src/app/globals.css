@@ -126,8 +126,9 @@ background-clip: text;
 .loader {
   display: inline-grid;
   padding: 5px;
-  background: #0a002500;
-  filter: contrast(12);
+  background: #0a002533;
+  filter: blur(1rem) contrast(12);
+  
 }
 .loader:before {
   content: "";
@@ -143,4 +144,28 @@ background-clip: text;
 }
 @keyframes l11{
   to {background-position: -200% 0,-100% 100%}
+}
+
+.moving {
+  background: linear-gradient(
+      to right,
+      #3b00b9 20%,
+      #00affa 30%,
+      #cd0101 70%,
+      #2c2c2c 80%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  background-size: 500% auto;
+  animation: textShine 5s ease-in-out infinite alternate;
+}
+@keyframes textShine {
+  0% {
+      background-position: 0% 50%;
+  }
+  100% {
+      background-position: 100% 50%;
+  }
 }
