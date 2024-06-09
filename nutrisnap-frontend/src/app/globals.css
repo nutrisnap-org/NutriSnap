@@ -122,3 +122,25 @@ background-clip: text;
   -webkit-text-fill-color: transparent;
 
 }
+/* HTML: <div class="loader"></div> */
+.loader {
+  display: inline-grid;
+  padding: 5px;
+  background: #0a002500;
+  filter: contrast(12);
+}
+.loader:before {
+  content: "";
+  height: 60px;
+  aspect-ratio: 3;
+  --c: #ffffff00 64%,#ffffff 66% 98%,#ffffff00 101%;
+  background:
+    radial-gradient(35% 146% at 50% 159%,var(--c)) 0 0,
+    radial-gradient(35% 146% at 50% -59%,var(--c)) 100% 100%;
+  background-size: calc(200%/3) 50%;
+  background-repeat: repeat-x;
+  animation: l11 .8s infinite linear;
+}
+@keyframes l11{
+  to {background-position: -200% 0,-100% 100%}
+}

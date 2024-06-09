@@ -193,10 +193,22 @@ const Header = () => {
           </h1> */}
                 </div>
                 {dropdownVisible && user && (
-                  <div className="absolute mt-4 p-2 right-0 w-48 bg-white border rounded-md dropdown shadow-xl z-50">
+                  <div
+                    className={`absolute mt-4 p-2 right-0 w-48 ${
+                      darkbg ? "bg-black" : "bg-white"
+                    }  border rounded-md dropdown shadow-xl z-50`}
+                  >
                     <div className="py-2 pl-2 rounded-sm hover:bg-gray-200 font-semibold flex gap-2 justify-left items-center">
-                      <img src="./profile.svg" alt="" height={30} width={20} />
-                      <a href="/profile">Profile & NFTs</a>
+                      <img
+                        src="./profile.svg"
+                        alt=""
+                        height={30}
+                        width={20}
+                        className={`${darkbg ? "invert" : ""}`}
+                      />
+                      <a href="/profile" className="">
+                        Profile & NFTs
+                      </a>
                     </div>
                     <div>
                       {user && (
