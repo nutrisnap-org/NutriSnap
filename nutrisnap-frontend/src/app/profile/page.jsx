@@ -17,7 +17,7 @@ const Home = () => {
   });
 
   return (
-    <div>
+    <div className="">
       <Profile />
       <div
         className={`bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-gradient-to-b ${

@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { auth, db } from "../../utils/firebase";
 import { useContext } from "react";
 import { ProfileContext } from "../../context/profileContext";
+import Link from "next/link";
 const Header = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
@@ -93,8 +94,11 @@ const Header = () => {
       >
         <div className="flex md:mx-12 items-center gap-2">
           <div className="flex gap-3 max-sm:gap-6">
-            <img src="/logo.png" alt="" height={30} width={30} />
-            <h1 className="font-bold text-xl max-sm:hidden">Nutrisnap</h1>
+            <Link href="/" className="flex gap-3">
+              <img src="/logo.png" alt="" height={30} width={30} />
+              <h1 className="font-bold text-xl max-sm:hidden">Nutrisnap</h1>
+            </Link>
+
             {user && (
               <span className="text-sm text-black flex font-bold px-4 py-1 rounded-full bg-white border border-purple-700 shadow-lg">
                 XP: {userXP}
@@ -193,15 +197,27 @@ const Header = () => {
           </h1> */}
                 </div>
                 {dropdownVisible && user && (
-                  <div className="absolute mt-4 p-2 right-0 w-48 bg-white border rounded-md dropdown shadow-xl z-50">
-                    <div className="py-2 pl-2 rounded-sm hover:bg-gray-200 font-semibold flex gap-2 justify-left items-center">
-                      <img src="./profile.svg" alt="" height={30} width={20} />
-                      <a href="/profile">Profile & NFTs</a>
+                  <div
+                    className={`absolute mt-4 p-2 right-0 w-48 ${
+                      darkbg ? "bg-black" : "bg-white"
+                    }  border rounded-md dropdown shadow-xl z-50`}
+                  >
+                    <div className="py-2 pl-2 rounded-sm hover:bg-gray-600/40 font-semibold flex gap-2 justify-left items-center">
+                      <img
+                        src="./profile.svg"
+                        alt=""
+                        height={30}
+                        width={20}
+                        className={`${darkbg ? "invert" : ""}`}
+                      />
+                      <a href="/profile" className="">
+                        Profile & NFTs
+                      </a>
                     </div>
                     <div>
                       {user && (
                         <div
-                          className="py-2 pl-2 w-full rounded-sm cursor-pointer hover:bg-red-200 font-semibold flex gap-2 justify-left items-center"
+                          className="py-2 pl-2 w-full rounded-sm cursor-pointer hover:bg-red-600/40 font-semibold flex gap-2 justify-left items-center"
                           onClick={handleLogout}
                         >
                           {" "}

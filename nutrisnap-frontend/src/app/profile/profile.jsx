@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { auth, db } from "../utils/firebase"; // Ensure Firebase is initialized here
 import { ProfileContext } from "../context/profileContext";
+import Loader from "../components/Loader";
 
 const Profile = () => {
   const [nft, setNft] = useState(null);
@@ -132,10 +133,14 @@ const Profile = () => {
   return (
     <>
       <div className={`${darkbg ? "bg-gray-950" : ""}`}>
-        <h1 className="text-center text-6xl font-bold uppercase text-gray-100 max-sm:text-4xl max-md:text-6xl mb-12">
+        <h1 className="text-center text-6xl font-bold uppercase text-gray-100  max-sm:text-4xl max-md:text-6xl mb-12">
           Profile
         </h1>
-        {!nft && <div className="text-gray-400">*good things take time*</div>}
+        {!nft && (
+          <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
+            <Loader />
+          </div>
+        )}
         {nft ? (
           <div>
             <iframe
@@ -156,24 +161,21 @@ const Profile = () => {
                 claim.underdogprotocol.com/nfts/{nft.id}
               </a>
             </div>
-            <div className="flex justify-center mt-8 mb-40">
+            <div className="flex justify-center mt-8">
               <button
-                className="bg-black hover:bg-gray-800 border border-black flex text-white font-bold pt-4 px-4 rounded"
+                className="bg-black hover:bg-gray-800 border w-fit mb-32 border-white px-4 py-2 flex text-white font-bold rounded"
                 style={{
                   borderRadius: "10px", // Set the border radius
                   backdropFilter: "blur(20px)", // Apply a backdrop blur effect
                 }}
                 onClick={shareOnTwitter}
               >
-                <div>Flex on X</div>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  className="fill-current text-white"
-                >
-                  <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                </svg>
+                Flex on{" "}
+                <img
+                  src="/twitter.png"
+                  alt="Twitter"
+                  className="w-6 h-6 ml-2"
+                />
               </button>
             </div>
           </div>
