@@ -4,9 +4,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
-import { auth, db } from "../utils/firebase"; // Ensure Firebase is initialized here
-import { ProfileContext } from "../context/profileContext";
-import Loader from "../components/Loader";
+import { auth, db } from "../../utils/firebase"; // Ensure Firebase is initialized here
+import { ProfileContext } from "../../context/profileContext";
+import Loader from "../../components/Loader";
 
 const Profile = () => {
   const [nft, setNft] = useState(null);
@@ -18,13 +18,14 @@ const Profile = () => {
   const { darkbg, setDarkbg } = useContext(ProfileContext);
   const path = usePathname();
 
+  const slugId = "id";
   useEffect(() => {
-    if (path === "/profile") {
+    if (path.includes("/profile/")) {
       setDarkbg(true);
     } else {
       setDarkbg(false);
     }
-  }, [path, setDarkbg]);
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

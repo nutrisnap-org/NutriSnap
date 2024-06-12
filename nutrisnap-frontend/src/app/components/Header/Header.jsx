@@ -76,8 +76,9 @@ const Header = () => {
 
   const { darkbg, setDarkbg } = useContext(ProfileContext);
   const path = usePathname();
+  const slugId = "id";
   useEffect(() => {
-    if (path === "/profile") {
+    if (path.includes("/profile/")) {
       setDarkbg(true);
     } else {
       setDarkbg(false);
@@ -204,13 +205,13 @@ const Header = () => {
                   >
                     <div className="py-2 pl-2 rounded-sm hover:bg-gray-600/40 font-semibold flex gap-2 justify-left items-center">
                       <img
-                        src="./profile.svg"
+                        src="/profile.svg"
                         alt=""
                         height={30}
                         width={20}
-                        className={`${darkbg ? "invert" : ""}`}
+                        className="invert"
                       />
-                      <a href="/profile" className="">
+                      <a href="/profile/slugId" className="">
                         Profile & NFTs
                       </a>
                     </div>

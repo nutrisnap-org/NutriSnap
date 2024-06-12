@@ -1,11 +1,11 @@
 "use client";
 import { Analytics } from "@vercel/analytics/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, doc, setDoc ,getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-
+import { EmailContext } from "../context/emailContext";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -22,6 +22,7 @@ const db = getFirestore(app);
 
 const LoginWithGoogle = () => {
   const [user, setUser] = useState(null);
+  const { email, setEmail } = useContext(EmailContext);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const LoginWithGoogle = () => {
       if (authUser) {
         saveUserDataToFirestore(authUser);
         setUser(authUser);
+        setEmail(authUser.email);
         // Store user data in Firestore
 
         router.push("/foodsnap");

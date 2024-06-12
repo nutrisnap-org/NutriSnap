@@ -3,13 +3,17 @@ import React, { useState } from "react";
 import Profile from "./profile";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { ProfileContext } from "../context/profileContext";
+import { ProfileContext } from "../../context/profileContext";
 import { useContext } from "react";
+import { EmailContext } from "../../context/emailContext";
 const Home = () => {
   const { darkbg, setDarkbg } = useContext(ProfileContext);
+  const { email, setEmail } = useContext(EmailContext);
+
   const path = usePathname();
+  const slugId = "id";
   useEffect(() => {
-    if (path === "/profile") {
+    if (path === `/profile/${slugId}`) {
       setDarkbg(true);
     } else {
       setDarkbg(false);

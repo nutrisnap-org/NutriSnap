@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Footer from "./components/Footer/Footer";
 const inter = DM_Sans({ subsets: ["latin"] });
 import { ProfileProvider } from "./context/profileContext";
-
+import { EmailProvider } from "./context/emailContext";
 export default function RootLayout({ children }) {
   const [isInstagramInAppBrowser, setIsInstagramInAppBrowser] = useState(false);
   const [isIPhone, setIsIPhone] = useState(false);
@@ -87,6 +87,7 @@ useEffect(() => {
 
       {!isInstagramInAppBrowser && (
           <>
+          <EmailProvider>
           <ProfileProvider>
             <Header />
             {children}
@@ -94,6 +95,7 @@ useEffect(() => {
             <Bot />
             <Footer />
             </ProfileProvider>
+            </EmailProvider>
           </>
         )}
 

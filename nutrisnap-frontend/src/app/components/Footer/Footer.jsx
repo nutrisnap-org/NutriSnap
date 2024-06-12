@@ -7,8 +7,9 @@ import { usePathname } from "next/navigation";
 const Footer = () => {
   const { darkbg, setDarkbg } = useContext(ProfileContext);
   const path = usePathname();
+  const slugId = "id";
   useEffect(() => {
-    if (path === "/profile") {
+    if (path.includes("/profile/")) {
       setDarkbg(true);
     } else {
       setDarkbg(false);
