@@ -14,6 +14,7 @@ import Link from "next/link";
 const Header = () => {
   const [user, setUser] = useState(null);
   const [userXP, setUserXP] = useState(0);
+  const [useremail, setUseremail] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -37,6 +38,7 @@ const Header = () => {
         if (docSnap.exists()) {
           const userData = docSnap.data();
           setUserXP(userData.xp);
+          setUseremail(userData.email);
           setUserXP(userData.xp || 0); // Set XP to 0 if userData.xp is undefined
         } else {
           // Handle case where user document doesn't exist
@@ -209,9 +211,9 @@ const Header = () => {
                         alt=""
                         height={30}
                         width={20}
-                        className="invert"
+                        className={darkbg ? "invert" : ""}
                       />
-                      <a href="/profile/slugId" className="">
+                      <a href={`/profile/${useremail}`} className="">
                         Profile & NFTs
                       </a>
                     </div>
