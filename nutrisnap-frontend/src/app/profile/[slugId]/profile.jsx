@@ -11,12 +11,17 @@ import Loader from "../../components/Loader";
 const Profile = () => {
   const [nft, setNft] = useState(null);
   const [message, setMessage] = useState("");
-  const [user, setUser] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [isMinting, setIsMinting] = useState(false);
   const [minted, setMinted] = useState(false);
   const [view, setView] = useState(false);
-
+  const [nutritionData, setNutritionData] = useState({
+    totalCalories: 0,
+    totalProtein: 0,
+    last24HoursCalories: 0,
+    last24HoursProtein: 0,
+  });
   const router = useRouter();
   const { darkbg, setDarkbg } = useContext(ProfileContext);
   const path = usePathname();
@@ -29,20 +34,15 @@ const Profile = () => {
     }
   }, [path, setDarkbg]);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
+  useEffect(  () => {
+ 
+     
         const email = path.split("/profile/")[1];
         if (email) {
-          await fetchDataByEmail(email);
+           fetchDataByEmail(email);
+           fetchNutritionData(email);
         }
-      } else {
-        setUser(null);
-        router.push("/login");
-      }
-    });
-    return () => unsubscribe();
+      
   }, [path, router]);
 
   const fetchDataByEmail = async (email) => {
@@ -153,6 +153,20 @@ const Profile = () => {
     }
   };
 
+  // Function to fetch user data from custom API
+  const fetchNutritionData = async (email) => {
+    try {
+      const response = await fetch(`/api/user?email=${email}`); // Call your API endpoint
+      if (response.ok) {
+        const data = await response.json();
+        setNutritionData(data); // Assuming your API returns an object with totalCalories, totalProtein, last24HoursCalories, last24HoursProtein
+      } else {
+        console.error("Failed to fetch nutrition data");
+      }
+    } catch (error) {
+      console.error("Error fetching nutrition data:", error);
+    }
+  };
   const shareOnTwitter = () => {
     if (nft) {
       const tweetText = `Tracking My Progress Using nutrisnap.tech 😋 Love The App! Check out my Progress with an NFT here: https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET`;
@@ -168,6 +182,16 @@ const Profile = () => {
       <h1 className="text-center text-6xl font-bold uppercase text-gray-100 max-sm:text-4xl max-md:text-6xl mb-12">
         Profile
       </h1>
+      <div className="flex justify-between px-8 py-4 mb-8">
+        <div className="text-gray-300">
+          <p>Total Calories: {nutritionData.totalCalories}</p>
+          <p>Total Protein: {nutritionData.totalProtein}</p>
+        </div>
+        <div className="text-gray-300">
+          <p>Last 24 Hours Calories: {nutritionData.last24HoursCalories}</p>
+          <p>Last 24 Hours Protein: {nutritionData.last24HoursProtein}</p>
+        </div>
+      </div>
       {loading ? (
         <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
           <Loader />
