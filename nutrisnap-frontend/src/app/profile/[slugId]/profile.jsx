@@ -144,7 +144,7 @@ const Profile = () => {
         
           setView(true);
           
-        }, 3000);
+        }, 2000);
           
         } else {
           const errorData = await createNftResponse.json();
