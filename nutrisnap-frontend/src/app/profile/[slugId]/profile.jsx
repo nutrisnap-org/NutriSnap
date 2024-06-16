@@ -135,9 +135,17 @@ const Profile = () => {
           const nftDocRef = doc(db, "nfts", userDoc.id);
           await setDoc(nftDocRef, { id: newNft.id });
           
+        
+          // setView(true);
           setMinted(true);
+          setMessage(`NFT created successfully! ID wait 2 seconds to view nft: ${newNft.id}`);
+             // Automatically view the NFT after 3 seconds
+        setTimeout(() => {
+        
           setView(true);
-          setMessage(`NFT created successfully! ID: ${newNft.id}`);
+          
+        }, 3000);
+          
         } else {
           const errorData = await createNftResponse.json();
           setMessage(`Failed to create NFT: ${errorData.error}`);
