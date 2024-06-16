@@ -29,6 +29,33 @@ async function getCollageUrl(imageUrls) {
   }
 }
 
+
+// Function to fetch NFT details
+async function fetchNftDetails(nftId) {
+  try {
+    const response = await fetch(
+      `${baseURL}/projects/1/nfts/${nftId}`,
+      {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          authorization: `Bearer ${process.env.NEXT_PUBLIC_UNDERDOG_API_KEY}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      return await response.json();
+    } else {
+      const errorData = await response.json();
+      throw new Error(`Failed to fetch NFT details: ${errorData.error}`);
+    }
+  } catch (error) {
+    console.error("Error fetching NFT details:", error);
+    throw new Error("Error fetching NFT details");
+  }
+}
+
 // POST handler
 export async function POST(request) {
   try {
@@ -72,7 +99,12 @@ console.log(responseData)
         createdAt: new Date().toISOString(),
       };
       console.log(newNft)
-      return NextResponse.json(newNft, { status: 201 });
+  
+      const nftDetails = await fetchNftDetails(responseData.nftId);
+      console.log("hi" + nftDetails)
+      console.log(nftDetails)
+   
+      return NextResponse.json(nftDetails, { status: 201 });
     } else {
       const errorMessage = await response.text();
       return NextResponse.json({ error: errorMessage }, { status: response.status });
