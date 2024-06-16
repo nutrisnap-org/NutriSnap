@@ -165,11 +165,11 @@ const ImageUploader = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "lodrnpjl"); // Replace with your Cloudinary upload preset
+    formData.append("upload_preset", "ttoifqeh"); // Replace with your Cloudinary upload preset
     
     try {
       const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload",
+        "https://api.cloudinary.com/v1_1/dd5khtlxa/image/upload",
         {
           method: "POST",
           body: formData,

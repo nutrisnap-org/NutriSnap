@@ -3,8 +3,8 @@ import axios from 'axios';
 import FormData from 'form-data';
 import { NextResponse } from 'next/server';
 
-const cloudinaryUploadUrl = 'https://api.cloudinary.com/v1_1/dmdhep1qp/image/upload';
-const cloudinaryUploadPreset = 'lodrnpjl';
+const cloudinaryUploadUrl = 'https://api.cloudinary.com/v1_1/dd5khtlxa/image/upload';
+const cloudinaryUploadPreset = 'ttoifqeh';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
