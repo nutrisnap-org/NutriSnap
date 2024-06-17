@@ -42,7 +42,8 @@
     "react-lottie": "^1.2.4",
     "react-plotly.js": "^2.6.0",
     "sharp": "^0.33.4",
-    "supports-color": "^9.4.0"
+    "supports-color": "^9.4.0",
+    "use-clipboard-copy": "^0.2.0"
   },
   "devDependencies": {
     "@types/react": "18.3.3",

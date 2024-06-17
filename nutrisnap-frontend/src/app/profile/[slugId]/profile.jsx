@@ -1,12 +1,22 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
-import { doc, getDoc, setDoc, query, where, collection, getDocs } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  query,
+  where,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { auth, db } from "../../utils/firebase"; // Ensure Firebase is initialized here
 import { ProfileContext } from "../../context/profileContext";
 import Loader from "../../components/Loader";
+import { BiCopy } from "react-icons/bi";
+import { useClipboard } from "use-clipboard-copy";
 
 const Profile = () => {
   const [nft, setNft] = useState(null);
@@ -21,6 +31,10 @@ const Profile = () => {
     totalProtein: 0,
     last24HoursCalories: 0,
     last24HoursProtein: 0,
+    photoURL: "",
+    displayName: "",
+    email: "",
+    xp: 0,
   });
   const router = useRouter();
   const { darkbg, setDarkbg } = useContext(ProfileContext);
@@ -34,15 +48,12 @@ const Profile = () => {
     }
   }, [path, setDarkbg]);
 
-  useEffect(  () => {
- 
-     
-        const email = path.split("/profile/")[1];
-        if (email) {
-           fetchDataByEmail(email);
-           fetchNutritionData(email);
-        }
-      
+  useEffect(() => {
+    const email = path.split("/profile/")[1];
+    if (email) {
+      fetchDataByEmail(email);
+      fetchNutritionData(email);
+    }
   }, [path, router]);
 
   const fetchDataByEmail = async (email) => {
@@ -134,18 +145,16 @@ const Profile = () => {
           const newNft = await createNftResponse.json();
           const nftDocRef = doc(db, "nfts", userDoc.id);
           await setDoc(nftDocRef, { id: newNft.id });
-          
-        
+
           // setView(true);
           setMinted(true);
-          setMessage(`NFT created successfully! ID wait 2 seconds to view nft: ${newNft.id}`);
-             // Automatically view the NFT after 3 seconds
-        setTimeout(() => {
-        
-          setView(true);
-          
-        }, 2000);
-          
+          setMessage(
+            `NFT created successfully! ID wait 2 seconds to view nft: ${newNft.id}`
+          );
+          // Automatically view the NFT after 3 seconds
+          setTimeout(() => {
+            setView(true);
+          }, 2000);
         } else {
           const errorData = await createNftResponse.json();
           setMessage(`Failed to create NFT: ${errorData.error}`);
@@ -185,21 +194,77 @@ const Profile = () => {
     }
   };
 
+  const clipboard = useClipboard();
+  const line = usePathname();
+  const newline = "https://nutrisnap.tech" + line;
+  const [copy, setCopy] = useState(false);
+  const copyToClipboard = () => {
+    clipboard.copy(newline);
+    setCopy(true);
+  };
+
   return (
     <div className={`${darkbg ? "bg-gray-950" : ""}`}>
-      <h1 className="text-center text-6xl font-bold uppercase text-gray-100 max-sm:text-4xl max-md:text-6xl mb-12">
-        Profile
-      </h1>
-      <div className="flex justify-between px-8 py-4 mb-8">
-        <div className="text-gray-300">
-          <p>Total Calories: {nutritionData.totalCalories}</p>
-          <p>Total Protein: {nutritionData.totalProtein}</p>
+      <img
+        src="/bannergrad.webp"
+        alt=""
+        className="h-72 w-full object-cover opacity-35"
+      />
+      <div className="bg-gradient-to-br from-zinc-950 to-zinc-800 relative p-8 max-sm:p-4 rounded-lg w-8/12 max-sm:w-11/12 mx-auto mb-20 -mt-20 max-sm:-mt-48 z-10">
+        <div className="flex justify-between max-sm:flex-col max-sm:gap-4">
+          <div className="flex-col items-center justify-center">
+            <img
+              src={nutritionData.photoURL}
+              alt=""
+              className="w-20 h-20 rounded-full"
+            />
+            <h1 className="text-2xl text-white font-semibold mt-4">
+              {nutritionData.displayName}
+            </h1>
+            <p className="text-gray-400 mt-2">{nutritionData.email}</p>
+          </div>
+          <div>
+            <div
+              onClick={copyToClipboard}
+              className="text-white px-4 py-2 rounded-md border border-gray-600 hover:bg-white/25  cursor-pointer"
+            >
+              {clipboard.copy && copy ? "Copied!" : "Copy Profile url"}{" "}
+              {clipboard.copy && copy ? "" : <BiCopy className="inline" />}
+            </div>
+          </div>
         </div>
-        <div className="text-gray-300">
-          <p>Last 24 Hours Calories: {nutritionData.last24HoursCalories}</p>
-          <p>Last 24 Hours Protein: {nutritionData.last24HoursProtein}</p>
+        <div className="flex max-sm:flex-col gap-4">
+          <div className="mt-6 w-fit border border-zinc-700 p-4 rounded-md flex gap-6">
+            <div>
+              <h1 className="text-white font-semibold">
+                Past 24 hours Calories
+              </h1>
+              <p className="text-gray-400">
+                {nutritionData.last24HoursCalories} cal
+              </p>
+            </div>
+            <div>
+              <h1 className="text-white font-semibold">
+                Past 24 hours Protien
+              </h1>
+              <p className="text-gray-400">
+                {nutritionData.last24HoursProtein} gms
+              </p>
+            </div>
+          </div>
+          <div className="mt-6 w-fit border border-zinc-700 p-4 rounded-md flex gap-6">
+            <div>
+              <h1 className="text-white font-semibold">Total Calories</h1>
+              <p className="text-gray-400">{nutritionData.totalCalories} cal</p>
+            </div>
+            <div>
+              <h1 className="text-white font-semibold">Total Protien</h1>
+              <p className="text-gray-400">{nutritionData.totalProtein} gms</p>
+            </div>
+          </div>
         </div>
       </div>
+
       {loading ? (
         <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
           <Loader />
@@ -214,7 +279,9 @@ const Profile = () => {
             ></iframe>
           )}
           <div className="flex justify-center items-center mt-10">
-            <span className="font-semibold text-gray-600">Check Your NFT: &nbsp;</span>
+            <span className="font-semibold text-gray-600">
+              Check Your NFT:{" "}
+            </span>
             <a
               href={`https://claim.underdogprotocol.com/nfts/${nft.mintAddress}?network=DEVNET`}
               target="_blank"
@@ -244,36 +311,38 @@ const Profile = () => {
           {!minted ? (
             !isMinting ? (
               <div>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                onClick={mintNft}
-              >
-                Mint NFT
-              </button>
-               <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
-               <Loader />
-             </div> 
-             </div>
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                  onClick={mintNft}
+                >
+                  Mint NFT
+                </button>
+                <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
+                  <Loader />
+                </div>
+              </div>
             ) : (
               <div>
-              <p className="text-gray-500 text-lg mb-4">Minting NFT...</p>
-              <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
-               <Loader />
-             </div> 
-             </div>
+                <p className="text-gray-500 text-lg mb-4">Minting NFT...</p>
+                <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
+                  <Loader />
+                </div>
+              </div>
             )
-          ) : view && (
-            <div>
-            <button
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() =>location.reload()}
-            >
-              View NFT
-            </button>
-            <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
-            <Loader />
-          </div> 
-          </div>
+          ) : (
+            view && (
+              <div>
+                <button
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => location.reload()}
+                >
+                  View NFT
+                </button>
+                <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
+                  <Loader />
+                </div>
+              </div>
+            )
           )}
         </div>
       )}

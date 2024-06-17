@@ -13,7 +13,7 @@ const Home = () => {
   const path = usePathname();
   const slugId = "id";
   useEffect(() => {
-    if (path === `/profile/${slugId}`) {
+    if (path.includes("/profile/")) {
       setDarkbg(true);
     } else {
       setDarkbg(false);
