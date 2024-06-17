@@ -26,15 +26,16 @@ const Profile = () => {
   const [isMinting, setIsMinting] = useState(false);
   const [minted, setMinted] = useState(false);
   const [view, setView] = useState(false);
+  const [nosuchuser, setNosuchuser] = useState(false);
   const [nutritionData, setNutritionData] = useState({
-    totalCalories: 0,
-    totalProtein: 0,
-    last24HoursCalories: 0,
-    last24HoursProtein: 0,
-    photoURL: "",
-    displayName: "",
-    email: "",
-    xp: 0,
+    totalCalories: "loading",
+    totalProtein: "loading",
+    last24HoursCalories: "loading",
+    last24HoursProtein: "loading",
+    photoURL: "https://i.kym-cdn.com/photos/images/newsfeed/002/051/162/211.gif",
+    displayName: "loading",
+    email: "loading",
+    xp:"loading",
   });
   const router = useRouter();
   const { darkbg, setDarkbg } = useContext(ProfileContext);
@@ -77,6 +78,8 @@ const Profile = () => {
         }
       } else {
         console.log("No such user document!");
+        setMessage("No such user");
+        setNosuchuser(true);
         setLoading(false);
       }
     } catch (error) {
@@ -154,10 +157,10 @@ const Profile = () => {
           // Automatically view the NFT after 3 seconds
           setTimeout(() => {
             setView(true);
-          }, 2000);
+          }, 1000);
         } else {
           const errorData = await createNftResponse.json();
-          setMessage(`Failed to create NFT: ${errorData.error}`);
+          setMessage( `Failed to create NFT : "USE FOODSNAP MORE AND THEN TRY AGAIN "  ${errorData.error}`);
         }
       } else {
         console.log("No such user document!");
@@ -210,7 +213,7 @@ const Profile = () => {
         alt=""
         className="h-72 w-full object-cover opacity-35"
       />
-      <div className="bg-gradient-to-br from-zinc-950 to-zinc-800 relative p-8 max-sm:p-4 rounded-lg w-8/12 max-sm:w-11/12 mx-auto mb-20 -mt-20 max-sm:-mt-48 z-10">
+  {!nosuchuser &&    <div className="bg-gradient-to-br from-zinc-950 to-zinc-800 relative p-8 max-sm:p-4 rounded-lg w-8/12 max-sm:w-11/12 mx-auto mb-20 -mt-20 max-sm:-mt-48 z-10">
         <div className="flex justify-between max-sm:flex-col max-sm:gap-4">
           <div className="flex-col items-center justify-center">
             <img
@@ -264,7 +267,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
+}
       {loading ? (
         <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
           <Loader />
@@ -310,17 +313,19 @@ const Profile = () => {
           <p className="text-gray-500 text-lg mb-4">{message}</p>
           {!minted ? (
             !isMinting ? (
-              <div>
+              <div>  {!nosuchuser && 
+              
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
                   onClick={mintNft}
                 >
                   Mint NFT
-                </button>
+                </button> }
                 <div className="text-gray-400 pt-28 pb-[25rem] flex justify-center w-full mx-auto">
-                  <Loader />
+                {!nosuchuser &&     <Loader /> }
                 </div>
-              </div>
+                
+                 </div> 
             ) : (
               <div>
                 <p className="text-gray-500 text-lg mb-4">Minting NFT...</p>
