@@ -22,7 +22,7 @@ import {
 } from "firebase/firestore";
 import gsap from "gsap";
 import html2canvas from "html2canvas";
-import {auth ,db} from "../utils/firebase"
+import { auth, db } from "../utils/firebase";
 // screenshot
 const divShot = () => {
   html2canvas(document.querySelector("#capture"), {
@@ -154,7 +154,6 @@ const ImageUploader = () => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "ttoifqeh"); // Replace with your Cloudinary upload preset
-   
 
     try {
       setLoading(true);
@@ -397,7 +396,7 @@ const ImageUploader = () => {
                         : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
                     } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
                   >
-                    XP: {result.XP}
+                    Aura: {result.XP}
                   </div>
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${

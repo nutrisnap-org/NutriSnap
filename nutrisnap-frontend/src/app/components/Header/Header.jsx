@@ -104,7 +104,7 @@ const Header = () => {
 
             {user && (
               <span className="text-sm text-black flex font-bold px-4 py-1 rounded-full bg-white border border-purple-700 shadow-lg">
-                XP: {userXP}
+                Aura: {userXP > 0 ? "+" + userXP : 0}
               </span>
             )}
           </div>
