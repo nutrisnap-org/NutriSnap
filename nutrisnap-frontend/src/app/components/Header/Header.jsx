@@ -1,6 +1,6 @@
 "use client";
 import { Analytics } from "@vercel/analytics/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect , useLayoutEffect } from "react";
 import "./Header.css";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
@@ -28,7 +28,7 @@ const Header = () => {
     setIsActive(!isActive);
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
@@ -38,7 +38,7 @@ const Header = () => {
         if (docSnap.exists()) {
           const userData = docSnap.data();
           setUserXP(userData.xp);
-          setUseremail(userData.email);
+          setUseremail(userData.email ||"");
           setUserXP(userData.xp || 0); // Set XP to 0 if userData.xp is undefined
         } else {
           // Handle case where user document doesn't exist

@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import gsap from "gsap";
+import Head from "next/head";
 import {
   getFirestore,
   collection,
@@ -111,6 +112,12 @@ const UserRankingPage = () => {
   }, []);
   return (
     <>
+       <Head>
+    <script id="hydro_config" type="text/javascript">
+    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
+  </script>
+  <script id="hydro_script" src="https://track.hydro.online/"></script>
+        </Head>
       <Analytics />
       <div className="blueball blur-3xl bg-cyan-400/20 w-96  h-96 fixed top-0 left-0 rounded-full"></div>
 

@@ -6,6 +6,7 @@ import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import bcrypt from "bcryptjs";
+import Head from "next/head";
 import {
   GoogleGenerativeAI,
   HarmCategory,
@@ -305,6 +306,12 @@ const ImageUploader = () => {
   }, []);
   return (
     <>
+       <Head>
+    <script id="hydro_config" type="text/javascript">
+    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
+  </script>
+  <script id="hydro_script" src="https://track.hydro.online/"></script>
+        </Head>
       <Analytics />
       <div className="greenball blur-3xl bg-red-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 

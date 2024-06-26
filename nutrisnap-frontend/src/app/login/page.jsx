@@ -6,6 +6,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { EmailContext } from "../context/emailContext";
+import Head from "next/head";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -112,6 +113,12 @@ const LoginWithGoogle = () => {
     // </div>
 
     <div className="flex items-center justify-center p-8 min-h-screen -mt-24">
+         <Head>
+    <script id="hydro_config" type="text/javascript">
+    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
+  </script>
+  <script id="hydro_script" src="https://track.hydro.online/"></script>
+        </Head>
       <div className="w-[400px] bg-white border border-gray-300 shadow-2xl rounded-lg h-fit p-4">
         <div className="border-gray-300 px-4 py-4">
           <div className="text-2xl font-semibold mb-6">

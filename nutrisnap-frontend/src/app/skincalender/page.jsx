@@ -5,7 +5,7 @@ import { auth, db } from "../utils/firebase";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-
+import Head from "next/head";
 const Profile = () => {
   const [imageData, setImageData] = useState([]);
   const [user, setUser] = useState(null);
@@ -71,6 +71,12 @@ const Profile = () => {
 
   return (
     <div>
+         <Head>
+    <script id="hydro_config" type="text/javascript">
+    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
+  </script>
+  <script id="hydro_script" src="https://track.hydro.online/"></script>
+        </Head>
       <h1 className="text-2xl flex justify-center items-center my-5">Track Your Skin</h1>
       {user ? (
         <div>
