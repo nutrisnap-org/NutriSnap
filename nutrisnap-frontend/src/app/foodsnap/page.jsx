@@ -20,12 +20,12 @@ import {
   arrayUnion,
   serverTimestamp,
   getDoc,
-  deleteField // Add getDoc function import
+  deleteField, // Add getDoc function import
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 
-import {auth ,db} from "../utils/firebase"
+import { auth, db } from "../utils/firebase";
 const ImageUploader = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const divShot = () => {
@@ -177,17 +177,16 @@ const ImageUploader = () => {
       );
       const data = await response.json();
       const newImageUrl = data.secure_url;
-      fetchAnalysisData(file , newImageUrl);
+      fetchAnalysisData(file, newImageUrl);
       const imageUrlHash = newImageUrl;
 
       setImageUrls([...imageUrls, imageUrlHash]);
-
     } catch (err) {
       console.error("Error uploading image: ", err);
     }
   };
 
-  const updateUserDataWithImageUrl = async (imageUrl , calories , protein) => {
+  const updateUserDataWithImageUrl = async (imageUrl, calories, protein) => {
     try {
       if (user) {
         const userDocRef = doc(db, "users", user.uid);
@@ -196,17 +195,22 @@ const ImageUploader = () => {
         await updateDoc(userDocRef, {
           tempTimestamp: serverTimestamp(),
         });
-    
+
         // Step 2: Retrieve the actual timestamp
         const userDoc = await getDoc(userDocRef);
         const timestamp = userDoc.data().tempTimestamp;
-    
+
         // Step 3: Add the image URL and timestamp to the array
         await updateDoc(userDocRef, {
-          unhashedfoodsnapUrls: arrayUnion({ imageUrl, timestamp ,calories , protein }),
+          unhashedfoodsnapUrls: arrayUnion({
+            imageUrl,
+            timestamp,
+            calories,
+            protein,
+          }),
           tempTimestamp: deleteField(), // Clean up the temp field
         });
-    
+
         console.log("Image URL successfully updated in Firestore!");
       } else {
         console.error("User not found in session storage");
@@ -215,7 +219,7 @@ const ImageUploader = () => {
       console.error("Error updating image URL: ", error);
     }
   };
-  const fetchAnalysisData = async (file , newImageUrl) => {
+  const fetchAnalysisData = async (file, newImageUrl) => {
     try {
       setLoading(true);
       const genAI = new GoogleGenerativeAI(
@@ -422,7 +426,7 @@ const ImageUploader = () => {
                         : "bg-green-100 rounded-md text-green-900 border-l-4 border-green-900"
                     } shadow-sm hover:shadow-lg transition-all mt-2 mb-4`}
                   >
-                    XP: {result.XP}
+                    Aura: : {result.XP}
                   </div>
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
@@ -448,7 +452,7 @@ const ImageUploader = () => {
                   </p>
                   <p className="text-md max-sm:text-sm mt-4 text-gray-600 leading-relaxed px-4 py-3 bg-gray-100 rounded-md border-l-4 border-gray-500">
                     <span className="font-bold text-lg max-sm:text-md">
-                    Protein:
+                      Protein:
                     </span>{" "}
                     {result.est_protein}
                   </p>

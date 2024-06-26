@@ -1,5 +1,5 @@
 "use client";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import gsap from "gsap";
@@ -11,10 +11,8 @@ import {
   limit,
   getDocs,
 } from "firebase/firestore";
-import {auth ,db} from "../utils/firebase"
+import { auth, db } from "../utils/firebase";
 const UserRankingPage = () => {
-
-
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResult, setSearchResult] = useState(null);
@@ -25,10 +23,14 @@ const UserRankingPage = () => {
     const fetchUserData = async () => {
       try {
         const usersCollection = collection(db, "users");
-        const usersQuery = query(usersCollection, orderBy("xp", "desc"), limit(20));
-        console.log(usersQuery)
+        const usersQuery = query(
+          usersCollection,
+          orderBy("xp", "desc"),
+          limit(20)
+        );
+        console.log(usersQuery);
         const querySnapshot = await getDocs(usersQuery);
-console.log(querySnapshot)
+        console.log(querySnapshot);
         const users = [];
         querySnapshot.forEach((doc) => {
           users.push({
@@ -109,7 +111,7 @@ console.log(querySnapshot)
   }, []);
   return (
     <>
-    <Analytics />
+      <Analytics />
       <div className="blueball blur-3xl bg-cyan-400/20 w-96  h-96 fixed top-0 left-0 rounded-full"></div>
 
       <div className="mt-2 lg:px-36">
@@ -173,7 +175,7 @@ console.log(querySnapshot)
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 py-2 px-4">Rank</th>
                   <th className="border border-gray-300 py-2 px-4">Username</th>
-                  <th className="border border-gray-300 py-2 px-4">XP</th>
+                  <th className="border border-gray-300 py-2 px-4">Aura</th>
                 </tr>
               </thead>
               <tbody>
