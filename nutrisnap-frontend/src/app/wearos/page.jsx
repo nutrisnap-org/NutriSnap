@@ -45,11 +45,11 @@ const CsvUploader = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "ttoifqeh");
+    formData.append("upload_preset", "se19yuyy");
 
     try {
       const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dd5khtlxa/raw/upload",
+        "https://api.cloudinary.com/v1_1/dgl9svb8r/raw/upload",
         {
           method: "POST",
           body: formData,
