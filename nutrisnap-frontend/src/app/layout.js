@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Footer from "./components/Footer/Footer";
 const inter = DM_Sans({ subsets: ["latin"] });
 import { ProfileProvider } from "./context/profileContext";
+import GoogleAdsense from './Google'
 import { EmailProvider } from "./context/emailContext";
 export default function RootLayout({ children }) {
   const [isInstagramInAppBrowser, setIsInstagramInAppBrowser] = useState(false);
@@ -84,6 +85,7 @@ useEffect(() => {
   return (
     <html lang="en">
       <body>
+    　<GoogleAdsense  />
 
       {!isInstagramInAppBrowser && (
           <>
