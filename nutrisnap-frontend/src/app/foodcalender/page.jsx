@@ -8,7 +8,7 @@ import { doc, getDoc } from "firebase/firestore";
 import Loader from "../components/Loader";
 import gsap from "gsap";
 import { data } from "autoprefixer";
-import Head from "next/head";
+   
 const moment = require("moment");
 const Profile = () => {
   const [imageData, setImageData] = useState([]);
@@ -175,12 +175,7 @@ const Profile = () => {
 
   return (
     <div>
-         <Head>
-    <script id="hydro_config" type="text/javascript">
-    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
-  </script>
-  <script id="hydro_script" src="https://track.hydro.online/"></script>
-        </Head>
+          
       <div className="greenball blur-3xl bg-violet-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
       <h1 className="text-8xl moving font-bold filter drop-shadow-xl max-sm:text-4xl max-md:text-6xl flex justify-center items-center my-5">
         Food Calendar

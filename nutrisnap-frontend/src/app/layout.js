@@ -9,6 +9,7 @@ import Footer from "./components/Footer/Footer";
 const inter = DM_Sans({ subsets: ["latin"] });
 import { ProfileProvider } from "./context/profileContext";
 import GoogleAdsense from './Google'
+import Hydro from './Hydroonline'
 import { EmailProvider } from "./context/emailContext";
 export default function RootLayout({ children }) {
   const [isInstagramInAppBrowser, setIsInstagramInAppBrowser] = useState(false);
@@ -86,7 +87,7 @@ useEffect(() => {
     <html lang="en">
       <body>
     　<GoogleAdsense  />
-
+      <Hydro />
       {!isInstagramInAppBrowser && (
           <>
           <EmailProvider>

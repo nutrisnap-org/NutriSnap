@@ -2,7 +2,7 @@
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
 import { useRouter } from "next/navigation";
-import Head from 'next/head'
+  
 
 
 
@@ -22,12 +22,7 @@ export default function Home() {
  
   return (
     <>
-    <Head>
-    <script id="hydro_config" type="text/javascript">
-    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
-  </script>
-  <script id="hydro_script" src="https://track.hydro.online/"></script>
-        </Head>
+     
     <main className="flex flex-col items-center justify-between px-4">
       <Hero />
       

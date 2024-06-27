@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import html2canvas from "html2canvas";
 import bcrypt from "bcryptjs";
-import Head from "next/head";
+   
 import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
 import { getAuth, signOut, onAuthStateChanged, reload } from "firebase/auth";
@@ -333,12 +333,7 @@ const ImageUploader = () => {
   }, []);
   return (
     <>
-       <Head>
-    <script id="hydro_config" type="text/javascript">
-    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
-  </script>
-  <script id="hydro_script" src="https://track.hydro.online/"></script>
-        </Head>
+        
       <Analytics />
       <div className="ball blur-3xl bg-purple-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 

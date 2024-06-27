@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { ProfileContext } from "../../context/profileContext";
 import { useContext } from "react";
-import Head from "next/head";
+   
 import { EmailContext } from "../../context/emailContext";
 const Home = () => {
   const { darkbg, setDarkbg } = useContext(ProfileContext);
@@ -23,12 +23,7 @@ const Home = () => {
 
   return (
     <div className="">
-         <Head>
-    <script id="hydro_config" type="text/javascript">
-    window.Hydro_tagId = "5aaf26c3-644d-4392-bd0e-d42832c1dcec";
-  </script>
-  <script id="hydro_script" src="https://track.hydro.online/"></script>
-        </Head>
+          
       <Profile />
       <div
         className={`bottom-navigation bottom-0 fixed w-full p-4 md:hidden bg-gradient-to-b ${
