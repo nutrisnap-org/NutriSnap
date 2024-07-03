@@ -1,6 +1,6 @@
 "use client";
 import { Analytics } from "@vercel/analytics/react";
-import { useState, useEffect , useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import "./Header.css";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
@@ -38,7 +38,7 @@ const Header = () => {
         if (docSnap.exists()) {
           const userData = docSnap.data();
           setUserXP(userData.xp);
-          setUseremail(userData.email ||"");
+          setUseremail(userData.email || "");
           setUserXP(userData.xp || 0); // Set XP to 0 if userData.xp is undefined
         } else {
           // Handle case where user document doesn't exist
@@ -93,7 +93,7 @@ const Header = () => {
       <div
         className={`${
           darkbg ? "text-white bg-gray-950" : "text-gray-950"
-        } w-full p-4 md:p-6 flex justify-between items-center z-50`}
+        } w-full p-4 md:p-6 flex justify-between items-center z-50 -mt-6`}
       >
         <div className="flex md:mx-12 items-center gap-2">
           <div className="flex gap-3 max-sm:gap-6">

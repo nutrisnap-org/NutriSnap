@@ -11,6 +11,7 @@ import { ProfileProvider } from "./context/profileContext";
 import GoogleAdsense from './Google'
 import Hydro from './Hydroonline'
 import { EmailProvider } from "./context/emailContext";
+import { usePathname } from "next/navigation";
 export default function RootLayout({ children }) {
   const [isInstagramInAppBrowser, setIsInstagramInAppBrowser] = useState(false);
   const [isIPhone, setIsIPhone] = useState(false);
@@ -81,11 +82,11 @@ useEffect(() => {
       alert('Failed to copy URL. Please copy manually.');
     }
   };
-
+ const path = usePathname()
   
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" >
+      <body className={`${path.includes("profile")?"bg-gray-950":""}`}>
     　<GoogleAdsense  />
       <Hydro />
       {!isInstagramInAppBrowser && (
