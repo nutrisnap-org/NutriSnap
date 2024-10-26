@@ -144,7 +144,7 @@ const Footer = () => {
                     </a>
                   </p>
                 </div>
-{/*                 <div>
+         <div>
                   <h6 className="mb-4 flex justify-center font-semibold uppercase md:justify-start">
                     Contributors
                   </h6>
@@ -176,7 +176,7 @@ const Footer = () => {
                       Rishabh Pandey
                     </p>
                   </a>
-                </div> */}
+                </div> 
               </div>
             </div>
 
