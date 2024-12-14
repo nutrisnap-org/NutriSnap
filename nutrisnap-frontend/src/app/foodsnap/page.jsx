@@ -1,34 +1,52 @@
 "use client";
 import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
-import { initializeApp } from "firebase/app";
-import html2canvas from "html2canvas";
-import bcrypt from "bcryptjs";
-   
-import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
-import { getAuth, signOut, onAuthStateChanged, reload } from "firebase/auth";
-import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
+import { 
+  GoogleGenerativeAI, 
+  HarmCategory, 
+  HarmBlockThreshold 
 } from "@google/generative-ai";
 import {
   setDoc,
-  getFirestore,
   doc,
   updateDoc,
   arrayUnion,
   serverTimestamp,
   getDoc,
-  deleteField, // Add getDoc function import
+  deleteField,
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
+import html2canvas from "html2canvas";
 
 import { auth, db } from "../utils/firebase";
+
 const ImageUploader = () => {
   const [previewImage, setPreviewImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [imageUrls, setImageUrls] = useState([]);
+  const [analysisResults, setAnalysisResults] = useState([]);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+  const reload = () => {
+    window.location.reload();
+  };
+  // Environment setup
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  // Utility function to convert file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  // HTML2Canvas screenshot download
   const divShot = () => {
     html2canvas(document.querySelector("#capture"), {
       imageTimeout: 20000,
@@ -36,10 +54,11 @@ const ImageUploader = () => {
       var link = document.createElement("a");
       link.download = `remedies.png`;
       link.href = canvas.toDataURL();
-
       link.click();
     });
   };
+
+  // File input change handler
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -50,158 +69,41 @@ const ImageUploader = () => {
       reader.readAsDataURL(file);
     }
   };
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [imageUrls, setImageUrls] = useState([]);
-  const [imageUrl, setImageUrl] = useState([]);
-  const [analysisResults, setAnalysisResults] = useState([]);
-  const [user, setUser] = useState(null);
-  const [userXP, setUserXP] = useState(0);
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-        const saveUserDataToFirestore = async (user) => {
-          try {
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
 
-            if (!docSnap.exists()) {
-              await setDoc(docRef, {
-                displayName: user.displayName,
-                email: user.email,
-                photoURL: user.photoURL,
-                // You can add more user data as needed
-              });
-              console.log("User data successfully stored in Firestore!");
-            } else {
-              console.log("User already exists in Firestore!");
-            }
-          } catch (error) {
-            console.error("Error storing user data: ", error);
-          }
-        };
-        saveUserDataToFirestore(user);
-        // Fetch user's XP from Firestore
-      } else {
-        setUser(null);
-        router.push("/login");
-
-        // Reset user's XP if not logged in
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-  // useEffect(() => {
-  //   // Retrieve user from session storage
-  //   const userFromSession = sessionStorage.getItem("user");
-  //   if (userFromSession) {
-  //     setUser(JSON.parse(userFromSession));
-  //   }
-  //   if(!userFromSession){
-
-  //   }
-  // }, []);
-  const fetchUserXP = async () => {
-    try {
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setUserXP(userData.xp);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (error) {
-      console.error("Error fetching user XP:", error);
-    }
-  };
-  const reload = () => {
-    window.location.reload();
-  };
-  useEffect(
-    () => {
-      if (user) {
-        fetchUserXP();
-      }
-    },
-    [user],
-    []
-  );
+  // Update user XP
   const updateUserXP = async (xpToAdd) => {
     try {
       if (user) {
-        // Fetch the current XP from the database
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const userData = docSnap.data();
           const currentXP = userData.xp || 0;
-
-          // Calculate the updated XP by adding the new XP to the current XP
           const updatedXP = currentXP + xpToAdd;
 
-          // Update the XP in the database
-          await updateDoc(docRef, {
-            xp: updatedXP,
-          });
-
+          await updateDoc(docRef, { xp: updatedXP });
           console.log("User XP successfully updated in Firestore!");
-        } else {
-          console.error("No such document!");
         }
-      } else {
-        router.push("/login");
-        console.error("User not found in session storage");
       }
     } catch (error) {
       console.error("Error updating user XP:", error);
     }
   };
 
-  const uploadImage = async (e) => {
-    handleFileInputChange(e);
-
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "se19yuyy"); // Replace with your Cloudinary upload preset
-    
-    try {
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dgl9svb8r/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const data = await response.json();
-      const newImageUrl = data.secure_url;
-      fetchAnalysisData(file, newImageUrl);
-      const imageUrlHash = newImageUrl;
-
-      setImageUrls([...imageUrls, imageUrlHash]);
-    } catch (err) {
-      console.error("Error uploading image: ", err);
-    }
-  };
-
+  // Update user data with image URL and analysis
   const updateUserDataWithImageUrl = async (imageUrl, calories, protein) => {
     try {
       if (user) {
         const userDocRef = doc(db, "users", user.uid);
 
-        // Step 1: Update the document to create a server-side timestamp
         await updateDoc(userDocRef, {
           tempTimestamp: serverTimestamp(),
         });
 
-        // Step 2: Retrieve the actual timestamp
         const userDoc = await getDoc(userDocRef);
         const timestamp = userDoc.data().tempTimestamp;
 
-        // Step 3: Add the image URL and timestamp to the array
         await updateDoc(userDocRef, {
           unhashedfoodsnapUrls: arrayUnion({
             imageUrl,
@@ -209,34 +111,37 @@ const ImageUploader = () => {
             calories,
             protein,
           }),
-          tempTimestamp: deleteField(), // Clean up the temp field
+          tempTimestamp: deleteField(),
         });
 
         console.log("Image URL successfully updated in Firestore!");
-      } else {
-        console.error("User not found in session storage");
       }
     } catch (error) {
       console.error("Error updating image URL: ", error);
     }
   };
-  const fetchAnalysisData = async (file, newImageUrl) => {
+
+  // Fetch analysis data from Google Generative AI
+  const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const genAI = new GoogleGenerativeAI(
-        process.env.NEXT_PUBLIC_GOOGLE_API_KEYIII
-      );
-      const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+
+      // Prepare base64 image
+      const base64Image = await fileToBase64(file);
+
+      // Configure model
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+      });
 
       const generationConfig = {
-        temperature: 0.4,
-        topK: 32,
-        topP: 1,
-        maxOutputTokens: 4096,
+        temperature: 0.7,
+        topP: 0.95,
+        topK: 64,
+        maxOutputTokens: 8192,
       };
 
       const safetySettings = [
-        // Add your safety settings here
         {
           category: HarmCategory.HARM_CATEGORY_HARASSMENT,
           threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
@@ -255,50 +160,136 @@ const ImageUploader = () => {
         },
       ];
 
-      const parts = [
-        await fileToGenerativePart(file),
-        {
-          text: "Analyse the food and give output in this manner in a json format eg {status:'unhealthy',description:'the food contains paneer and gravy'. est calories:'Give the calories amount that product has in numbers', est protein:'Give the protein amount that product has in numbers', XP:'the value ranges from 1-10 depending on the food health', diet: 'suggest a good diet for the person to stay fit and healthy'} pls do not halucinate and give unique recommendations and output for new food images",
-        },
-      ];
+      const prompt = `Analyse the food image and provide a JSON response with the following structure:
+      {
+        status: 'healthy' or 'unhealthy',
+        description: 'detailed food description',
+        est_calories: 'estimated calorie count',
+        est_protein: 'estimated protein amount in grams',
+        XP: 'health score from 1-10',
+        diet: 'personalized diet recommendation'
+      }
+      
+      Provide accurate, unique insights based on the specific food image.`;
 
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts }],
+      // Start chat session
+      const chatSession = model.startChat({
         generationConfig,
         safetySettings,
       });
-      const data = result.response.text();
-      const data2 = result.response[1];
-      const data3 = JSON.parse(data);
-      setAnalysisResults([...analysisResults, data3]);
-      console.log(analysisResults);
-      console.log(data2);
 
-      // regex error fix end
-      const { est_calories, est_protein } = data3;
-      // const imageUrl = imageUrl
-      updateUserDataWithImageUrl(newImageUrl, est_calories, est_protein);
-      // Update analysisResults state with parsed result
-      // Parse and set analysis results
-      if (data3.XP) {
-        updateUserXP(parseInt(data3.XP));
-      }
-    } catch (error) {
-      console.error("Error fetching analysis data: ", error);
-    } finally {
-      setLoading(false); // Set loading to false when analysis is done
+      // Send message with image
+      const result = await chatSession.sendMessage([
+        { 
+          inlineData: { 
+            mimeType: file.type, 
+            data: base64Image 
+          } 
+        },
+        { text: prompt }
+      ]);
+
+     // Get the response text
+     const responseText = await result.response.text();
+     console.log("Raw Response:", responseText); // Log raw response for debugging
+ 
+     // More robust JSON parsing
+     let parsedData;
+     try {
+       // Remove ```json and ``` if present
+       const cleanedResponseText = responseText
+         .replace(/```json/g, '')
+         .replace(/```/g, '')
+         .trim();
+ 
+       parsedData = JSON.parse(cleanedResponseText);
+     } catch (parseError) {
+       console.error("JSON Parsing Error:", parseError);
+       console.error("Problematic Response:", responseText);
+       
+       // Fallback parsing attempt
+       try {
+         // Try to extract JSON-like content
+         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+         if (jsonMatch) {
+           parsedData = JSON.parse(jsonMatch[0]);
+         } else {
+           throw new Error("No JSON-like content found");
+         }
+       } catch (fallbackError) {
+         console.error("Fallback Parsing Error:", fallbackError);
+         parsedData = {
+           status: 'unknown',
+           description: 'Unable to analyze the image',
+           est_calories: 'N/A',
+           est_protein: 'N/A',
+           XP: '1',
+           diet: 'Consult a nutritionist for personalized advice'
+         };
+       }
+     }
+ 
+     // Ensure all required fields exist
+     parsedData = {
+       status: parsedData.status || 'unknown',
+       description: parsedData.description || 'No description available',
+       est_calories: parsedData.est_calories || 'N/A',
+       est_protein: parsedData.est_protein || 'N/A',
+       XP: parsedData.XP || '1',
+       diet: parsedData.diet || 'No specific diet recommendation'
+     };
+ 
+     // Update states
+     setAnalysisResults([...analysisResults, parsedData]);
+     
+     // Optional: Update user data and XP if available
+     if (previewImage) {
+       updateUserDataWithImageUrl(previewImage, parsedData.est_calories, parsedData.est_protein);
+     }
+     
+     if (parsedData.XP) {
+       updateUserXP(parseInt(parsedData.XP));
+     }
+ 
+   } catch (error) {
+     console.error("Analysis Error:", error);
+     setAnalysisResults([...analysisResults, {
+       status: 'error',
+       description: 'Failed to analyze image',
+       est_calories: 'N/A',
+       est_protein: 'N/A',
+       XP: '1',
+       diet: 'Check connection and try again'
+     }]);
+   } finally {
+     setLoading(false);
+   }
+ };
+
+  // Image upload handler
+  const uploadImage = async (e) => {
+    handleFileInputChange(e);
+    const file = e.target.files[0];
+    
+    if (file) {
+      setImageUrls([...imageUrls, URL.createObjectURL(file)]);
+      fetchAnalysisData(file);
     }
   };
-  const fileToGenerativePart = async (file) => {
-    const base64EncodedDataPromise = new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(",")[1]);
-      reader.readAsDataURL(file);
-    });
-    return {
-      inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-    };
-  };
+
+  // User authentication effect
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //     if (currentUser) {
+  //       setUser(currentUser);
+  //     } else {
+  //       router.push("/login");
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, []); 
+
+
   useEffect(() => {
     gsap.set(".ball", { xPercent: -50, yPercent: -50 });
     let targets = gsap.utils.toArray(".ball");

@@ -1,45 +1,66 @@
 "use client";
 import { Analytics } from "@vercel/analytics/react";
 import React, { useState, useEffect } from "react";
-import { initializeApp } from "firebase/app";
-import { Image } from "cloudinary-react";
 import { ThreeDots } from "react-loader-spinner";
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import bcrypt from "bcryptjs";
-   
-import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
+import { 
+  GoogleGenerativeAI, 
+  HarmCategory, 
+  HarmBlockThreshold 
 } from "@google/generative-ai";
-import { useRouter } from "next/navigation";
 import {
-  getFirestore,
+  setDoc,
   doc,
   updateDoc,
-  setDoc,
   arrayUnion,
-  getDoc, // Add getDoc function import
+  serverTimestamp,
+  getDoc,
+  deleteField,
 } from "firebase/firestore";
-import gsap from "gsap";
+import { useRouter } from "next/navigation";
+import { gsap } from "gsap";
 import html2canvas from "html2canvas";
+
 import { auth, db } from "../utils/firebase";
-// screenshot
-const divShot = () => {
-  html2canvas(document.querySelector("#capture"), {
-    imageTimeout: 20000,
-  }).then((canvas) => {
-    var link = document.createElement("a");
-    link.download = `remedies.png`;
-    link.href = canvas.toDataURL();
 
-    link.click();
-  });
-};
-
-const ImageUploader = () => {
+const SkinSnapUploader = () => {
   const [previewImage, setPreviewImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [imageUrls, setImageUrls] = useState([]);
+  const [analysisResults, setAnalysisResults] = useState([]);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+  
+  const reload = () => {
+    window.location.reload();
+  };
 
+  // Environment setup
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  // Utility function to convert file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  // HTML2Canvas screenshot download
+  const divShot = () => {
+    html2canvas(document.querySelector("#capture"), {
+      imageTimeout: 20000,
+    }).then((canvas) => {
+      var link = document.createElement("a");
+      link.download = `skin_remedies.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
+
+  // File input change handler
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -50,168 +71,79 @@ const ImageUploader = () => {
       reader.readAsDataURL(file);
     }
   };
-  const [imageUrls, setImageUrls] = useState([]);
-  const [analysisResults, setAnalysisResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [userXP, setUserXP] = useState(0);
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-        const saveUserDataToFirestore = async (user) => {
-          try {
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
 
-            if (!docSnap.exists()) {
-              await setDoc(docRef, {
-                displayName: user.displayName,
-                email: user.email,
-                photoURL: user.photoURL,
-                // You can add more user data as needed
-              });
-              console.log("User data successfully stored in Firestore!");
-            } else {
-              console.log("User already exists in Firestore!");
-            }
-          } catch (error) {
-            console.error("Error storing user data: ", error);
-          }
-        };
-        saveUserDataToFirestore(user);
-        // Fetch user's XP from Firestore
-      } else {
-        setUser(null);
-        router.push("/login");
-
-        // Reset user's XP if not logged in
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-  const reload = () => {
-    window.location.reload();
-  };
-  const fetchUserXP = async () => {
-    try {
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setUserXP(userData.xp);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (error) {
-      console.error("Error fetching user XP:", error);
-    }
-  };
-
-  useEffect(
-    () => {
-      if (user) {
-        fetchUserXP();
-      }
-    },
-    [user],
-    []
-  );
+  // Update user XP
   const updateUserXP = async (xpToAdd) => {
     try {
       if (user) {
-        // Fetch the current XP from the database
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const userData = docSnap.data();
           const currentXP = userData.xp || 0;
-
-          // Calculate the updated XP by adding the new XP to the current XP
           const updatedXP = currentXP + xpToAdd;
 
-          // Update the XP in the database
-          await updateDoc(docRef, {
-            xp: updatedXP,
-          });
-
+          await updateDoc(docRef, { xp: updatedXP });
           console.log("User XP successfully updated in Firestore!");
-        } else {
-          console.error("No such document!");
         }
-      } else {
-        console.error("User not found in session storage");
       }
     } catch (error) {
       console.error("Error updating user XP:", error);
     }
   };
 
-  const uploadImage = async (e) => {
-    handleFileInputChange(e);
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "se19yuyy"); // Replace with your Cloudinary upload preset
-   
-
-    try {
-      setLoading(true);
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dgl9svb8r/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const data = await response.json();
-      const newImageUrl = data.secure_url;
-      fetchAnalysisData(file);
-      const imageUrlHash = newImageUrl;
-
-      setImageUrls([...imageUrls, imageUrlHash]);
-
-      // Update Firestore document with image URL
-      updateUserDataWithImageUrl(imageUrlHash);
-    } catch (err) {
-      console.error("Error uploading image: ", err);
-    }
-  };
-
-  const updateUserDataWithImageUrl = async (imageUrl) => {
+  // Update user data with image URL and analysis
+  const updateUserDataWithImageUrl = async (imageUrl, skinType, remedies) => {
     try {
       if (user) {
-        await updateDoc(doc(db, "users", user.uid), {
-          unhashedskinsnapUrls: arrayUnion(imageUrl),
+        const userDocRef = doc(db, "users", user.uid);
+
+        await updateDoc(userDocRef, {
+          tempTimestamp: serverTimestamp(),
         });
+
+        const userDoc = await getDoc(userDocRef);
+        const timestamp = userDoc.data().tempTimestamp;
+
+        await updateDoc(userDocRef, {
+          unhashedskinsnapUrls: arrayUnion({
+            imageUrl,
+            timestamp,
+            skinType,
+            remedies,
+          }),
+          tempTimestamp: deleteField(),
+        });
+
         console.log("Image URL successfully updated in Firestore!");
-      } else {
-        console.error("User not found in session storage");
-        router.push("/login");
       }
     } catch (error) {
       console.error("Error updating image URL: ", error);
     }
   };
+
+  // Fetch analysis data from Google Generative AI
   const fetchAnalysisData = async (file) => {
     try {
       setLoading(true);
-      const genAI = new GoogleGenerativeAI(
-        process.env.NEXT_PUBLIC_GOOGLE_API_KEYII
-      );
-      const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+
+      // Prepare base64 image
+      const base64Image = await fileToBase64(file);
+
+      // Configure model
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+      });
 
       const generationConfig = {
-        temperature: 0.4,
-        topK: 32,
-        topP: 1,
-        maxOutputTokens: 4096,
+        temperature: 0.7,
+        topP: 0.95,
+        topK: 64,
+        maxOutputTokens: 8192,
       };
 
       const safetySettings = [
-        // Add your safety settings here
         {
           category: HarmCategory.HARM_CATEGORY_HARASSMENT,
           threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
@@ -230,52 +162,141 @@ const ImageUploader = () => {
         },
       ];
 
-      const parts = [
-        await fileToGenerativePart(file),
-        {
-          text: "Analyse the skin of this human and give output eg in json format {status:'dark/oily/clear/acne/mild/dry/etc  depending on skin type complexion and texture' ,description:'The skin appears to be healthy and clear and more description abt the person skin', remedies:'suggest some remedies to the person to take care of their skin and get a glow',XP:' the value ranges from 1-10 depending on the skin health of the person pls give lesser XP if they have even slightly oily/dry/dark skin' products:'suggest some good and trusted skincare prodcust in points space seperated  ' } also pls dont halucinate give unique response for new images",
-        },
-      ];
+      const prompt = `Analyse the skin image and provide a JSON response with the following structure:
+      {
+        status: 'clear/oily/dry/combination/acne/sensitive',
+        description: 'detailed skin condition description',
+        remedies: 'specific skincare recommendations',
+        XP: 'skin health score from 1-10',
+        products: 'recommended skincare products in comma-separated list',
+        concerns: 'specific skin concerns to address'
+      }
+      
+      Provide accurate, unique insights based on the specific skin image.`;
 
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts }],
+      // Start chat session
+      const chatSession = model.startChat({
         generationConfig,
         safetySettings,
       });
-      const data = result.response.text();
-      const data2 = result.response[1];
-      const data3 = JSON.parse(data);
-      setAnalysisResults([...analysisResults, data3]);
-      console.log(analysisResults);
-      console.log(data2);
 
-      // regex error fix end
+      // Send message with image
+      const result = await chatSession.sendMessage([
+        { 
+          inlineData: { 
+            mimeType: file.type, 
+            data: base64Image 
+          } 
+        },
+        { text: prompt }
+      ]);
 
-      // Update analysisResults state with parsed result
-      // Parse and set analysis results
-      if (data3.XP) {
-        updateUserXP(parseInt(data3.XP));
+      // Get the response text
+      const responseText = await result.response.text();
+      console.log("Raw Response:", responseText); // Log raw response for debugging
+ 
+      // More robust JSON parsing
+      let parsedData;
+      try {
+        // Remove ```json and ``` if present
+        const cleanedResponseText = responseText
+          .replace(/```json/g, '')
+          .replace(/```/g, '')
+          .trim();
+ 
+        parsedData = JSON.parse(cleanedResponseText);
+      } catch (parseError) {
+        console.error("JSON Parsing Error:", parseError);
+        console.error("Problematic Response:", responseText);
+       
+        // Fallback parsing attempt
+        try {
+          // Try to extract JSON-like content
+          const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            parsedData = JSON.parse(jsonMatch[0]);
+          } else {
+            throw new Error("No JSON-like content found");
+          }
+        } catch (fallbackError) {
+          console.error("Fallback Parsing Error:", fallbackError);
+          parsedData = {
+            status: 'unknown',
+            description: 'Unable to analyze the skin image',
+            remedies: 'Consult a dermatologist for personalized advice',
+            XP: '1',
+            products: 'No specific products recommended',
+            concerns: 'Need professional assessment'
+          };
+        }
       }
+ 
+      // Ensure all required fields exist
+      parsedData = {
+        status: parsedData.status || 'unknown',
+        description: parsedData.description || 'No description available',
+        remedies: parsedData.remedies || 'No specific remedies suggested',
+        XP: parsedData.XP || '1',
+        products: parsedData.products || 'No products recommended',
+        concerns: parsedData.concerns || 'No specific concerns identified'
+      };
+ 
+      // Update states
+      setAnalysisResults([...analysisResults, parsedData]);
+     
+      // Optional: Update user data and XP if available
+      if (previewImage) {
+        updateUserDataWithImageUrl(previewImage, parsedData.status, parsedData.remedies);
+      }
+     
+      if (parsedData.XP) {
+        updateUserXP(parseInt(parsedData.XP));
+      }
+ 
     } catch (error) {
-      console.error("Error fetching analysis data: ", error);
+      console.error("Analysis Error:", error);
+      setAnalysisResults([...analysisResults, {
+        status: 'error',
+        description: 'Failed to analyze skin image',
+        remedies: 'Check connection and try again',
+        XP: '1',
+        products: 'No products recommended',
+        concerns: 'Analysis unsuccessful'
+      }]);
     } finally {
-      setLoading(false); // Set loading to false when analysis is done
+      setLoading(false);
     }
   };
-  const fileToGenerativePart = async (file) => {
-    const base64EncodedDataPromise = new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(",")[1]);
-      reader.readAsDataURL(file);
-    });
-    return {
-      inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-    };
+
+  // Image upload handler
+  const uploadImage = async (e) => {
+    handleFileInputChange(e);
+    const file = e.target.files[0];
+    
+    if (file) {
+      setImageUrls([...imageUrls, URL.createObjectURL(file)]);
+      fetchAnalysisData(file);
+    }
   };
+
+  // User authentication effect
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //     if (currentUser) {
+  //       setUser(currentUser);
+  //     } else {
+  //       router.push("/login");
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, []); 
+
+  // GSAP mouse interaction effect
   useEffect(() => {
-    gsap.set(".greenball", { xPercent: -50, yPercent: -50 });
-    let targets = gsap.utils.toArray(".greenball");
-    window.addEventListener("mouseleave", (e) => {
+    gsap.set(".redball", { xPercent: -50, yPercent: -50 });
+    let targets = gsap.utils.toArray(".redball");
+    
+    window.addEventListener("mouseleave", () => {
       gsap.to(targets, {
         duration: 0.5,
         scale: 0,
@@ -284,7 +305,8 @@ const ImageUploader = () => {
         stagger: 0.02,
       });
     });
-    window.addEventListener("mouseenter", (e) => {
+    
+    window.addEventListener("mouseenter", () => {
       gsap.to(targets, {
         duration: 0.5,
         scale: 1,
@@ -293,6 +315,7 @@ const ImageUploader = () => {
         stagger: 0.02,
       });
     });
+    
     window.addEventListener("mousemove", (e) => {
       gsap.to(targets, {
         duration: 0.5,
@@ -304,24 +327,23 @@ const ImageUploader = () => {
       });
     });
   }, []);
+
   return (
     <>
-        
       <Analytics />
-      <div className="greenball blur-3xl bg-red-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
+      <div className="redball blur-3xl bg-red-400/50 w-96 h-96 fixed top-0 left-0 rounded-full"></div>
 
-      <div className="">
-        <div className="px-6 mx-auto text-center text-7xl max-sm:text-5xl max-md:text-6xl font-bold mt-10">
-          Ready to Analyse your <span className="greentext">"Skin snap"</span> ?
+      <div className="px-4">
+        <div className="mx-auto text-center text-7xl max-sm:text-4xl max-md:text-6xl font-bold mt-10">
+          Ready to Analyse your <span className="text-grad">"Skin Snap"</span> ?
         </div>
-        <p className="px-12 text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
-          Choose a file or open camera to send us pics to get a skin care
-          routine and analyse your skin using our AI
+        <p className="text-sm max-sm:text-xs text-gray-600 mt-4 mx-auto text-center">
+          Choose a file to send us pics to get a personalized skin care analysis and routine
         </p>
         <div className="flex max-md:flex-col mx-auto justify-center mt-8 px-24 max-sm:px-4">
           <div className="w-full">
-            <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-red-100 border border-red-300 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
-              <div className=" flex-col items-center justify-center">
+            <div className="w-fit max-md:w-11/12 p-8 max-sm:p-2 bg-red-100 rounded-md h-fit max-h-min mx-auto mt-8 mb-8 flex-col items-center justify-center">
+              <div className="flex-col items-center justify-center">
                 <input
                   type="file"
                   id="file"
@@ -354,10 +376,9 @@ const ImageUploader = () => {
               <>
                 <div
                   onClick={reload}
-                  className=" analyze-button flex mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
+                  className="analyze-button flex mb-8 cursor-pointer mx-auto px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-800 shadow-md rounded-full text-white w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out"
                 >
-                  <img src="/refresh.png" alt="" className="mr-2" /> Try
-                  Refreshing
+                  <img src="/refresh.png" alt="" className="mr-2" /> Try Refreshing
                 </div>
                 <div
                   className="Download Remedies mb-8 cursor-pointer mx-auto px-4 py-2 text-black border rounded-full w-fit border-black"
@@ -368,7 +389,7 @@ const ImageUploader = () => {
               </>
             )}
             {loading && (
-              <div className="loader mb-8  mx-auto w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
+              <div className="loader mb-8 mx-auto w-fit mt-6 hover:from-slate-800 hover:to-slate-600 transition duration-300 ease-in-out">
                 <ThreeDots
                   visible={true}
                   height="80"
@@ -379,17 +400,19 @@ const ImageUploader = () => {
                   wrapperStyle={{}}
                   wrapperClass=""
                 />
-                <p classname="max-sm:text-xs text-black text-center text-sm">
-                  Good things takes time but it's worth! *10-15 seconds*{" "}
+                <p className="max-sm:text-xs text-black text-center text-sm">
+                  Good things take time but it's worth it! *10-15 seconds*
                 </p>
               </div>
             )}
           </div>
           <div>
             {analysisResults.map((result, index) => (
-              <div className="w-full" id="capture">
-                <div className="text-4xl mb-4 px-4 max-md:px-2">Report:</div>
-                <div key={index} className="card px-4 max-md:px-2">
+              <div key={index} className="w-full" id="capture">
+                <div className="text-4xl mt-4 mb-4 px-4 max-md:px-2">
+                  Report:
+                </div>
+                <div className="card px-4 max-md:px-2">
                   <div
                     className={`text-md w-fit max-md:w-full font-semibold px-4 py-3 ${
                       result.XP >= 1 && result.XP <= 3
@@ -501,4 +524,4 @@ const ImageUploader = () => {
   );
 };
 
-export default ImageUploader;
+export default SkinSnapUploader;

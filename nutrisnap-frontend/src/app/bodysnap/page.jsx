@@ -206,7 +206,7 @@ const ImageUploader = () => {
       const genAI = new GoogleGenerativeAI(
         process.env.NEXT_PUBLIC_GOOGLE_API_KEYI
       );
-      const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
       const generationConfig = {
         temperature: 0.4,
